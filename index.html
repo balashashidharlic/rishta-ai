@@ -75,7 +75,7 @@ body{background:var(--bg);color:var(--t1);font-family:-apple-system,BlinkMacSyst
 .sc2::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:14px 14px 0 0}
 .sg::before{background:linear-gradient(90deg,var(--gold),transparent)}
 .st::before{background:linear-gradient(90deg,var(--teal),transparent)}
-.sp::before{background:linear(90deg,var(--purple),transparent)}
+.sp::before{background:linear-gradient(90deg,var(--purple),transparent)}
 .sr::before{background:linear-gradient(90deg,var(--coral),transparent)}
 .sl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-weight:600}
 .sv{font-size:28px;font-weight:800;line-height:1}
@@ -139,8 +139,8 @@ body{background:var(--bg);color:var(--t1);font-family:-apple-system,BlinkMacSyst
 .soul-tag{display:inline-flex;padding:2px 8px;border-radius:10px;font-size:10px;background:rgba(167,139,250,0.12);color:var(--purple);border:1px solid rgba(167,139,250,0.2);margin:2px}
 
 /* TIMELINE */
-.tl{position:relative;padding-left:22px}
-.tl::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--gold),var(--purple),var(--teal))}
+.tline{position:relative;padding-left:22px}
+.tline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--gold),var(--purple),var(--teal))}
 .tle{position:relative;padding:0 0 18px 18px}
 .tld{position:absolute;left:-16px;top:4px;width:12px;height:12px;border-radius:50%;border:2px solid var(--bg)}
 .tly{font-size:10px;color:var(--t3);margin-bottom:3px;font-weight:700}
@@ -472,7 +472,10 @@ async function POST(p) {
 // ============================================================
 async function loadAll() {
   showL('Syncing universe...');
-  DB = await GET();
+  const raw = await GET();
+  // Google Sheets returns numbers/dates as non-strings. Convert every field
+  // to a string so .replace/.split/.toLowerCase never crash (fixes profile not opening)
+  DB = raw.map(c => { const o = {}; for (const k in c) o[k] = (c[k] == null) ? '' : String(c[k]); return o; });
   hideL();
   updateStats();
   renderDash();
@@ -642,7 +645,7 @@ function openProf(idx) {
   lev.push({y:yr+1,t:'Tax Planning',d:'80C deadline March. ₹1.5L deduction available.',r:'OPPORTUNITY',rc:'var(--teal)',dc:'#12C499'});
   lev.sort((a,b)=>a.y-b.y);
   const lifehtml = lev.length > 0
-    ? '<div class="tl">'+lev.map(e=>`<div class="tle"><div class="tld" style="background:${e.dc}"></div><div class="tly">${e.y}</div><div class="tlt">${e.t}</div><div class="tli">${e.d}</div><div class="risk" style="background:${e.rc}20;color:${e.rc}">${e.r}</div></div>`).join('')+'</div>'
+    ? '<div class="tline">'+lev.map(e=>`<div class="tle"><div class="tld" style="background:${e.dc}"></div><div class="tly">${e.y}</div><div class="tlt">${e.t}</div><div class="tli">${e.d}</div><div class="risk" style="background:${e.rc}20;color:${e.rc}">${e.r}</div></div>`).join('')+'</div>'
     : '<div style="font-size:12px;color:var(--t3)">Add children/goals to see life predictions.</div>';
 
   // Soul
