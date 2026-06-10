@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Rishta AI 2030</title>
+<title>Rishta AI — Bala Shashidhar | LIC Advisor, Anantapur</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Telugu:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -13,7 +16,10 @@
   --card:#0F1E30;--card2:#152640;--b:rgba(255,255,255,0.08);
   --t1:#F0EDE6;--t2:#94A3B8;--t3:#4A5568;
 }
-body{background:var(--bg);color:var(--t1);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow-x:hidden}
+body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),transparent 60%),radial-gradient(900px 600px at -10% 110%,rgba(18,196,153,0.05),transparent 60%),var(--bg);color:var(--t1);font-family:'Manrope','Noto Sans Telugu',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow-x:hidden}
+.logo-t,.tt,.pn,.sv,.wn,.cn,.jn,.tnm,.mh h3,.etit{font-family:'Sora','Noto Sans Telugu',sans-serif;letter-spacing:-0.01em}
+:focus-visible{outline:2px solid rgba(240,180,41,0.55);outline-offset:2px;border-radius:4px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 .app{display:flex;min-height:100vh}
 
 /* SIDEBAR */
@@ -37,7 +43,7 @@ body{background:var(--bg);color:var(--t1);font-family:-apple-system,BlinkMacSyst
 
 /* MAIN */
 .mn{flex:1;display:flex;flex-direction:column;min-width:0}
-.tb{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--b);background:var(--bg);position:sticky;top:0;z-index:50;flex-wrap:wrap}
+.tb{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--b);background:rgba(8,15,26,0.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);position:sticky;top:0;z-index:50;flex-wrap:wrap}
 .tt{font-size:17px;font-weight:600}
 .ts{font-size:11px;color:var(--t3);margin-top:1px}
 .ta{display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap}
@@ -47,7 +53,7 @@ body{background:var(--bg);color:var(--t1);font-family:-apple-system,BlinkMacSyst
 
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;font-size:12px;cursor:pointer;border:none;font-family:inherit;font-weight:600;transition:all .15s;white-space:nowrap}
-.bp{background:linear-gradient(135deg,var(--gold),#D4960A);color:var(--bg)}
+.bp{background:linear-gradient(135deg,var(--gold),#D4960A);color:var(--bg);box-shadow:0 6px 18px -8px rgba(240,180,41,0.55)}
 .bp:hover{opacity:.9;transform:translateY(-1px)}
 .bg{background:transparent;color:var(--t2);border:1px solid var(--b)}
 .bg:hover{background:rgba(255,255,255,0.05);color:var(--t1)}
@@ -57,7 +63,7 @@ body{background:var(--bg);color:var(--t1);font-family:-apple-system,BlinkMacSyst
 .bd{background:rgba(224,92,58,0.15);color:var(--coral);border:1px solid rgba(224,92,58,0.3)}
 
 /* PANELS */
-.p{background:var(--card);border:1px solid var(--b);border-radius:14px;overflow:hidden;margin-bottom:16px}
+.p{background:var(--card);border:1px solid var(--b);border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 1px 0 rgba(255,255,255,0.03) inset,0 16px 34px -22px rgba(0,0,0,0.6)}
 .ph{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 11px;border-bottom:1px solid var(--b)}
 .pt{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
 .pa{font-size:11px;color:var(--gold);cursor:pointer}
@@ -70,8 +76,8 @@ body{background:var(--bg);color:var(--t1);font-family:-apple-system,BlinkMacSyst
 .cgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 
 /* STAT CARDS */
-.sc2{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:16px 18px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
-.sc2:hover{transform:translateY(-2px);border-color:rgba(255,255,255,0.15)}
+.sc2{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:16px 18px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;box-shadow:0 1px 0 rgba(255,255,255,0.03) inset,0 14px 30px -20px rgba(0,0,0,0.55)}
+.sc2:hover{transform:translateY(-2px);border-color:rgba(240,180,41,0.3);box-shadow:0 1px 0 rgba(255,255,255,0.04) inset,0 18px 38px -18px rgba(0,0,0,0.65)}
 .sc2::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:14px 14px 0 0}
 .sg::before{background:linear-gradient(90deg,var(--gold),transparent)}
 .st::before{background:linear-gradient(90deg,var(--teal),transparent)}
@@ -232,32 +238,59 @@ body{background:var(--bg);color:var(--t1);font-family:-apple-system,BlinkMacSyst
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 .float{animation:float 3s ease-in-out infinite}
-@media(max-width:900px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:1fr 1fr}}
-@media(max-width:680px){.sb{width:54px;min-width:54px}.sb .ni span,.sb .logo-t,.sb .logo-s,.sb .logo-v,.sb .an,.sb .ar{display:none}.g2,.cgrid,.fr{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}}
+/* LIC NEWS TICKER */
+.tk{display:flex;align-items:stretch;border-bottom:1px solid var(--b);background:linear-gradient(90deg,rgba(240,180,41,0.07),transparent 45%);overflow:hidden}
+.tkl{flex-shrink:0;display:flex;align-items:center;gap:6px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:var(--gold);padding:9px 14px;border-right:1px solid var(--b);text-transform:uppercase;background:rgba(240,180,41,0.08);font-family:'Sora',sans-serif}
+.tkdot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:ap 1.6s infinite}
+.tkv{flex:1;overflow:hidden;white-space:nowrap;display:flex;align-items:center}
+.tkt{display:inline-flex;align-items:center;gap:36px;padding-left:24px;animation:tkm 55s linear infinite;will-change:transform}
+.tkv:hover .tkt{animation-play-state:paused}
+@keyframes tkm{to{transform:translateX(-50%)}}
+.tki{font-size:11.5px;color:var(--t2);flex-shrink:0}
+.tks{color:var(--gold);font-size:9px;flex-shrink:0}
+
+/* MY TEAM TREE */
+.tgrid{display:grid;grid-template-columns:330px 1fr;gap:16px;align-items:start}
+.tnd{margin-bottom:10px}
+.tnc{display:flex;align-items:center;gap:12px;background:var(--card2);border:1px solid var(--b);border-radius:12px;padding:12px 14px;cursor:pointer;transition:all .15s;flex-wrap:wrap}
+.tnc:hover{border-color:rgba(240,180,41,0.45);transform:translateX(2px)}
+.tnc.root{background:linear-gradient(135deg,rgba(240,180,41,0.1),rgba(18,196,153,0.05));border-color:rgba(240,180,41,0.35);cursor:default}
+.tnc.root:hover{transform:none}
+.tav{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;font-family:'Sora',sans-serif}
+.tnm{font-size:13px;font-weight:700}
+.tnr{font-size:10px;color:var(--t3);margin-top:1px}
+.tchips{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto;align-items:center}
+.tchip{font-size:9.5px;padding:3px 9px;border-radius:14px;background:rgba(255,255,255,0.05);border:1px solid var(--b);color:var(--t2);white-space:nowrap}
+.tchip b{color:var(--t1)}
+.tadd{font-size:10px;padding:4px 10px;border-radius:10px;background:rgba(18,196,153,0.12);color:var(--teal);border:1px solid rgba(18,196,153,0.25);cursor:pointer;flex-shrink:0;font-weight:700}
+.tadd:hover{background:rgba(18,196,153,0.22)}
+.tkids{margin:8px 0 4px 19px;padding-left:20px;border-left:2px dashed rgba(240,180,41,0.22)}
+
+@media(max-width:900px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:1fr 1fr}.tgrid{grid-template-columns:1fr}}
+@media(max-width:680px){.sb{width:54px;min-width:54px}.sb .ni span,.sb .logo-t,.sb .logo-s,.sb .logo-v,.sb .an,.sb .ar{display:none}.g2,.cgrid,.fr{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}.tchips{margin-left:0;width:100%}.tkl span{display:none}}
 </style>
 </head>
 <body>
 
-<div class="lo" id="LO"><div class="ls"></div><div class="lt" id="LT">Initializing Rishta AI 2030...</div></div>
+<div class="lo" id="LO"><div class="ls"></div><div class="lt" id="LT">Initializing Rishta AI...</div></div>
 
 <div class="app">
 <div class="sb">
   <div class="logo">
     <div class="logo-t">Rishta AI</div>
-    <div class="logo-s">Intelligence Universe</div>
-    <div class="logo-v">✦ 2030 Vision</div>
+    <div class="logo-s">Relationship Intelligence</div>
   </div>
   <div class="nl">Mission Control</div>
   <div class="ni on" id="nav-dashboard" onclick="go('dashboard')"><i class="ti ti-planet" style="font-size:15px;width:18px;text-align:center"></i><span>Universe</span></div>
   <div class="ni" id="nav-customers" onclick="go('customers')"><i class="ti ti-users" style="font-size:15px;width:18px;text-align:center"></i><span>Customers</span><div class="nbadge" id="ccount">0</div></div>
-  <div class="ni" id="nav-addcustomer" onclick="go('addcustomer')"><i class="ti ti-user-plus" style="font-size:15px;width:18px;text-align:center"></i><span>Add Customer</span></div>
+  <div class="ni" id="nav-team" onclick="go('team')"><i class="ti ti-sitemap" style="font-size:15px;width:18px;text-align:center"></i><span>My Team</span><div class="nbadge" id="tcount" style="background:var(--teal)">0</div></div>
   <div class="ni" id="nav-messages" onclick="go('messages')"><i class="ti ti-message-circle" style="font-size:15px;width:18px;text-align:center"></i><span>Messages</span></div>
   <div class="nl">Intelligence</div>
   <div class="ni" id="nav-ai" onclick="go('ai')"><i class="ti ti-brain" style="font-size:15px;width:18px;text-align:center"></i><span>Jarvis AI</span><div class="nbadge" id="jcount" style="background:var(--purple)">0</div></div>
   <div class="ni" id="nav-objections" onclick="go('objections')"><i class="ti ti-shield" style="font-size:15px;width:18px;text-align:center"></i><span>Objections</span></div>
   <div class="ni" id="nav-universe" onclick="go('universe')"><i class="ti ti-circle-dot" style="font-size:15px;width:18px;text-align:center"></i><span>Galaxy Map</span></div>
   <div class="sbbot">
-    <div class="acard"><div class="aav">B</div><div><div class="an">Bala Garu</div><div class="ar">LIC Advisor · Hyd</div></div></div>
+    <div class="acard"><div class="aav">BS</div><div><div class="an">Bala Shashidhar</div><div class="ar">LIC Advisor · Anantapur</div></div></div>
   </div>
 </div>
 
@@ -268,6 +301,11 @@ body{background:var(--bg);color:var(--t1);font-family:-apple-system,BlinkMacSyst
       <button class="btn bg" onclick="loadAll()"><i class="ti ti-refresh"></i> Sync</button>
       <button class="btn bp" onclick="go('addcustomer')"><i class="ti ti-plus"></i> Add Customer</button>
     </div>
+  </div>
+
+  <div class="tk">
+    <div class="tkl"><div class="tkdot"></div><span>LIC Updates</span></div>
+    <div class="tkv"><div class="tkt" id="tktrack"></div></div>
   </div>
 
   <div class="con">
@@ -399,6 +437,33 @@ body{background:var(--bg);color:var(--t1);font-family:-apple-system,BlinkMacSyst
       <div class="p"><div class="ph"><div class="pt">🛡️ Objection Intelligence — Telugu + English</div></div><div class="pb"><p style="font-size:12px;color:var(--t2);margin-bottom:16px">Tap any objection for proven response scripts.</p><div id="objlist"></div></div></div>
     </div>
 
+    <!-- MY TEAM -->
+    <div class="sc" id="sc-team">
+      <div class="g4">
+        <div class="sc2 sg"><div class="sl">Team Members</div><div class="sv" style="color:var(--gold)" id="tm1">0</div><div class="sd">Across all levels</div></div>
+        <div class="sc2 st"><div class="sl">Policies by Team</div><div class="sv" style="color:var(--teal)" id="tm2">0</div><div class="sd">Lives insured</div></div>
+        <div class="sc2 sp"><div class="sl">Team Premium</div><div class="sv" style="color:var(--purple);font-size:22px" id="tm3">₹0</div><div class="sd">Annual collection</div></div>
+        <div class="sc2 sr"><div class="sl">Network Depth</div><div class="sv" style="color:var(--coral)" id="tm4">0</div><div class="sd">Levels below you</div></div>
+      </div>
+      <div class="tgrid">
+        <div class="p" id="taddp">
+          <div class="ph"><div class="pt">➕ Add Team Member</div></div>
+          <div class="pb">
+            <div class="fg"><label class="fl">Full Name *</label><input class="fi" id="tn" placeholder="e.g. Suresh Reddy"/></div>
+            <div class="fg"><label class="fl">Phone</label><input class="fi" id="tp" placeholder="10-digit mobile" maxlength="10" type="tel"/></div>
+            <div class="fg"><label class="fl">Designation</label><select class="fi" id="tr"><option>Agent</option><option>Senior Agent</option><option>Chief Life Insurance Advisor</option><option>Development Officer</option></select></div>
+            <div class="fg"><label class="fl">Reports To</label><select class="fi" id="tpar"></select></div>
+            <div class="fr"><div class="fg"><label class="fl">Policies Sold</label><input class="fi" id="tpol" type="number" min="0" value="0"/></div><div class="fg"><label class="fl">Premium (₹/yr)</label><input class="fi" id="tprem" type="number" min="0" value="0"/></div></div>
+            <button class="btn bp" onclick="addMem()" style="width:100%;justify-content:center"><i class="ti ti-user-plus"></i> Add to My Team</button>
+          </div>
+        </div>
+        <div class="p">
+          <div class="ph"><div class="pt">🌿 Downline Network — tap a member to edit</div></div>
+          <div class="pb" id="ttree"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- UNIVERSE MAP -->
     <div class="sc" id="sc-universe">
       <div class="p"><div class="ph"><div class="pt">🌌 Relationship Galaxy — Your Universe</div></div>
@@ -440,11 +505,25 @@ body{background:var(--bg);color:var(--t1);font-family:-apple-system,BlinkMacSyst
   </div>
 </div>
 
+<!-- TEAM MEMBER MODAL -->
+<div class="mb" id="MB-member">
+  <div class="mo">
+    <div class="mh"><h3>👤 Team Member Details</h3><button class="mx" onclick="closeM('member')">×</button></div>
+    <div class="mbody">
+      <div id="mmstats" style="margin-bottom:16px"></div>
+      <div class="fr"><div class="fg"><label class="fl">Name</label><input class="fi" id="mmn"/></div><div class="fg"><label class="fl">Phone</label><input class="fi" id="mmp" maxlength="10" type="tel"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Designation</label><select class="fi" id="mmr"><option>Agent</option><option>Senior Agent</option><option>Chief Life Insurance Advisor</option><option>Development Officer</option></select></div><div class="fg"><label class="fl">Reports To</label><select class="fi" id="mmpar"></select></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Policies Sold (own)</label><input class="fi" id="mmpol" type="number" min="0"/></div><div class="fg"><label class="fl">Premium ₹/yr (own)</label><input class="fi" id="mmprem" type="number" min="0"/></div></div>
+    </div>
+    <div class="mf"><button class="btn bd" onclick="delMem()" style="margin-right:auto"><i class="ti ti-trash"></i> Remove</button><button class="btn bg" onclick="closeM('member')">Cancel</button><button class="btn bp" onclick="saveMem()">Save Changes</button></div>
+  </div>
+</div>
+
 <div class="toast" id="TOAST"></div>
 
 <script>
 // ============================================================
-// RISHTA AI 2030 - COMPLETE FRESH BUILD
+// RISHTA AI - PREMIUM BUILD
 // ============================================================
 
 const API = 'https://script.google.com/macros/s/AKfycbzbU2favZPPWKHUA6sP3cBVeIv9UGiBrCDYGjV9MOMsHNu6lO88HN_xitA9C-kDnx-paA/exec';
@@ -883,7 +962,7 @@ function updateMsgDrop() {
 }
 
 const MT = {
-  birthday:{te:c=>`Namaste! 🙏\n\nప్రియమైన ${c.name} గారికి పుట్టినరోజు శుభాకాంక్షలు! 🎂🌸\n\nMee puttinroju samayamlo meeru, family andaru aanandinchali.\n\nMeeru naku ichina vishwaasaniki dhanyavaadaalu.\n\nMee Bala Garu 🙏\nLIC Advisor, Hyderabad`,en:c=>`Dear ${c.name},\n\nWishing you a very Happy Birthday! 🎂\n\nMay this day bring you joy, health and happiness. Thank you for your trust.\n\nWarm regards,\nBala, LIC Advisor\n📞 98765 43210`},
+  birthday:{te:c=>`Namaste! 🙏\n\nప్రియమైన ${c.name} గారికి పుట్టినరోజు శుభాకాంక్షలు! 🎂🌸\n\nMee puttinroju samayamlo meeru, family andaru aanandinchali.\n\nMeeru naku ichina vishwaasaniki dhanyavaadaalu.\n\nMee Bala Garu 🙏\nLIC Advisor, Anantapur`,en:c=>`Dear ${c.name},\n\nWishing you a very Happy Birthday! 🎂\n\nMay this day bring you joy, health and happiness. Thank you for your trust.\n\nWarm regards,\nBala, LIC Advisor\n📞 98765 43210`},
   festival:{te:c=>`🌸 Panduga Subhakankshalu! 🌸\n\nPriyamaina ${c.name} Garu,\n\nEe panduga mee jeevitamlo aanandam, samriddhi teestuundani korukuntunnaanu.\n\nMee family andhariki subhakamkshalu!\n\nMee Bala Garu 🙏`,en:c=>`Dear ${c.name},\n\nWishing you and your family a wonderful festival season!\n\nMay it bring joy and prosperity.\n\nWith warm wishes,\nBala, LIC Advisor`},
   premium:{te:c=>`Namaste ${c.name} Garu 🙏\n\nMee LIC policy premium due avutundi.\n\nSamayaaniki payment chesthe mee family ki poorna protection continue avutundi.\n\nEmi help kaavaali ante call cheyyandi.\n\nBala Garu\n📞 98765 43210`,en:c=>`Dear ${c.name},\n\nFriendly reminder — your LIC policy premium is due soon.\n\nTimely payment keeps your family fully protected.\n\nCall me anytime.\nBala, LIC Advisor\n📞 98765 43210`},
   edu:{te:c=>`${c.name} Garu 🙏\n\n${c.children?'Mee pillalu '+c.children+' — vaallaki ':'Mee pillalaki '}education planning gurinchi share cheyyalani anipistundi.\n\nIppude start chesthe strong future veyyachu.\n\nOkasaari 15 minutes matladaam?\n\nBala Garu\n📞 98765 43210`,en:c=>`Dear ${c.name},\n\nWanted to discuss your children's education planning — costs are rising every year.\n\nStarting early makes a huge difference.\n\nCan we have a quick call?\n\nWarm regards,\nBala, LIC Advisor\n📞 98765 43210`},
@@ -956,7 +1035,7 @@ function renderU() {
   const ctr = document.createElement('div');
   ctr.className = 'ustar float';
   ctr.style.cssText = `width:54px;height:54px;left:${cx-27}px;top:${cy-27}px;background:linear-gradient(135deg,rgba(240,180,41,0.4),rgba(18,196,153,0.2));border:2px solid var(--gold);color:var(--gold);font-size:11px;flex-direction:column;gap:1px`;
-  ctr.innerHTML = '<div>B</div><div style="font-size:7px;opacity:.7">You</div>';
+  ctr.innerHTML = '<div>BS</div><div style="font-size:7px;opacity:.7">You</div>';
   el.appendChild(ctr);
   DB.slice(0,14).forEach((c,i) => {
     const angle = (i/Math.min(DB.length,14))*2*Math.PI - Math.PI/2;
@@ -983,10 +1062,10 @@ function renderU() {
 // ============================================================
 // AI CHAT
 // ============================================================
-let CH = [{r:'ai',t:'Namaste Bala Garu! 🙏\n\nNenu mee Jarvis AI — 2030 Relationship Intelligence.\n\nMee customers digital souls, emotional maps, family graphs — anni analyze chestanu.\n\nEmi kanaleddu?'}];
+let CH = [{r:'ai',t:'Namaste Bala Garu! 🙏\n\nNenu mee Jarvis AI — Relationship Intelligence.\n\nMee customers digital souls, emotional maps, family graphs — anni analyze chestanu.\n\nEmi kanaleddu?'}];
 function renderChat() {
   const c = el_('chat'); if (!c) return;
-  c.innerHTML = CH.map(m=>`<div class="mr ${m.r==='u'?'u':''}"><div class="mav ${m.r==='u'?'u':'ai'}">${m.r==='u'?'B':'⚡'}</div><div class="mbu ${m.r==='u'?'u':'ai'}">${m.t}</div></div>`).join('');
+  c.innerHTML = CH.map(m=>`<div class="mr ${m.r==='u'?'u':''}"><div class="mav ${m.r==='u'?'u':'ai'}">${m.r==='u'?'BS':'⚡'}</div><div class="mbu ${m.r==='u'?'u':'ai'}">${m.t}</div></div>`).join('');
   c.scrollTop = c.scrollHeight;
 }
 function ask(pre) {
@@ -1055,6 +1134,7 @@ const TITLES = {
   messages:'AI Message Generator 🪄',
   ai:'Jarvis — Autonomous Intelligence ⚡',
   objections:'Objection Intelligence Scripts 🛡️',
+  team:'My Team — Downline Network 🌿',
   universe:'Relationship Galaxy Map 🌌'
 };
 function go(name) {
@@ -1065,6 +1145,7 @@ function go(name) {
   el_('TT').textContent = TITLES[name]||name;
   if (name==='messages') setTimeout(genMsg,100);
   if (name==='universe') setTimeout(renderU,100);
+  if (name==='team') renderTeam();
 }
 
 // ============================================================
@@ -1090,11 +1171,146 @@ function set(id,v){const e=el_(id);if(e)e.textContent=v;}
 function empty(icon,txt){return`<div class="empty"><div class="eicon">${icon}</div><div class="etit">${txt}</div></div>`;}
 
 // ============================================================
+// LIC NEWS TICKER
+// EDIT THIS LIST anytime — add the latest LIC announcements,
+// new plan launches, bonus declarations etc. They scroll in the news bar.
+// ============================================================
+const LIC_NEWS = [
+  '💡 Pay LIC premiums online anytime at licindia.in or through the LIC Digital app',
+  '📋 Tax saving — life insurance premiums qualify under Section 80C up to ₹1.5 lakh',
+  '🛡️ Review policy nominee details every year for smooth claim settlement',
+  '⏰ Grace period — 30 days for yearly/half-yearly/quarterly modes, 15 days for monthly',
+  '🔁 Lapsed policy? LIC revival schemes can restore old policies — ask your advisor',
+  '🎓 Children\'s education plans — starting early sharply reduces the monthly premium',
+  '📱 Policy status, loan eligibility and bonus details available on the LIC customer portal',
+  '🤝 Need help with a claim or service request? Call Bala Shashidhar — LIC Advisor, Anantapur'
+];
+function renderTicker() {
+  const t = el_('tktrack'); if (!t) return;
+  const h = LIC_NEWS.map(n=>`<span class="tki">${n}</span>`).join('<span class="tks">✦</span>');
+  t.innerHTML = h + '<span class="tks">✦</span>' + h + '<span class="tks">✦</span>';
+}
+
+// ============================================================
+// MY TEAM — DOWNLINE NETWORK
+// Stored in this browser (localStorage). Performance rolls up
+// through every level: own policies + entire downline below.
+// ============================================================
+const TKEY = 'rishta_team_v1';
+let TEAM = [], MID = null;
+function tload() { try { TEAM = JSON.parse(localStorage.getItem(TKEY)||'[]'); } catch(e) { TEAM = []; } }
+function tsave() { localStorage.setItem(TKEY, JSON.stringify(TEAM)); }
+function esc(s) { return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtINR(n) { return '₹' + Number(n||0).toLocaleString('en-IN'); }
+function kids(id) { return TEAM.filter(m => m.parent === id); }
+function down(id) { let out=[]; kids(id).forEach(k => { out.push(k); out = out.concat(down(k.id)); }); return out; }
+function depthOf(id) { const k = kids(id); return k.length ? 1 + Math.max(...k.map(c=>depthOf(c.id))) : 0; }
+function rollPol(m) { return (parseInt(m.pol)||0) + down(m.id).reduce((s,x)=>s+(parseInt(x.pol)||0),0); }
+function rollPrem(m) { return (parseFloat(m.prem)||0) + down(m.id).reduce((s,x)=>s+(parseFloat(x.prem)||0),0); }
+
+function parentOptions(excludeId) {
+  // a member can't report to themselves or anyone in their own downline
+  const bad = excludeId ? [excludeId, ...down(excludeId).map(m=>m.id)] : [];
+  return '<option value="root">⭐ Bala Shashidhar (You)</option>' +
+    TEAM.filter(m=>!bad.includes(m.id)).map(m=>`<option value="${m.id}">${esc(m.name)} — ${esc(m.role)}</option>`).join('');
+}
+
+function nodeHTML(m) {
+  const d = down(m.id), col = getCol(m.name||'');
+  const ch = kids(m.id);
+  return `<div class="tnd">
+    <div class="tnc" onclick="openMem('${m.id}')">
+      <div class="tav" style="background:${col.bg};color:${col.tc}">${ini(m.name)}</div>
+      <div><div class="tnm">${esc(m.name)}</div><div class="tnr">${esc(m.role||'Agent')}${m.phone?' · 📞 '+esc(m.phone):''}</div></div>
+      <div class="tchips">
+        <span class="tchip">🛡 Own <b>${parseInt(m.pol)||0}</b></span>
+        ${d.length?`<span class="tchip">👥 Team <b>${d.length}</b></span><span class="tchip">🛡 Total <b>${rollPol(m)}</b></span>`:''}
+        <span class="tchip">💰 <b>${fmtINR(rollPrem(m))}</b></span>
+        <span class="tadd" onclick="event.stopPropagation();preAdd('${m.id}')">+ Add under</span>
+      </div>
+    </div>
+    ${ch.length?`<div class="tkids">${ch.map(nodeHTML).join('')}</div>`:''}
+  </div>`;
+}
+
+function renderTeam() {
+  const tr = el_('ttree'); if (!tr) return;
+  const tot = TEAM.length;
+  const pol = TEAM.reduce((s,m)=>s+(parseInt(m.pol)||0),0);
+  const prem = TEAM.reduce((s,m)=>s+(parseFloat(m.prem)||0),0);
+  set('tm1', tot); set('tm2', pol); set('tm3', fmtINR(prem)); set('tm4', depthOf('root'));
+  set('tcount', tot);
+  const p = el_('tpar'); if (p) { const pv = p.value; p.innerHTML = parentOptions(); if (pv) p.value = pv; }
+  const rk = kids('root');
+  tr.innerHTML = `<div class="tnd"><div class="tnc root">
+      <div class="tav" style="background:linear-gradient(135deg,rgba(240,180,41,0.35),rgba(18,196,153,0.2));color:var(--gold)">BS</div>
+      <div><div class="tnm">Bala Shashidhar <span style="font-size:9px;color:var(--gold);letter-spacing:1px">YOU</span></div><div class="tnr">LIC Advisor · Anantapur</div></div>
+      <div class="tchips"><span class="tchip">👥 Network <b>${tot}</b></span><span class="tchip">🛡 Policies <b>${pol}</b></span><span class="tchip">💰 <b>${fmtINR(prem)}</b></span></div>
+    </div>${rk.length?`<div class="tkids">${rk.map(nodeHTML).join('')}</div>`:''}</div>` +
+    (tot ? '' : `<div class="empty"><div class="eicon">🌿</div><div class="etit">No team members yet</div><div class="edesc">Add your first agent on the left. Build their downline using "+ Add under" on any member.</div></div>`);
+}
+
+function addMem() {
+  const name = el_('tn').value.trim();
+  if (!name) { showT('⚠️ Enter member name'); return; }
+  TEAM.push({ id:'m'+Date.now(), name, phone:el_('tp').value.trim(), role:el_('tr').value,
+    parent:el_('tpar').value||'root', pol:parseInt(el_('tpol').value)||0,
+    prem:parseFloat(el_('tprem').value)||0, joined:new Date().toISOString().slice(0,10) });
+  tsave();
+  el_('tn').value=''; el_('tp').value=''; el_('tpol').value=0; el_('tprem').value=0;
+  renderTeam();
+  showT('✅ ' + name + ' added to your team!');
+}
+
+function preAdd(pid) {
+  const p = el_('tpar'); if (p) { p.innerHTML = parentOptions(); p.value = pid; }
+  el_('tn').focus();
+  showT('👇 New member will report to the selected manager');
+}
+
+function openMem(id) {
+  const m = TEAM.find(x=>x.id===id); if (!m) return;
+  MID = id;
+  const d = down(id);
+  el_('mmstats').innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap">
+    <span class="tchip">📅 Joined <b>${esc(m.joined||'—')}</b></span>
+    <span class="tchip">👥 Downline <b>${d.length}</b></span>
+    <span class="tchip">🛡 Total policies <b>${rollPol(m)}</b></span>
+    <span class="tchip">💰 Total premium <b>${fmtINR(rollPrem(m))}</b></span>
+  </div>`;
+  el_('mmn').value = m.name; el_('mmp').value = m.phone||''; el_('mmr').value = m.role||'Agent';
+  const p = el_('mmpar'); p.innerHTML = parentOptions(id); p.value = m.parent;
+  el_('mmpol').value = parseInt(m.pol)||0; el_('mmprem').value = parseFloat(m.prem)||0;
+  openM('member');
+}
+
+function saveMem() {
+  const m = TEAM.find(x=>x.id===MID); if (!m) return;
+  const nm = el_('mmn').value.trim();
+  if (!nm) { showT('⚠️ Name required'); return; }
+  m.name = nm; m.phone = el_('mmp').value.trim(); m.role = el_('mmr').value;
+  m.parent = el_('mmpar').value; m.pol = parseInt(el_('mmpol').value)||0; m.prem = parseFloat(el_('mmprem').value)||0;
+  tsave(); closeM('member'); renderTeam(); showT('✅ Member updated');
+}
+
+function delMem() {
+  const m = TEAM.find(x=>x.id===MID); if (!m) return;
+  const up = m.parent==='root' ? 'you' : 'their manager';
+  if (!confirm('Remove ' + m.name + '? Their downline will move up under ' + up + '.')) return;
+  kids(m.id).forEach(k => k.parent = m.parent);
+  TEAM = TEAM.filter(x=>x.id!==MID);
+  tsave(); closeM('member'); renderTeam(); showT('🗑️ ' + m.name + ' removed');
+}
+
+// ============================================================
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', async () => {
   renderOBJ();
   renderChat();
+  renderTicker();
+  tload();
+  renderTeam();
   await loadAll();
 });
 </script>
