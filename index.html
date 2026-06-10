@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Telugu:wght@400;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -249,6 +250,10 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
 .tki{font-size:11.5px;color:var(--t2);flex-shrink:0}
 .tks{color:var(--gold);font-size:9px;flex-shrink:0}
 
+/* LOGIN */
+.lgw{position:fixed;inset:0;background:radial-gradient(900px 600px at 75% 20%,rgba(240,180,41,0.08),transparent 60%),var(--bg);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px}
+.lgc{width:100%;max-width:380px;background:var(--card);border:1px solid var(--b);border-radius:18px;padding:34px 30px;box-shadow:0 30px 70px -30px rgba(0,0,0,0.8)}
+
 /* MY TEAM TREE */
 .tgrid{display:grid;grid-template-columns:330px 1fr;gap:16px;align-items:start}
 .tnd{margin-bottom:10px}
@@ -272,6 +277,17 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
 </head>
 <body>
 
+<div class="lgw" id="LOGIN" style="display:none">
+  <div class="lgc">
+    <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--gold),#D4960A);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:18px">&#128155;</div>
+    <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.02em">Welcome back, Bala Garu</div>
+    <div style="font-size:12px;color:var(--t3);margin:6px 0 22px">Your relationship universe awaits</div>
+    <div class="fg"><label class="fl">Email</label><input class="fi" id="lemail" type="email" placeholder="you@gmail.com"/></div>
+    <div class="fg"><label class="fl">Password</label><input class="fi" id="lpass" type="password" placeholder="********" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div id="lerr" style="font-size:11.5px;color:var(--coral);min-height:16px;margin:4px 0 10px"></div>
+    <button class="btn bp" id="lbtn" onclick="doLogin()" style="width:100%;justify-content:center;padding:12px">Enter My Universe</button>
+  </div>
+</div>
 <div class="lo" id="LO"><div class="ls"></div><div class="lt" id="LT">Initializing Rishta AI...</div></div>
 
 <div class="app">
@@ -290,7 +306,7 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
   <div class="ni" id="nav-objections" onclick="go('objections')"><i class="ti ti-shield" style="font-size:15px;width:18px;text-align:center"></i><span>Objections</span></div>
   <div class="ni" id="nav-universe" onclick="go('universe')"><i class="ti ti-circle-dot" style="font-size:15px;width:18px;text-align:center"></i><span>Galaxy Map</span></div>
   <div class="sbbot">
-    <div class="acard"><div class="aav">BS</div><div><div class="an">Bala Shashidhar</div><div class="ar">LIC Advisor · Anantapur</div></div></div>
+    <div class="acard"><div class="aav">BS</div><div style="flex:1"><div class="an">Bala Shashidhar</div><div class="ar">LIC Advisor · Anantapur</div></div><i class="ti ti-logout" onclick="doLogout()" title="Logout" style="cursor:pointer;color:var(--t3);font-size:15px"></i></div>
   </div>
 </div>
 
@@ -329,6 +345,10 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
         <div class="sc2" style="border-color:rgba(167,139,250,0.15)"><div class="sl">Champions</div><div class="sv" id="s3" style="color:var(--purple)">0</div><div class="sd">Trust score 75+</div></div>
         <div class="sc2 sr" onclick="go('ai')"><div class="sl">Jarvis Alerts</div><div class="sv" id="s4" style="color:var(--coral)">0</div><div class="sd">Need attention</div></div>
       </div>
+      <div class="g2">
+        <div class="p" style="border-color:rgba(224,92,58,0.25)"><div class="ph"><div class="pt">🚨 Drifting Relationships — 45+ days quiet</div></div><div class="pb" id="driftlist"></div></div>
+        <div class="p" style="border-color:rgba(240,180,41,0.25)"><div class="ph"><div class="pt">🎯 This Week's Focus — top 12</div></div><div class="pb" id="focuslist"></div></div>
+      </div>
       <div class="p" style="margin-bottom:16px;border-color:rgba(167,139,250,0.2)">
         <div class="ph"><div class="pt">⚡ Jarvis Autonomous Insights</div><div class="pa" onclick="go('ai')">Ask Jarvis →</div></div>
         <div class="pb" id="jinsd"><div class="empty"><div class="eicon">⚡</div><div class="etit">Loading intelligence...</div></div></div>
@@ -347,6 +367,8 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
         <span class="tag" style="cursor:pointer" onclick="renderCGrid(DB)">All</span>
         <span class="tag" style="cursor:pointer;color:var(--coral)" onclick="filterTrust('low')">⚠ At Risk</span>
         <span class="tag" style="cursor:pointer;color:var(--teal)" onclick="filterTrust('high')">⭐ Champions</span>
+        <span class="tag" style="cursor:pointer;color:var(--gold)" onclick="el_('csvfile').click()">📥 Import CSV</span>
+        <input type="file" id="csvfile" accept=".csv" style="display:none" onchange="importCSV(this.files[0])"/>
       </div>
       <div id="cgrid" class="cgrid"></div>
     </div>
@@ -373,6 +395,7 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
           <div class="fg"><label class="fl">Financial Goals</label><textarea class="fi" id="fgo" rows="2" placeholder="e.g. Daughter education, retirement at 60..."></textarea></div>
           <div class="fg"><label class="fl">Life Notes</label><textarea class="fi" id="fno" rows="2" placeholder="e.g. Recently promoted, worried about parents..."></textarea></div>
           <div class="fr"><div class="fg"><label class="fl">Referred By</label><input class="fi" id="fre" placeholder="e.g. Suresh Reddy Garu"/></div><div class="fg"><label class="fl">Trust Score (1-100)</label><input type="number" class="fi" id="ftr" value="50" min="1" max="100"/></div></div>
+          <div class="fg"><label class="fl">Persona (how they think)</label><select class="fi" id="fpe"><option value=""></option><option>Protector</option><option>Planner</option><option>Skeptic</option><option>Emotional Buyer</option><option>Family Guardian</option><option>Logical Analyst</option></select></div>
           <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
             <button class="btn bp" id="savebtn" onclick="saveC()"><i class="ti ti-device-floppy"></i> Save to Universe</button>
             <button class="btn bg" onclick="clearF()">Clear</button>
@@ -526,24 +549,21 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
 // RISHTA AI - PREMIUM BUILD
 // ============================================================
 
-const API = 'https://script.google.com/macros/s/AKfycbzbU2favZPPWKHUA6sP3cBVeIv9UGiBrCDYGjV9MOMsHNu6lO88HN_xitA9C-kDnx-paA/exec';
+// =============== SUPABASE CONFIG ===============
+// Paste your values from Supabase: Project Settings -> API
+const SUPABASE_URL = 'https://ydsvaudxnspecmfbyomi.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkc3ZhdWR4bnNwZWNtZmJ5b21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExMDQ3NDYsImV4cCI6MjA5NjY4MDc0Nn0.fACdloD8SbH-6MKlPiGSWUgwsDGE4J6sVOByP4pZUYM';
+let sb = null;
+try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
 let DB = [], CUR = -1, NIDX = -1;
 
 // ============================================================
 // API
 // ============================================================
 async function GET() {
-  try {
-    const r = await fetch(API + '?action=getCustomers');
-    const d = await r.json();
-    return d.success ? d.data : [];
-  } catch(e) { showT('⚠️ Connection error'); return []; }
-}
-async function POST(p) {
-  try {
-    const r = await fetch(API, { method:'POST', body: JSON.stringify(p) });
-    return await r.json();
-  } catch(e) { showT('⚠️ Request failed'); return { success:false }; }
+  const { data, error } = await sb.from('customers').select('*').order('created_at', { ascending: true });
+  if (error) { showT('⚠️ ' + error.message); return []; }
+  return (data || []).map(c => ({ ...c, created: c.created_at || '' }));
 }
 
 // ============================================================
@@ -551,12 +571,14 @@ async function POST(p) {
 // ============================================================
 async function loadAll() {
   showL('Syncing universe...');
+  loadTeam(); // refresh team from TeamMembers sheet in parallel
   const raw = await GET();
   // Google Sheets returns numbers/dates as non-strings. Convert every field
   // to a string so .replace/.split/.toLowerCase never crash (fixes profile not opening)
   DB = raw.map(c => { const o = {}; for (const k in c) o[k] = (c[k] == null) ? '' : String(c[k]); return o; });
   hideL();
   updateStats();
+  renderSmart();
   renderDash();
   renderCGrid(DB);
   updateMsgDrop();
@@ -727,9 +749,35 @@ function openProf(idx) {
     ? '<div class="tline">'+lev.map(e=>`<div class="tle"><div class="tld" style="background:${e.dc}"></div><div class="tly">${e.y}</div><div class="tlt">${e.t}</div><div class="tli">${e.d}</div><div class="risk" style="background:${e.rc}20;color:${e.rc}">${e.r}</div></div>`).join('')+'</div>'
     : '<div style="font-size:12px;color:var(--t3)">Add children/goals to see life predictions.</div>';
 
+  // Hidden opportunities (keyword scan of their own goals + notes)
+  const optxt = ((c.goals||'') + ' ' + (c.notes||'')).toLowerCase();
+  const OPP = [
+    [/school|college|education|fees|exam|study/, '🎓 Education corpus planning — studies are already on their mind'],
+    [/hospital|health|medical|surgery|sugar|diabet|bp /, '🏥 Health & critical illness cover — health concerns mentioned'],
+    [/retire|pension|old age/, '🌅 Retirement income plan'],
+    [/marriage|wedding|pelli/, '💍 Marriage corpus — goal-based plan fits'],
+    [/business|shop|loan|emi/, '🏪 Income protection / loan-cover term plan'],
+    [/baby|born|pregnan|new child/, '👶 New-child plan — start small, start now']
+  ];
+  const opps = OPP.filter(o=>o[0].test(optxt)).map(o=>o[1]);
+  const oppHtml = opps.length ? `<div class="p" style="border-color:rgba(240,180,41,0.25)"><div class="ph"><div class="pt">💡 Hidden Opportunities — from their own words</div></div><div class="pb">${opps.map(o=>`<div style="font-size:12.5px;padding:7px 0;border-bottom:1px solid var(--b)">${o}</div>`).join('')}<div style="font-size:10px;color:var(--t3);margin-top:8px">Detected from goals & notes. Verify in conversation before suggesting anything.</div></div></div>` : '';
+  let eduRows = '';
+  if (c.children) c.children.split(',').forEach(ch => {
+    const m = ch.match(/\d+/); if (!m) return;
+    const age = parseInt(m[0]); if (age >= 18 || age < 0) return;
+    const nm = ch.replace(/\d+/,'').replace(/[()]/g,'').trim() || 'Child';
+    const yrsUG = 18 - age, ugYear = new Date().getFullYear() + yrsUG;
+    const corpus = 1200000 * Math.pow(1.08, yrsUG);
+    const lakh = Math.round(corpus/100000);
+    const monthly = Math.round(corpus/(yrsUG*12*1.4)/1000);
+    eduRows += `<div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--b)"><div style="font-size:20px">🎓</div><div style="flex:1"><div style="font-size:12.5px;font-weight:700">${nm} — higher education in ${ugYear} (${yrsUG} yrs away)</div><div style="font-size:11px;color:var(--t2)">Est. corpus: <b style="color:var(--gold)">₹${lakh} lakh</b> · roughly ₹${monthly}K/month if started now</div></div></div>`;
+  });
+  const eduHtml = eduRows ? `<div class="p" style="border-color:rgba(167,139,250,0.25)"><div class="ph"><div class="pt">👨‍👩‍👧 Child Education Projection</div></div><div class="pb">${eduRows}<div style="font-size:10px;color:var(--t3);margin-top:8px">Rough estimate: ₹12L today's private UG cost, 8% education inflation, simple savings math. A conversation starter — not a quote.</div></div></div>` : '';
+
   // Soul
   const pers = t>=75?'Loyal & Trusting':t>=60?'Warming Up':t>=45?'Cautious Observer':'Emotionally Distant';
-  const appr = t>=70?'Ask about family first. Then financial planning.':t>=50?'Share stories. Be patient. No rush.':'Check their wellbeing. NO product talk today.';
+  const personaTip = {'Protector':'Lead with family safety — security matters more to them than returns. ','Planner':'Bring numbers and timelines — they respect preparation. ','Skeptic':'Zero pressure. Share claim stories and proof, let them verify. ','Emotional Buyer':'Stories over statistics — talk about the people they love. ','Family Guardian':'Frame everything around children and parents. ','Logical Analyst':'Compare options openly — they value transparency. '}[c.persona] || '';
+  const appr = personaTip + (t>=70?'Ask about family first. Then financial planning.':t>=50?'Share stories. Be patient. No rush.':'Check their wellbeing. NO product talk today.');
 
   // Family
   const fam = [];
@@ -752,6 +800,7 @@ function openProf(idx) {
             ${c.spouse?'<div class="pbadge">👫 '+c.spouse+'</div>':''}
             ${c.children?'<div class="pbadge">👨‍👩‍👧 '+c.children+'</div>':''}
             ${c.referred_by?'<div class="pbadge">📣 Ref: '+c.referred_by+'</div>':''}
+            <select class="pbadge" style="background:var(--card2);color:var(--purple);border:1px solid var(--b);cursor:pointer;font-family:inherit" onchange="setPersona(this.value)">${['','Protector','Planner','Skeptic','Emotional Buyer','Family Guardian','Logical Analyst'].map(pp=>`<option value="${pp}" ${c.persona===pp?'selected':''}>${pp||'🧠 Set persona'}</option>`).join('')}</select>
           </div>
         </div>
         <div style="text-align:center;flex-shrink:0">
@@ -849,8 +898,16 @@ function openProf(idx) {
         </div>
       </div>
     </div>`;
+  el_('profcont').insertAdjacentHTML('beforeend', oppHtml + eduHtml);
 
   go('profile');
+}
+
+async function setPersona(v) {
+  const c = DB[CUR]; if (!c) return;
+  c.persona = v;
+  const { error } = await sb.from('customers').update({ persona: v }).eq('id', c.id);
+  showT(error ? '⚠️ ' + error.message : '🧠 Persona saved');
 }
 
 // ============================================================
@@ -863,16 +920,19 @@ async function saveC() {
   if (phone.length < 10) { showT('⚠️ Enter valid 10-digit phone'); return; }
   const btn = el_('savebtn');
   btn.innerHTML = '⏳ Saving...'; btn.disabled = true;
-  const r = await POST({ action:'addCustomer', name, phone,
+  const stamp = '[' + new Date().toLocaleDateString('en-IN') + '] ';
+  const firstNote = el_('fno').value.trim();
+  const { error } = await sb.from('customers').insert({ name, phone,
     dob:el_('fd').value, occupation:el_('fo').value.trim(),
     income:el_('fi2').value, language:el_('fl2').value,
     spouse:el_('fsp').value.trim(), children:el_('fch').value.trim(),
-    goals:el_('fgo').value.trim(), notes:el_('fno').value.trim(),
-    referred_by:el_('fre').value.trim(), trust_score:parseInt(el_('ftr').value)||50
+    goals:el_('fgo').value.trim(), notes:firstNote ? stamp + firstNote : '',
+    referred_by:el_('fre').value.trim(), trust_score:parseInt(el_('ftr').value)||50,
+    persona:el_('fpe') ? el_('fpe').value : '', active:'active'
   });
   btn.innerHTML = '💾 Save to Universe'; btn.disabled = false;
-  if (r.success) { showT('✅ '+name+' added!'); clearF(); await loadAll(); go('customers'); }
-  else showT('❌ Save failed. Try again.');
+  if (!error) { showT('✅ '+name+' added!'); clearF(); await loadAll(); go('customers'); }
+  else showT('❌ Save failed: ' + error.message);
 }
 function clearF() { ['fn','fp','fd','fo','fsp','fch','fgo','fno','fre'].forEach(id=>{const e=el_(id);if(e)e.value='';}); const t=el_('ftr');if(t)t.value=50; }
 
@@ -884,10 +944,10 @@ async function deleteC() {
   const c = DB[CUR];
   if (!confirm('Delete '+c.name+'? This cannot be undone.')) return;
   showL('Deleting...');
-  const r = await POST({ action:'deleteCustomer', id:c.id });
+  const { error } = await sb.from('customers').delete().eq('id', c.id);
   hideL();
-  if (r.success) { showT('🗑️ '+c.name+' deleted!'); await loadAll(); go('customers'); }
-  else showT('❌ Delete failed. Try again.');
+  if (!error) { showT('🗑️ '+c.name+' deleted!'); await loadAll(); go('customers'); }
+  else showT('❌ Delete failed: ' + error.message);
 }
 
 // ============================================================
@@ -908,13 +968,17 @@ async function saveNote() {
   if (!text) { showT('⚠️ Write a note first'); return; }
   const c = DB[NIDX]; if (!c) return;
   showL('Saving note...');
-  await POST({ action:'addNote', id:c.id, note:type+': '+text });
-  await POST({ action:'updateTrust', id:c.id, trust_score:ntr });
+  const stamp = '[' + new Date().toLocaleDateString('en-IN') + '] ' + type + ': ' + text;
+  const newNotes = c.notes ? c.notes + '\n' + stamp : stamp;
+  const { error } = await sb.from('customers').update({ notes:newNotes, trust_score:ntr }).eq('id', c.id);
   hideL();
+  if (error) { showT('❌ ' + error.message); return; }
   showT('✅ Note saved!');
   closeM('note');
+  const cid = c.id;
   await loadAll();
-  openProf(NIDX);
+  const ni = DB.findIndex(x => x.id === cid);
+  if (ni >= 0) openProf(ni);
 }
 
 // ============================================================
@@ -1193,13 +1257,26 @@ function renderTicker() {
 
 // ============================================================
 // MY TEAM — DOWNLINE NETWORK
-// Stored in this browser (localStorage). Performance rolls up
-// through every level: own policies + entire downline below.
+// Synced to the "TeamMembers" sheet in your Google Sheet via
+// Apps Script (actions: getTeam / addMember / updateMember /
+// deleteMember). localStorage is kept as an offline cache so
+// the tree appears instantly while the sheet loads.
 // ============================================================
 const TKEY = 'rishta_team_v1';
 let TEAM = [], MID = null;
-function tload() { try { TEAM = JSON.parse(localStorage.getItem(TKEY)||'[]'); } catch(e) { TEAM = []; } }
-function tsave() { localStorage.setItem(TKEY, JSON.stringify(TEAM)); }
+function tcache() { try { localStorage.setItem(TKEY, JSON.stringify(TEAM)); } catch(e) {} }
+
+async function loadTeam() {
+  // 1) instant render from cache
+  try { TEAM = JSON.parse(localStorage.getItem(TKEY)||'[]'); } catch(e) { TEAM = []; }
+  renderTeam();
+  // 2) refresh from Supabase
+  const { data, error } = await sb.from('team_members').select('*');
+  if (error) { showT('⚠️ Team sync failed — showing offline copy'); return; }
+  TEAM = (data||[]).map(m => { const o = {}; for (const k in m) o[k] = (m[k]==null) ? '' : String(m[k]); return o; });
+  tcache();
+  renderTeam();
+}
 function esc(s) { return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function fmtINR(n) { return '₹' + Number(n||0).toLocaleString('en-IN'); }
 function kids(id) { return TEAM.filter(m => m.parent === id); }
@@ -1250,16 +1327,18 @@ function renderTeam() {
     (tot ? '' : `<div class="empty"><div class="eicon">🌿</div><div class="etit">No team members yet</div><div class="edesc">Add your first agent on the left. Build their downline using "+ Add under" on any member.</div></div>`);
 }
 
-function addMem() {
+async function addMem() {
   const name = el_('tn').value.trim();
   if (!name) { showT('⚠️ Enter member name'); return; }
-  TEAM.push({ id:'m'+Date.now(), name, phone:el_('tp').value.trim(), role:el_('tr').value,
+  const m = { id:'m'+Date.now(), name, phone:el_('tp').value.trim(), role:el_('tr').value,
     parent:el_('tpar').value||'root', pol:parseInt(el_('tpol').value)||0,
-    prem:parseFloat(el_('tprem').value)||0, joined:new Date().toISOString().slice(0,10) });
-  tsave();
+    prem:parseFloat(el_('tprem').value)||0, joined:new Date().toISOString().slice(0,10) };
+  // show immediately, then save to the TeamMembers sheet
+  TEAM.push(m); tcache(); renderTeam();
   el_('tn').value=''; el_('tp').value=''; el_('tpol').value=0; el_('tprem').value=0;
-  renderTeam();
-  showT('✅ ' + name + ' added to your team!');
+  const { error } = await sb.from('team_members').insert(m);
+  if (!error) showT('✅ ' + name + ' saved!');
+  else showT('⚠️ ' + name + ' added locally — sync failed: ' + error.message);
 }
 
 function preAdd(pid) {
@@ -1284,34 +1363,138 @@ function openMem(id) {
   openM('member');
 }
 
-function saveMem() {
+async function saveMem() {
   const m = TEAM.find(x=>x.id===MID); if (!m) return;
   const nm = el_('mmn').value.trim();
   if (!nm) { showT('⚠️ Name required'); return; }
   m.name = nm; m.phone = el_('mmp').value.trim(); m.role = el_('mmr').value;
   m.parent = el_('mmpar').value; m.pol = parseInt(el_('mmpol').value)||0; m.prem = parseFloat(el_('mmprem').value)||0;
-  tsave(); closeM('member'); renderTeam(); showT('✅ Member updated');
+  tcache(); closeM('member'); renderTeam();
+  const { error } = await sb.from('team_members').update({ name:m.name, phone:m.phone, role:m.role, parent:m.parent, pol:m.pol, prem:m.prem }).eq('id', m.id);
+  showT(!error ? '✅ Saved' : '⚠️ Sync failed: ' + error.message);
 }
 
-function delMem() {
+async function delMem() {
   const m = TEAM.find(x=>x.id===MID); if (!m) return;
   const up = m.parent==='root' ? 'you' : 'their manager';
   if (!confirm('Remove ' + m.name + '? Their downline will move up under ' + up + '.')) return;
   kids(m.id).forEach(k => k.parent = m.parent);
   TEAM = TEAM.filter(x=>x.id!==MID);
-  tsave(); closeM('member'); renderTeam(); showT('🗑️ ' + m.name + ' removed');
+  tcache(); closeM('member'); renderTeam();
+  await sb.from('team_members').update({ parent:m.parent }).eq('parent', m.id);
+  const { error } = await sb.from('team_members').delete().eq('id', m.id);
+  showT(!error ? '🗑️ ' + m.name + ' removed' : '⚠️ Removed locally — sync failed: ' + error.message);
 }
 
 // ============================================================
 // INIT
 // ============================================================
-document.addEventListener('DOMContentLoaded', async () => {
+// =============== SMART FEATURES ===============
+function parseDateLoose(str) {
+  str = String(str||'').trim();
+  const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return new Date(+m[3], +m[2]-1, +m[1]);
+  const d = new Date(str);
+  return isNaN(d) ? null : d;
+}
+function lastTouch(c) {
+  let latest = null;
+  String(c.notes||'').split('\n').forEach(n => {
+    const m = n.match(/\[(.+?)\]/);
+    if (m) { const d = parseDateLoose(m[1]); if (d && (!latest || d > latest)) latest = d; }
+  });
+  if (latest) return latest;
+  const cr = new Date(c.created || c.created_at || Date.now());
+  return isNaN(cr) ? new Date() : cr;
+}
+function daysSince(d) { return Math.floor((Date.now() - d.getTime()) / 86400000); }
+function smartRow(x, sub, col, rank) {
+  const cc = getCol(x.c.name||'');
+  return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b);cursor:pointer" onclick="openProf(${x.i})">${rank?`<div style="width:18px;font-size:11px;color:var(--t3);font-weight:700">${rank}</div>`:''}<div style="width:30px;height:30px;border-radius:50%;background:${cc.bg};color:${cc.tc};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">${ini(x.c.name)}</div><div style="flex:1"><div style="font-size:12.5px;font-weight:700">${esc(x.c.name)}</div><div style="font-size:10.5px;color:${col}">${sub}</div></div><i class="ti ti-chevron-right" style="color:var(--t3)"></i></div>`;
+}
+function renderSmart() {
+  const dr = el_('driftlist'), fo = el_('focuslist');
+  if (!dr || !fo) return;
+  const scored = DB.map((c,i) => { const t = parseInt(c.trust_score)||50; const ds = daysSince(lastTouch(c)); return { c, i, t, ds, score: (100-t) + Math.min(ds, 90) }; });
+  const drift = scored.filter(x => x.ds >= 45 && x.t < 70).sort((a,b) => b.ds - a.ds).slice(0,8);
+  dr.innerHTML = drift.length ? drift.map(x => smartRow(x, `${x.ds} days quiet · trust ${x.t} — a no-sales check-in call`, 'var(--coral)')).join('') : '<div style="font-size:12px;color:var(--t3);padding:6px 0">No one is drifting — every relationship touched within 45 days 💛</div>';
+  const focus = [...scored].sort((a,b) => b.score - a.score).slice(0,12);
+  fo.innerHTML = focus.length ? focus.map((x,n) => smartRow(x, `trust ${x.t} · ${x.ds}d since contact`, 'var(--gold)', n+1)).join('') : '<div style="font-size:12px;color:var(--t3);padding:6px 0">Add customers to see your weekly priority list.</div>';
+}
+
+// =============== CSV IMPORT (one-time, from Google Sheets export) ===============
+function parseCSV(text) {
+  const rows = []; let row = [], f = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (q) { if (ch === '"') { if (text[i+1] === '"') { f += '"'; i++; } else q = false; } else f += ch; }
+    else {
+      if (ch === '"') q = true;
+      else if (ch === ',') { row.push(f); f = ''; }
+      else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i+1] === '\n') i++; row.push(f); f = ''; if (row.some(x => x !== '')) rows.push(row); row = []; }
+      else f += ch;
+    }
+  }
+  if (f !== '' || row.length) { row.push(f); if (row.some(x => x !== '')) rows.push(row); }
+  return rows;
+}
+async function importCSV(file) {
+  if (!file) return;
+  showL('Importing CSV...');
+  const text = await file.text();
+  const rows = parseCSV(text);
+  if (rows.length < 2) { hideL(); showT('⚠️ CSV has no data rows'); return; }
+  const head = rows[0].map(h => String(h).trim().toLowerCase().replace(/\s+/g,'_'));
+  const ix = n => head.indexOf(n);
+  const g = (r,n) => { const i = ix(n); return i < 0 ? '' : String(r[i] == null ? '' : r[i]); };
+  const recs = rows.slice(1).map(r => ({
+    name: g(r,'name').trim(),
+    phone: g(r,'phone').replace(/[^0-9]/g,''),
+    dob: g(r,'dob'), occupation: g(r,'occupation'), income: g(r,'income'),
+    language: g(r,'language') || 'Telugu', spouse: g(r,'spouse'), children: g(r,'children'),
+    goals: g(r,'goals'), notes: g(r,'notes'), referred_by: g(r,'referred_by'),
+    trust_score: parseInt(g(r,'trust_score')) || 50, active: 'active'
+  })).filter(x => x.name);
+  if (!recs.length) { hideL(); showT('⚠️ No valid rows found (need a name column)'); return; }
+  const { error } = await sb.from('customers').insert(recs);
+  hideL();
+  el_('csvfile').value = '';
+  if (error) { showT('❌ Import failed: ' + error.message); return; }
+  showT('✅ Imported ' + recs.length + ' customers!');
+  await loadAll();
+}
+
+// =============== AUTH + INIT ===============
+function showLogin() { el_('LOGIN').style.display = 'flex'; }
+function hideLogin() { el_('LOGIN').style.display = 'none'; }
+async function doLogin() {
+  const em = el_('lemail').value.trim(), pw = el_('lpass').value;
+  if (!em || !pw) { el_('lerr').textContent = 'Enter email and password'; return; }
+  el_('lbtn').disabled = true; el_('lbtn').textContent = 'Signing in...';
+  const { error } = await sb.auth.signInWithPassword({ email: em, password: pw });
+  el_('lbtn').disabled = false; el_('lbtn').textContent = 'Enter My Universe';
+  if (error) { el_('lerr').textContent = error.message; return; }
+  hideLogin(); boot();
+}
+async function doLogout() { await sb.auth.signOut(); location.reload(); }
+let BOOTED = false;
+async function boot() {
+  if (BOOTED) return; BOOTED = true;
   renderOBJ();
   renderChat();
   renderTicker();
-  tload();
-  renderTeam();
+  loadTeam();
   await loadAll();
+}
+document.addEventListener('DOMContentLoaded', async () => {
+  if (!sb || SUPABASE_URL.indexOf('PASTE') >= 0) {
+    showLogin();
+    el_('lerr').textContent = '⚠️ Setup needed: paste your Supabase URL and anon key at the top of this file (search for SUPABASE_URL).';
+    return;
+  }
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) { hideLogin(); boot(); }
+  else showLogin();
 });
 </script>
 </body>
