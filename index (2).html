@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rishta AI — Relationship Operating System</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#0F1B2D;--navy2:#162236;--gold2:#F0B429;--gold3:#FDD87A;--teal2:#12C499;--coral:#E05C3A;--purple:#7C5CFC;--blue:#2D8EFF;--card:#1A2A3F;--card2:#223044;--border:rgba(255,255,255,0.08);--text1:#F0EDE6;--text2:#A8B4C0;--text3:#6B7A8D}
+html,body{height:100%;background:var(--navy);color:var(--text1);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow-x:hidden}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;min-width:220px;background:var(--navy2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.logo-area{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.logo-title{font-size:15px;font-weight:600;color:var(--gold2)}
+.logo-sub{font-size:10px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:1px}
+.logo-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(212,150,10,0.15);border:1px solid rgba(212,150,10,0.3);border-radius:20px;padding:2px 8px;font-size:9px;color:var(--gold2);margin-top:8px}
+.pulse-dot{width:5px;height:5px;border-radius:50%;background:var(--teal2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.nav-section{padding:12px 8px 4px}
+.nav-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;padding:0 8px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;position:relative;user-select:none}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:var(--text1)}
+.nav-item.active{background:rgba(240,180,41,0.15);color:var(--gold2)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--gold2);border-radius:0 3px 3px 0}
+.nav-icon{font-size:15px;width:18px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--coral);color:#fff;font-size:9px;padding:1px 5px;border-radius:10px;font-weight:600}
+.sidebar-bottom{margin-top:auto;padding:12px;border-top:1px solid var(--border)}
+.advisor-card{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:10px;padding:10px}
+.advisor-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#F0B429,#12C499);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--navy);flex-shrink:0}
+.advisor-name{font-size:12px;font-weight:500}
+.advisor-role{font-size:10px;color:var(--text3)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--navy);position:sticky;top:0;z-index:10;flex-wrap:wrap}
+.topbar-title{font-size:16px;font-weight:500}
+.topbar-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.topbar-actions{display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap}
+.content{flex:1;overflow-y:auto;padding:20px}
+.screen{display:none}
+.screen.active{display:block}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;transition:all .15s;border:none;font-family:inherit;white-space:nowrap}
+.btn-primary{background:var(--gold2);color:var(--navy);font-weight:600}
+.btn-primary:hover{background:var(--gold3)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{background:rgba(255,255,255,0.06);color:var(--text1)}
+.btn-teal{background:rgba(14,159,122,0.2);color:var(--teal2);border:1px solid rgba(14,159,122,0.3)}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--border)}
+.panel-title{font-size:13px;font-weight:500}
+.panel-action{font-size:11px;color:var(--gold2);cursor:pointer}
+.panel-body{padding:12px 16px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s}
+.stat-card:hover{border-color:rgba(255,255,255,0.15);transform:translateY(-1px)}
+.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.stat-value{font-size:24px;font-weight:500;line-height:1}
+.stat-delta{font-size:11px;margin-top:4px}
+.delta-up{color:var(--teal2)}
+.delta-warn{color:var(--gold2)}
+.delta-alert{color:var(--coral)}
+.ai-greeting{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.greeting-head{font-size:18px;font-weight:500;margin-bottom:4px}
+.greeting-sub{font-size:13px;color:var(--text2);margin-bottom:14px}
+.ai-insight{background:rgba(240,180,41,0.08);border:1px solid rgba(240,180,41,0.2);border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:var(--gold2);margin-top:4px;flex-shrink:0;animation:pulse 2s infinite}
+.ai-insight-text{font-size:12px;color:var(--text2);line-height:1.6}
+.ai-insight-text strong{color:var(--gold2);font-weight:500}
+.ai-insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.ai-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px}
+.aic-icon{font-size:18px;margin-bottom:6px}
+.aic-title{font-size:11px;font-weight:500;margin-bottom:4px}
+.aic-body{font-size:10px;color:var(--text2);line-height:1.5}
+.aic-action{font-size:10px;color:var(--gold2);margin-top:6px;cursor:pointer}
+.reminder-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.reminder-item:last-child{border-bottom:none}
+.ri-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.ri-gold{background:rgba(240,180,41,0.15);color:var(--gold2)}
+.ri-teal{background:rgba(14,159,122,0.15);color:var(--teal2)}
+.ri-coral{background:rgba(224,92,58,0.15);color:var(--coral)}
+.ri-purple{background:rgba(124,92,252,0.15);color:var(--purple)}
+.ri-info{flex:1}
+.ri-name{font-size:12px;font-weight:500}
+.ri-desc{font-size:11px;color:var(--text3);margin-top:1px}
+.ri-time{font-size:10px;color:var(--text3);flex-shrink:0}
+.ri-urgent{color:var(--coral)!important;font-weight:600}
+.heatmap-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;padding:4px 0}
+.hm-cell{aspect-ratio:1;border-radius:4px;cursor:pointer}
+.hm-0{background:rgba(255,255,255,0.05)}
+.hm-1{background:rgba(240,180,41,0.2)}
+.hm-2{background:rgba(240,180,41,0.45)}
+.hm-3{background:rgba(240,180,41,0.7)}
+.hm-4{background:var(--gold2)}
+.heatmap-legend{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.legend-label{font-size:9px;color:var(--text3)}
+.legend-cells{display:flex;gap:3px}
+.legend-cells .hm-cell{width:10px;height:10px}
+.donut-area{display:flex;align-items:center;gap:20px}
+.donut-legend{flex:1;display:flex;flex-direction:column;gap:8px}
+.dl-item{display:flex;align-items:center;gap:8px}
+.dl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dl-label{font-size:11px;flex:1}
+.dl-val{font-size:12px;font-weight:500}
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:100px;padding-top:8px}
+.bar{flex:1;border-radius:4px 4px 0 0;transition:all .3s;cursor:pointer;min-width:8px}
+.bar:hover{opacity:.8}
+.bar-labels{display:flex;gap:6px}
+.bar-labels>div{flex:1}
+.bar-label{font-size:9px;color:var(--text3);text-align:center;margin-top:4px}
+.search-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:16px}
+.search-bar input{background:none;border:none;outline:none;flex:1;min-width:160px;font-size:13px;color:var(--text1);font-family:inherit}
+.search-bar input::placeholder{color:var(--text3)}
+.customer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.customer-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:all .15s}
+.customer-card:hover{border-color:rgba(240,180,41,0.3);transform:translateY(-1px)}
+.cc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.cc-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:500;flex-shrink:0}
+.cc-name{font-size:14px;font-weight:500;margin-top:2px}
+.cc-occ{font-size:11px;color:var(--text3);margin-top:1px}
+.trust-pill{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:500}
+.trust-high{background:rgba(14,159,122,0.15);color:var(--teal2)}
+.trust-med{background:rgba(240,180,41,0.15);color:var(--gold2)}
+.trust-low{background:rgba(224,92,58,0.15);color:var(--coral)}
+.cc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.cc-meta{display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:10px}
+.cc-meta-item{text-align:center}
+.cc-meta-val{font-size:13px;font-weight:500}
+.cc-meta-lbl{font-size:9px;color:var(--text3);margin-top:1px}
+.profile-hero{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.ph-avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,rgba(240,180,41,0.3),rgba(14,159,122,0.3));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;flex-shrink:0;border:2px solid rgba(240,180,41,0.3)}
+.ph-name{font-size:20px;font-weight:500;margin-bottom:2px}
+.ph-desc{font-size:12px;color:var(--text2);margin-bottom:10px}
+.ph-badges{display:flex;flex-wrap:wrap;gap:6px}
+.ph-badge{font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.07);border:1px solid var(--border);color:var(--text2)}
+.ph-stats{display:flex;gap:20px;align-items:center;margin-left:auto}
+.ph-stat-item{text-align:center}
+.ph-stat-val{font-size:20px;font-weight:500}
+.ph-stat-lbl{font-size:10px;color:var(--text3)}
+.score-ring{display:flex;flex-direction:column;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;border:3px solid var(--teal2)}
+.score-ring-val{font-size:20px;font-weight:500;color:var(--teal2)}
+.score-ring-lbl{font-size:8px;color:var(--text3)}
+.family-tree{display:flex;flex-wrap:wrap;gap:12px;padding:8px 0}
+.family-node{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center;min-width:70px}
+.fn-avatar{width:34px;height:34px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500}
+.fn-name{font-size:11px;font-weight:500}
+.fn-role{font-size:9px;color:var(--text3);margin-top:1px}
+.fn-age{font-size:10px;color:var(--gold2);margin-top:3px}
+.coverage-meter{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.coverage-label{font-size:11px;color:var(--text2);width:110px;flex-shrink:0}
+.coverage-track{flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px}
+.coverage-fill{height:6px;border-radius:3px}
+.coverage-val{font-size:11px;color:var(--text2);width:30px;text-align:right;flex-shrink:0}
+.gap-alert{margin-top:10px;padding:10px;background:rgba(224,92,58,0.1);border:1px solid rgba(224,92,58,0.2);border-radius:8px}
+.gap-alert-title{font-size:11px;color:var(--coral);font-weight:500}
+.gap-alert-body{font-size:10px;color:var(--text2);margin-top:3px;line-height:1.5}
+.timeline{position:relative;padding-left:20px}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border)}
+.tl-item{position:relative;padding:0 0 16px 16px}
+.tl-dot{position:absolute;left:-13px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--card)}
+.tl-gold{background:var(--gold2)}
+.tl-teal{background:var(--teal2)}
+.tl-purple{background:var(--purple)}
+.tl-gray{background:var(--text3)}
+.tl-date{font-size:10px;color:var(--text3);margin-bottom:3px}
+.tl-title{font-size:12px;font-weight:500;margin-bottom:2px}
+.tl-desc{font-size:11px;color:var(--text2);line-height:1.5}
+.msg-template{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .15s}
+.msg-template:hover{border-color:rgba(240,180,41,0.3)}
+.mt-type{font-size:9px;color:var(--gold2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.mt-preview{font-size:11px;color:var(--text2);line-height:1.5}
+.mt-lang{font-size:9px;color:var(--purple);margin-top:4px}
+.chat-area{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;min-height:300px;display:flex;flex-direction:column;margin-bottom:12px;gap:14px;overflow-y:auto;max-height:400px}
+.msg-row{display:flex;gap:10px;align-items:flex-start}
+.msg-row.user{flex-direction:row-reverse}
+.msg-avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+.msg-ai-avatar{background:rgba(240,180,41,0.2);color:var(--gold2)}
+.msg-user-avatar{background:rgba(45,142,255,0.2);color:var(--blue)}
+.msg-bubble{max-width:80%;padding:10px 13px;border-radius:12px;font-size:12px;line-height:1.6;color:var(--text1);white-space:pre-line}
+.bubble-ai{background:var(--card2);border:1px solid var(--border);border-radius:4px 12px 12px 12px}
+.bubble-user{background:rgba(45,142,255,0.15);border:1px solid rgba(45,142,255,0.2);border-radius:12px 4px 12px 12px}
+.quick-prompts{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.qp{background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:11px;color:var(--text2);cursor:pointer;transition:all .15s}
+.qp:hover{border-color:rgba(240,180,41,0.3);color:var(--gold2)}
+.chat-input-area{display:flex;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;align-items:flex-end}
+.chat-input{flex:1;background:none;border:none;outline:none;resize:none;font-family:inherit;font-size:13px;color:var(--text1);min-height:36px;max-height:100px}
+.chat-input::placeholder{color:var(--text3)}
+.send-btn{width:32px;height:32px;border-radius:8px;background:var(--gold2);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--navy);flex-shrink:0;align-self:flex-end;transition:all .15s}
+.send-btn:hover{background:var(--gold3)}
+.objection-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all .15s}
+.objection-card:hover{border-color:rgba(124,92,252,0.4)}
+.obj-q{font-size:12px;font-weight:500;color:var(--coral);margin-bottom:8px}
+.obj-body{display:none}
+.obj-lang-tabs{display:flex;gap:5px;margin-bottom:8px}
+.obj-lang-tab{font-size:10px;padding:2px 8px;border-radius:10px;cursor:pointer;background:rgba(255,255,255,0.06);color:var(--text3);transition:all .15s}
+.obj-lang-tab.active{background:rgba(124,92,252,0.2);color:var(--purple)}
+.obj-a{font-size:11px;color:var(--text2);line-height:1.6}
+.obj-tel{font-size:11px;color:var(--purple);margin-top:6px;border-top:1px solid var(--border);padding-top:6px;display:none}
+.lifecycle-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.lifecycle-label{font-size:11px;color:var(--text2);width:120px;text-align:right;flex-shrink:0}
+.lifecycle-bar{height:22px;border-radius:4px;display:flex;align-items:center;padding:0 8px;min-width:40px}
+.lifecycle-val{font-size:10px;font-weight:500}
+.form-group{margin-bottom:14px}
+.form-label{font-size:11px;color:var(--text3);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.6px}
+.form-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text1);font-family:inherit;outline:none;transition:border-color .15s;appearance:none}
+.form-input:focus{border-color:rgba(240,180,41,0.4)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center}
+.modal-backdrop.open{display:flex}
+.modal{background:var(--navy2);border:1px solid var(--border);border-radius:16px;width:500px;max-width:95vw;max-height:85vh;overflow-y:auto}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.modal-head h3{font-size:15px;font-weight:500}
+.modal-close{background:none;border:none;color:var(--text3);font-size:22px;cursor:pointer;padding:0 4px;line-height:1}
+.modal-close:hover{color:var(--text1)}
+.modal-body{padding:16px 20px}
+.modal-footer{padding:12px 20px 16px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border)}
+.voice-btn{width:70px;height:70px;border-radius:50%;background:rgba(240,180,41,0.15);border:2px solid rgba(240,180,41,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;cursor:pointer;transition:all .2s}
+.voice-btn.recording{background:rgba(224,92,58,0.2);border-color:rgba(224,92,58,0.5)}
+.voice-example{background:var(--card);border-radius:10px;padding:14px;margin-top:8px}
+.voice-example-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.voice-example-text{font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6;font-style:italic}
+.toast{position:fixed;bottom:20px;right:20px;z-index:200;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;transform:translateY(80px);transition:transform .3s;max-width:300px}
+.toast.show{transform:translateY(0)}
+.toast-text{font-size:12px;color:var(--text1)}
+.hm-full-category{margin-bottom:20px}
+.hm-full-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.hm-chip{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;transition:all .15s;margin:0 8px 8px 0}
+.hm-chip:hover{border-color:rgba(255,255,255,0.2)}
+.hm-chip-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.msg-preview-box{background:var(--card2);border:1px solid rgba(240,180,41,0.2);border-radius:10px;padding:14px;margin-top:4px}
+.msg-preview-label{font-size:10px;color:var(--gold2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.msg-preview-text{font-size:12px;color:var(--text1);line-height:1.8;white-space:pre-line}
+.tag{font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(255,255,255,0.07);color:var(--text2)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr)}.three-col{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){.sidebar{width:54px;min-width:54px}.sidebar .nav-item span,.sidebar .logo-title,.sidebar .logo-sub,.sidebar .logo-badge,.sidebar .advisor-name,.sidebar .advisor-role{display:none}.logo-area{padding:12px 8px}.advisor-card{justify-content:center}.two-col,.customer-grid,.form-row{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr 1fr}.three-col{grid-template-columns:1fr}.ph-stats{display:none}}
+@media(max-width:480px){.content{padding:12px}.topbar{padding:10px 12px}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sidebar">
+  <div class="logo-area">
+    <div class="logo-title">Rishta AI</div>
+    <div class="logo-sub">Relationship OS</div>
+    <div class="logo-badge"><div class="pulse-dot"></div> AI Active</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Core</div>
+    <div class="nav-item active" onclick="showScreen('dashboard')"><i class="ti ti-layout-dashboard nav-icon"></i><span>Dashboard</span></div>
+    <div class="nav-item" onclick="showScreen('customers')"><i class="ti ti-users nav-icon"></i><span>Customers</span><div class="nav-badge">24</div></div>
+    <div class="nav-item" onclick="showScreen('reminders')"><i class="ti ti-bell nav-icon"></i><span>Reminders</span><div class="nav-badge">7</div></div>
+    <div class="nav-item" onclick="showScreen('messages')"><i class="ti ti-message-circle nav-icon"></i><span>Messages</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Intelligence</div>
+    <div class="nav-item" onclick="showScreen('ai')"><i class="ti ti-brain nav-icon"></i><span>AI Assistant</span></div>
+    <div class="nav-item" onclick="showScreen('objections')"><i class="ti ti-shield nav-icon"></i><span>Objections</span></div>
+    <div class="nav-item" onclick="showScreen('analytics')"><i class="ti ti-chart-bar nav-icon"></i><span>Analytics</span></div>
+    <div class="nav-item" onclick="showScreen('heatmap')"><i class="ti ti-flame nav-icon"></i><span>Heatmap</span></div>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="advisor-card">
+      <div class="advisor-avatar">B</div>
+      <div><div class="advisor-name">Bala Garu</div><div class="advisor-role">LIC Advisor · Hyderabad</div></div>
+    </div>
+  </div>
+</div>
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="topbar-title">Good Morning, Bala Garu 🙏</div>
+      <div class="topbar-sub" id="topbar-sub">Wednesday, 10 June 2026 · Hyderabad · 7 urgent actions today</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost" onclick="openModal('voice')"><i class="ti ti-microphone"></i> Voice Note</button>
+      <button class="btn btn-primary" onclick="openModal('addCustomer')"><i class="ti ti-plus"></i> Add Customer</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="screen active" id="screen-dashboard">
+      <div class="ai-greeting">
+        <div class="greeting-head">AI Relationship Briefing</div>
+        <div class="greeting-sub">Here's what requires your attention today</div>
+        <div class="ai-insight">
+          <div class="ai-dot"></div>
+          <div class="ai-insight-text"><strong>Suresh Reddy</strong> inactive 87 days. Daughter Priya turns 16 in 3 months — ideal time to discuss <strong>education planning</strong>. Jeevan Labh matures 2027. Trust score 91.<br><strong>Ravi Kumar</strong> premium due in 4 days. <strong>Lakshmi Amma</strong> birthday tomorrow — send Telugu wishes.</div>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card" onclick="showScreen('customers')"><div class="stat-label">Total Families</div><div class="stat-value" style="color:var(--gold2)">124</div><div class="stat-delta delta-up">↑ 3 this month</div></div>
+        <div class="stat-card" onclick="showScreen('reminders')"><div class="stat-label">Renewals Due</div><div class="stat-value" style="color:var(--coral)">12</div><div class="stat-delta delta-alert">↑ 4 this week</div></div>
+        <div class="stat-card"><div class="stat-label">Avg Trust Score</div><div class="stat-value" style="color:var(--teal2)">78</div><div class="stat-delta delta-up">↑ 5 pts · strong</div></div>
+        <div class="stat-card"><div class="stat-label">Referrals Predicted</div><div class="stat-value" style="color:var(--purple)">8</div><div class="stat-delta delta-warn">This quarter</div></div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title"><i class="ti ti-bell" style="margin-right:6px;color:var(--gold2)"></i>Today's Actions</div><div class="panel-action" onclick="showScreen('reminders')">See all</div></div>
+          <div class="panel-body" id="dash-reminders"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title"><i class="ti ti-brain" style="margin-right:6px;color:var(--purple)"></i>AI Predictions</div><div class="panel-action" onclick="showScreen('analytics')">Insights</div></div>
+          <div class="panel-body">
+            <div class="ai-insight-grid">
+              <div class="ai-card"><div class="aic-icon">🎓</div><div class="aic-title">Education Gap</div><div class="aic-body">3 families have children age 14–16. Education fund urgency high.</div><div class="aic-action" onclick="showScreen('customers')">Review →</div></div>
+              <div class="ai-card"><div class="aic-icon">🏡</div><div class="aic-title">Protection Gap</div><div class="aic-body">Venkat Rao's term cover only 8× income. Min 10× needed.</div><div class="aic-action" onclick="showScreen('profile')">Suggest →</div></div>
+              <div class="ai-card"><div class="aic-icon">🎊</div><div class="aic-title">Festival Window</div><div class="aic-body">Bonalu season next week. Greetings to 28 Telugu families.</div><div class="aic-action" onclick="showScreen('messages')">Generate →</div></div>
+              <div class="ai-card"><div class="aic-icon">📈</div><div class="aic-title">Tax Season</div><div class="aic-body">8 customers haven't optimised 80C. ₹1.5L headroom available.</div><div class="aic-action" onclick="showScreen('ai')">Plan →</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="three-col">
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">Engagement Heatmap</div><div class="panel-action">7 weeks</div></div>
+          <div class="panel-body"><div class="heatmap-grid" id="dash-heatmap"></div><div class="heatmap-legend"><span class="legend-label">Less</span><div class="legend-cells"><div class="hm-cell hm-0"></div><div class="hm-cell hm-1"></div><div class="hm-cell hm-2"></div><div class="hm-cell hm-4"></div></div><span class="legend-label">More</span></div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">Trust Distribution</div><div class="panel-action">124 families</div></div>
+          <div class="panel-body">
+            <div class="donut-area">
+              <svg width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="28" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="14"/><circle cx="40" cy="40" r="28" fill="none" stroke="#12C499" stroke-width="14" stroke-dasharray="70 106" stroke-dashoffset="-2" transform="rotate(-90 40 40)"/><circle cx="40" cy="40" r="28" fill="none" stroke="#F0B429" stroke-width="14" stroke-dasharray="42 134" stroke-dashoffset="-72" transform="rotate(-90 40 40)"/><circle cx="40" cy="40" r="28" fill="none" stroke="#E05C3A" stroke-width="14" stroke-dasharray="24 152" stroke-dashoffset="-114" transform="rotate(-90 40 40)"/><text x="40" y="44" text-anchor="middle" fill="#F0EDE6" font-size="11" font-weight="500" font-family="system-ui">124</text></svg>
+              <div class="donut-legend">
+                <div class="dl-item"><div class="dl-dot" style="background:var(--teal2)"></div><div class="dl-label">High trust</div><div class="dl-val">49</div></div>
+                <div class="dl-item"><div class="dl-dot" style="background:var(--gold2)"></div><div class="dl-label">Growing</div><div class="dl-val">30</div></div>
+                <div class="dl-item"><div class="dl-dot" style="background:var(--coral)"></div><div class="dl-label">At risk</div><div class="dl-val">17</div></div>
+                <div class="dl-item"><div class="dl-dot" style="background:var(--text3)"></div><div class="dl-label">New</div><div class="dl-val">28</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">Monthly Premiums</div></div>
+          <div class="panel-body"><div style="font-size:22px;font-weight:500;color:var(--gold2);margin-bottom:4px">₹3.24L</div><div style="font-size:11px;color:var(--text3);margin-bottom:12px">Portfolio annual premium</div><div class="bar-chart" id="monthly-bars"></div><div class="bar-labels" id="monthly-bar-labels"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOMERS -->
+    <div class="screen" id="screen-customers">
+      <div class="search-bar"><i class="ti ti-search" style="color:var(--text3);font-size:15px"></i><input type="text" placeholder="Search by name, policy, family..." id="customer-search" oninput="filterCustomers(this.value)"/><div style="display:flex;gap:6px"><div class="tag" style="cursor:pointer" onclick="filterCustomers('')">All</div><div class="tag" style="cursor:pointer;color:var(--coral)" onclick="filterByTrust('low')">At Risk</div><div class="tag" style="cursor:pointer;color:var(--teal2)" onclick="filterByTrust('high')">High Trust</div></div></div>
+      <div class="customer-grid" id="customer-grid"></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="screen" id="screen-profile">
+      <div style="margin-bottom:16px"><button class="btn btn-ghost" onclick="showScreen('customers')"><i class="ti ti-arrow-left"></i> Customers</button></div>
+      <div class="profile-hero">
+        <div class="ph-avatar">SR</div>
+        <div style="flex:1">
+          <div class="ph-name">Suresh Reddy Garu</div>
+          <div class="ph-desc">Government Teacher · Hyderabad · Telugu speaking · Since 2018</div>
+          <div class="ph-badges"><div class="ph-badge">🏠 Family of 4</div><div class="ph-badge">📋 3 Policies</div><div class="ph-badge">⚠️ 87 days inactive</div><div class="ph-badge">🎓 Daughter Class 10</div><div class="ph-badge">💰 ₹45K/month</div></div>
+        </div>
+        <div class="ph-stats">
+          <div class="ph-stat-item"><div class="ph-stat-val" style="color:var(--teal2)">91</div><div class="ph-stat-lbl">Trust Score</div></div>
+          <div style="width:1px;height:40px;background:var(--border)"></div>
+          <div class="ph-stat-item"><div class="ph-stat-val" style="color:var(--gold2)">₹22K</div><div class="ph-stat-lbl">Annual Prem.</div></div>
+          <div style="width:1px;height:40px;background:var(--border)"></div>
+          <div class="score-ring"><div class="score-ring-val">91</div><div class="score-ring-lbl">Trust</div></div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="panel" style="margin-bottom:16px">
+            <div class="panel-head"><div class="panel-title"><i class="ti ti-users" style="margin-right:6px;color:var(--gold2)"></i>Family Tree</div></div>
+            <div class="panel-body">
+              <div class="family-tree">
+                <div class="family-node"><div class="fn-avatar" style="background:rgba(240,180,41,0.2);color:var(--gold2)">SR</div><div class="fn-name">Suresh</div><div class="fn-role">Father</div><div class="fn-age">Age 42</div></div>
+                <div class="family-node"><div class="fn-avatar" style="background:rgba(14,159,122,0.2);color:var(--teal2)">PS</div><div class="fn-name">Padma</div><div class="fn-role">Spouse</div><div class="fn-age">Age 38</div></div>
+                <div class="family-node"><div class="fn-avatar" style="background:rgba(124,92,252,0.2);color:var(--purple)">PR</div><div class="fn-name">Priya</div><div class="fn-role">Daughter</div><div class="fn-age">Age 15</div></div>
+                <div class="family-node"><div class="fn-avatar" style="background:rgba(45,142,255,0.2);color:var(--blue)">AR</div><div class="fn-name">Arjun</div><div class="fn-role">Son</div><div class="fn-age">Age 11</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div class="panel-title"><i class="ti ti-shield-check" style="margin-right:6px;color:var(--teal2)"></i>Coverage Analysis</div></div>
+            <div class="panel-body">
+              <div class="coverage-meter"><div class="coverage-label">Life Cover</div><div class="coverage-track"><div class="coverage-fill" style="width:72%;background:var(--teal2)"></div></div><div class="coverage-val">72%</div></div>
+              <div class="coverage-meter"><div class="coverage-label">Retirement</div><div class="coverage-track"><div class="coverage-fill" style="width:45%;background:var(--gold2)"></div></div><div class="coverage-val">45%</div></div>
+              <div class="coverage-meter"><div class="coverage-label">Education Fund</div><div class="coverage-track"><div class="coverage-fill" style="width:28%;background:var(--coral)"></div></div><div class="coverage-val">28%</div></div>
+              <div class="coverage-meter"><div class="coverage-label">Emergency</div><div class="coverage-track"><div class="coverage-fill" style="width:60%;background:var(--blue)"></div></div><div class="coverage-val">60%</div></div>
+              <div class="gap-alert"><div class="gap-alert-title">⚠️ Critical Gap — Education Fund</div><div class="gap-alert-body">Priya needs ₹8–12L for engineering in 3 years. Current corpus: ₹2.1L. Gap: ₹6–10L. Recommend Jeevan Tarun immediately.</div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="panel" style="margin-bottom:16px">
+            <div class="panel-head"><div class="panel-title"><i class="ti ti-timeline" style="margin-right:6px;color:var(--purple)"></i>Relationship Timeline</div><button class="btn btn-ghost" style="font-size:10px;padding:4px 8px" onclick="openModal('addNote')">+ Add Note</button></div>
+            <div class="panel-body">
+              <div class="timeline">
+                <div class="tl-item"><div class="tl-dot tl-gold"></div><div class="tl-date">June 2026 · AI Insight</div><div class="tl-title">Education Gap Alert</div><div class="tl-desc">AI detected Priya (15) approaching engineering entrance. 3-year window. Recommend child plan discussion.</div></div>
+                <div class="tl-item"><div class="tl-dot tl-gray"></div><div class="tl-date">Feb 2026 · Phone Call</div><div class="tl-title">Casual Check-In</div><div class="tl-desc">Padma garu's mother unwell. Son Arjun scored well in exams. Emotional support call.</div></div>
+                <div class="tl-item"><div class="tl-dot tl-teal"></div><div class="tl-date">Nov 2025 · Meeting</div><div class="tl-title">Premium Renewal + Review</div><div class="tl-desc">Renewed Jeevan Anand ₹8,400. Discussed retirement planning at age 60.</div></div>
+                <div class="tl-item"><div class="tl-dot tl-purple"></div><div class="tl-date">Aug 2025 · Referral</div><div class="tl-title">Referred Ravi Kumar</div><div class="tl-desc">Referred colleague from same school. Strong advocate. Thank-you message sent.</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div class="panel-title"><i class="ti ti-message-circle" style="margin-right:6px;color:var(--blue)"></i>AI Message Templates</div></div>
+            <div class="panel-body">
+              <div class="msg-template" onclick="goToMsg('followup')"><div class="mt-type">Follow-up · Telugu</div><div class="mt-preview">Suresh garu, మీతో మాట్లాడి చాలా రోజులు అయ్యింది. Priya's education planning గురించి మాట్లాడదాం...</div><div class="mt-lang">🇮🇳 Telugu · Non-pushy tone</div></div>
+              <div class="msg-template" onclick="goToMsg('edu')" style="margin-top:8px"><div class="mt-type">Education Plan · English</div><div class="mt-preview">Your daughter Priya is 3 years from engineering. ₹500/month today can secure ₹8L by 2029...</div><div class="mt-lang">🇬🇧 English · Fact-based</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REMINDERS -->
+    <div class="screen" id="screen-reminders">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div class="stat-card"><div class="stat-label">Due Today</div><div class="stat-value" style="color:var(--coral)">3</div><div class="stat-delta delta-alert">Premium + Birthday + Follow-up</div></div>
+        <div class="stat-card"><div class="stat-label">This Week</div><div class="stat-value" style="color:var(--gold2)">7</div><div class="stat-delta delta-warn">4 premiums, 2 follow-ups, 1 referral</div></div>
+      </div>
+      <div class="panel"><div class="panel-head"><div class="panel-title">All Reminders · AI Prioritized</div></div><div class="panel-body" id="all-reminders"></div></div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="screen" id="screen-messages">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><i class="ti ti-wand" style="margin-right:6px;color:var(--purple)"></i>AI Message Generator</div></div>
+        <div class="panel-body">
+          <div class="form-row" style="margin-bottom:12px">
+            <div><label class="form-label">Customer</label><select class="form-input"><option>Suresh Reddy Garu</option><option>Ravi Kumar Garu</option><option>Lakshmi Amma</option><option>Anitha Garu</option></select></div>
+            <div><label class="form-label">Message Type</label><select class="form-input" id="msg-type-select" onchange="generateMessage()"><option value="birthday">Birthday Wishes</option><option value="festival">Festival Greetings (Ugadi)</option><option value="premium">Premium Reminder</option><option value="edu">Education Planning</option><option value="followup">Friendly Follow-up</option><option value="claim">Claim Support</option></select></div>
+          </div>
+          <div class="form-row" style="margin-bottom:12px">
+            <div><label class="form-label">Language</label><select class="form-input" id="msg-lang-select" onchange="generateMessage()"><option value="telugu">Telugu</option><option value="english">English</option><option value="bilingual">Telugu + English</option></select></div>
+            <div><label class="form-label">Tone</label><select class="form-input"><option>Warm &amp; Respectful</option><option>Professional</option><option>Emotional &amp; Personal</option></select></div>
+          </div>
+          <div id="msg-preview-area"></div>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="generateMessage()"><i class="ti ti-wand"></i> Generate</button>
+            <button class="btn btn-teal"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button>
+            <button class="btn btn-ghost" onclick="copyMsg()"><i class="ti ti-copy"></i> Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI -->
+    <div class="screen" id="screen-ai">
+      <div class="chat-area" id="chat-messages"></div>
+      <div class="quick-prompts">
+        <div class="qp" onclick="sendAI('Who should I follow up with today?')">Follow up today?</div>
+        <div class="qp" onclick="sendAI('Generate Telugu birthday message for Lakshmi Amma')">Birthday msg Telugu</div>
+        <div class="qp" onclick="sendAI('How to approach Suresh about education planning?')">Suresh education approach</div>
+        <div class="qp" onclick="sendAI('How do I handle: LIC returns are low?')">LIC returns objection</div>
+        <div class="qp" onclick="sendAI('Which customers are at risk of churning?')">Churn risk</div>
+      </div>
+      <div class="chat-input-area">
+        <textarea class="chat-input" id="chat-input" rows="1" placeholder="Ask anything about customers, policies, objections..." onkeydown="handleKey(event)"></textarea>
+        <button class="send-btn" onclick="sendAI()"><i class="ti ti-send"></i></button>
+      </div>
+    </div>
+
+    <!-- OBJECTIONS -->
+    <div class="screen" id="screen-objections">
+      <div class="panel"><div class="panel-head"><div class="panel-title"><i class="ti ti-brain" style="margin-right:6px;color:var(--purple)"></i>AI Objection Handling Assistant</div></div><div class="panel-body"><p style="font-size:12px;color:var(--text2);margin-bottom:14px">Click any objection for Telugu + English response scripts.</p><div id="objection-list"></div></div></div>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div class="screen" id="screen-analytics">
+      <div class="stats-grid" style="margin-bottom:16px">
+        <div class="stat-card"><div class="stat-label">Policies YTD</div><div class="stat-value" style="color:var(--gold2)">47</div><div class="stat-delta delta-up">↑ 18% vs last year</div></div>
+        <div class="stat-card"><div class="stat-label">Annual Premium</div><div class="stat-value" style="color:var(--teal2)">₹3.2L</div><div class="stat-delta delta-up">↑ Growing</div></div>
+        <div class="stat-card"><div class="stat-label">Avg Relationship</div><div class="stat-value" style="color:var(--purple)">3.4y</div><div class="stat-delta delta-up">Deep trust</div></div>
+        <div class="stat-card"><div class="stat-label">Referral Rate</div><div class="stat-value" style="color:var(--blue)">32%</div><div class="stat-delta delta-up">↑ Above avg</div></div>
+      </div>
+      <div class="two-col">
+        <div class="panel"><div class="panel-head"><div class="panel-title">Monthly New Policies</div></div><div class="panel-body"><div class="bar-chart" id="analytics-bars" style="height:120px"></div><div class="bar-labels" id="analytics-bar-labels"></div></div></div>
+        <div class="panel"><div class="panel-head"><div class="panel-title">Customer Lifecycle Stage</div></div><div class="panel-body" style="padding-top:12px">
+          <div class="lifecycle-row"><div class="lifecycle-label">New (0–6m)</div><div class="lifecycle-bar" style="background:rgba(45,142,255,0.18);width:22%"><span class="lifecycle-val" style="color:var(--blue)">28</span></div></div>
+          <div class="lifecycle-row"><div class="lifecycle-label">Building (6m–2y)</div><div class="lifecycle-bar" style="background:rgba(240,180,41,0.18);width:38%"><span class="lifecycle-val" style="color:var(--gold2)">47</span></div></div>
+          <div class="lifecycle-row"><div class="lifecycle-label">Trusted (2–5y)</div><div class="lifecycle-bar" style="background:rgba(14,159,122,0.18);width:52%"><span class="lifecycle-val" style="color:var(--teal2)">31</span></div></div>
+          <div class="lifecycle-row"><div class="lifecycle-label">Champion (5y+)</div><div class="lifecycle-bar" style="background:rgba(124,92,252,0.18);width:14%"><span class="lifecycle-val" style="color:var(--purple)">18</span></div></div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- HEATMAP -->
+    <div class="screen" id="screen-heatmap">
+      <div class="panel"><div class="panel-head"><div class="panel-title"><i class="ti ti-flame" style="margin-right:6px;color:var(--coral)"></i>Relationship Heatmap · All Families</div></div><div class="panel-body" id="heatmap-full"></div></div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-backdrop" id="modal-addCustomer">
+  <div class="modal">
+    <div class="modal-head"><h3>Add New Customer</h3><button class="modal-close" onclick="closeModal('addCustomer')">×</button></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label class="form-label">Full Name</label><input class="form-input" placeholder="e.g. Ravi Kumar Garu"/></div><div class="form-group"><label class="form-label">Phone</label><input class="form-input" placeholder="+91 98765 43210"/></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Date of Birth</label><input type="date" class="form-input"/></div><div class="form-group"><label class="form-label">Occupation</label><input class="form-input" placeholder="e.g. Govt Teacher"/></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Monthly Income</label><select class="form-input"><option>Under ₹20K</option><option>₹20K–40K</option><option>₹40K–70K</option><option>₹70K–1L</option><option>Above ₹1L</option></select></div><div class="form-group"><label class="form-label">Language</label><select class="form-input"><option>Telugu</option><option>Hindi</option><option>English</option><option>Telugu + English</option></select></div></div>
+      <div class="form-group"><label class="form-label">Children (names &amp; ages)</label><input class="form-input" placeholder="e.g. Priya (15), Arjun (11)"/></div>
+      <div class="form-group"><label class="form-label">Financial Goals</label><textarea class="form-input" rows="2" placeholder="e.g. Daughter education, retirement at 60..."></textarea></div>
+      <div class="form-group"><label class="form-label">Emotional Notes</label><textarea class="form-input" rows="2" placeholder="e.g. Concerned about aging parents..."></textarea></div>
+      <div class="form-group"><label class="form-label">Referred By</label><input class="form-input" placeholder="e.g. Suresh Reddy Garu"/></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('addCustomer')">Cancel</button><button class="btn btn-primary" onclick="saveCustomer()">Save Customer</button></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-voice">
+  <div class="modal">
+    <div class="modal-head"><h3>Voice Note → CRM</h3><button class="modal-close" onclick="closeModal('voice')">×</button></div>
+    <div class="modal-body">
+      <div style="text-align:center;padding:20px 0">
+        <div class="voice-btn" id="voice-btn" onclick="toggleVoice()"><i class="ti ti-microphone" style="color:var(--gold2)"></i></div>
+        <div style="font-size:14px;font-weight:500;margin-bottom:6px" id="voice-status">Tap to record</div>
+        <div style="font-size:11px;color:var(--text3)">Speak in Telugu or English</div>
+      </div>
+      <div class="voice-example">
+        <div class="voice-example-label">Example transcription</div>
+        <div class="voice-example-text">"Met Suresh garu today. Son Arjun appearing 10th class next year. Padma garu worried about education expenses. Interested in child education plans."</div>
+        <div style="font-size:10px;color:var(--gold2);margin-bottom:6px;font-weight:500">AI Extracted:</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px"><span class="tag" style="color:var(--teal2)">📚 Education concern</span><span class="tag" style="color:var(--gold2)">👦 Son 10th class</span><span class="tag" style="color:var(--purple)">📅 Follow up after results</span></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('voice')">Cancel</button><button class="btn btn-primary" onclick="saveVoice()">Save to CRM</button></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-addNote">
+  <div class="modal">
+    <div class="modal-head"><h3>Add Interaction Note</h3><button class="modal-close" onclick="closeModal('addNote')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Interaction Type</label><select class="form-input"><option>Phone Call</option><option>In-Person Meeting</option><option>WhatsApp</option><option>Festival Greeting</option></select></div>
+      <div class="form-group"><label class="form-label">Notes (Telugu or English)</label><textarea class="form-input" rows="4" placeholder="What was discussed? Emotional context? Concerns? Future plans?"></textarea></div>
+      <div class="form-group"><label class="form-label">Customer Mood</label><select class="form-input"><option>Warm &amp; Receptive</option><option>Neutral</option><option>Cautious</option><option>Concerned</option><option>Excited</option></select></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('addNote')">Cancel</button><button class="btn btn-primary" onclick="saveNote()">Add Note</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><div class="toast-text" id="toast-text">Saved!</div></div>
+
+<script>
+const customers=[{id:1,name:"Suresh Reddy Garu",initials:"SR",bg:"rgba(240,180,41,0.25)",tc:"#F0B429",occ:"Govt Teacher · Hyderabad",trust:91,tl:"high",tags:["3 Policies","Family of 4","Referral Champion"],policies:3,premium:"₹22K",years:6,active:true},{id:2,name:"Ravi Kumar Garu",initials:"RK",bg:"rgba(14,159,122,0.25)",tc:"#12C499",occ:"Engineer · Secunderabad",trust:74,tl:"med",tags:["2 Policies","Referred by Suresh","Premium Due"],policies:2,premium:"₹15K",years:2,active:true},{id:3,name:"Lakshmi Amma",initials:"LA",bg:"rgba(224,92,58,0.25)",tc:"#E05C3A",occ:"Homemaker · Karimnagar",trust:62,tl:"med",tags:["1 Policy","Birthday Tomorrow","Senior Citizen"],policies:1,premium:"₹8K",years:4,active:false},{id:4,name:"Venkat Rao Garu",initials:"VR",bg:"rgba(45,142,255,0.25)",tc:"#2D8EFF",occ:"Business Owner · Warangal",trust:55,tl:"low",tags:["2 Policies","Protection Gap","At Risk"],policies:2,premium:"₹31K",years:1,active:false},{id:5,name:"Anitha Garu",initials:"AG",bg:"rgba(124,92,252,0.25)",tc:"#7C5CFC",occ:"Doctor · Hyderabad",trust:88,tl:"high",tags:["4 Policies","High Trust","Referral Ready"],policies:4,premium:"₹54K",years:5,active:true},{id:6,name:"Prasad Babu Garu",initials:"PB",bg:"rgba(240,180,41,0.25)",tc:"#F0B429",occ:"Retired Officer · Nizamabad",trust:79,tl:"high",tags:["2 Policies","Pension Plan","Retiring Soon"],policies:2,premium:"₹18K",years:7,active:true}];
+const reminders=[{icon:"🎂",color:"ri-coral",name:"Lakshmi Amma",desc:"Birthday tomorrow · Send Telugu wishes",time:"Tomorrow",u:0},{icon:"📋",color:"ri-gold",name:"Ravi Kumar Garu",desc:"Jeevan Anand premium · ₹8,400 due",time:"4 days",u:2},{icon:"📞",color:"ri-teal",name:"Suresh Reddy",desc:"87 days inactive · Education planning needed",time:"Overdue",u:0},{icon:"⭐",color:"ri-purple",name:"Anitha Garu",desc:"Referral request window · Trust score 91",time:"This week",u:3},{icon:"📄",color:"ri-gold",name:"Murali Garu",desc:"Jeevan Labh matures 6 months · Plan reinvestment",time:"6 months",u:4},{icon:"🎊",color:"ri-teal",name:"28 families",desc:"Bonalu greetings · AI messages ready",time:"Next week",u:3},{icon:"💰",color:"ri-gold",name:"Venkat Rao Garu",desc:"Term cover protection gap · Urgent upgrade",time:"ASAP",u:1}];
+const objections=[{q:"LIC returns are too low compared to mutual funds",en:"I understand — equity MFs can beat LIC on returns. But LIC is not an investment, it's a promise. If something happens tomorrow, a ₹1 crore term plan pays your family ₹1 crore instantly. No mutual fund does that. Think of LIC as safety, not investment.",te:"Meeru cheppindi nijame. Kaani LIC oka promise — meeru lekapothe family ki ₹1 crore istundi. Mutual funds adi cheyagalava? Ledu. LIC protection kosam, investment kosam kaadu."},{q:"I don't have budget right now",en:"Totally understand. But if you couldn't work for 6 months tomorrow, where would your family's money come from? ₹500/month today prevents that crisis. We can start with the minimum and increase as income grows.",te:"Artham ayindi. Kaani oka question — meeru 6 nelalu panicheyakapothe family emichestundi? Nela ₹500 tho start cheyachu. Income penchina taruvata increase cheyachu."},{q:"I already have employer insurance",en:"Great — group cover is a bonus. But that cover disappears when you change jobs or retire. Personal LIC policy travels with you forever, regardless of employer.",te:"Job cover manchidi. Kaani job marcheste aa cover untundaa? Retire ayyaka? Personal LIC policy life ante untundi — job marchina, retire ayyina."},{q:"I need time to think about it",en:"Of course — take your time. But may I ask, is there a specific concern I can help clarify? Often 'need to think' has a specific worry underneath. I'd love to address that honestly.",te:"Chukka ledu. Kaani oka vishayam — emi doubt aithe meeru cheppandi? Mostly oka specific concern untundi. Daani gurinchi honest ga matladdam."}];
+const msgs={birthday:{telugu:"Namaste! 🙏\n\nప్రియమైన Lakshmi Amma గారికి పుట్టినరోజు శుభాకాంక్షలు! 🎂\n\nమీరు ఎప్పటికీ ఆరోగ్యంగా, సంతోషంగా ఉండాలని మనస్ఫూర్తిగా కోరుకుంటున్నాను.\n\nమీ విశ్వాసానికి ధన్యవాదాలు 🌸\nBala Garu, LIC Advisor",english:"Dear Lakshmi Amma,\n\nWishing you a very Happy Birthday! 🎂 May this year bring excellent health, happiness and peace for you and your family.\n\nThank you for trusting me as your advisor.\n\nWarm regards,\nBala, LIC Advisor"},festival:{telugu:"🌸 ఉగాది శుభాకాంక్షలు! 🌸\n\nప్రియమైన Suresh Reddy గారికి,\n\nఈ ఉగాది మీ జీవితంలో కొత్త అవకాశాలు, సంతోషం మరియు సమృద్ధి తీసుకురావాలని కోరుకుంటున్నాను.\n\nBala Garu, LIC Advisor 🙏",english:"Wishing you and your family a wonderful Ugadi! May this Telugu New Year bring new beginnings, prosperity, and good health.\n\nWarm regards, Bala, LIC Advisor"},premium:{telugu:"Namaste Ravi Kumar Garu 🙏\n\nమీ Jeevan Anand policy premium ₹8,400 రానున్న 4 రోజుల్లో due అవుతుంది (June 14).\n\nTimely payment వల్ల family కి పూర్తి protection కొనసాగుతుంది.\n\nBala Garu: 98765 43210",english:"Dear Ravi Kumar,\n\nFriendly reminder: Your Jeevan Anand premium of ₹8,400 is due on June 14.\n\nTimely payment keeps your family's protection active.\n\nCall anytime: 98765 43210\nBala, LIC Advisor"},edu:{telugu:"Suresh Reddy Garu,\n\nPriya కి engineering college మరో 3 సంవత్సరాలే ఉంది. ₹1,500/నెల ఇప్పుడే start చేస్తే 2029 కి ₹8-10 లక్షలు ready అవుతాయి.\n\nఒకసారి కలిసి మాట్లాడదాం?\n\nBala Garu 🙏",english:"Dear Suresh garu,\n\nPriya is 3 years from engineering college. Starting ₹1,500/month today builds ₹8-10 lakhs by 2029.\n\nLet's have a 20-min call — no obligation.\n\nWarm regards, Bala"},followup:{telugu:"Namaste Suresh Reddy Garu 🙏\n\nమీతో మాట్లాడి చాలా రోజులు అయ్యింది. మీరు, Padma garu, పిల్లలు అందరూ ఆరోగ్యంగా ఉన్నారని ఆశిస్తున్నాను.\n\nConvenient అయినప్పుడు call చేయండి.\n\nమీ Bala Garu 🙏",english:"Dear Suresh garu,\n\nIt's been a while! Hope you, Padma garu, and the children are doing well.\n\nWanted to share some planning updates. Please call when convenient.\n\nYour advisor, Bala"},claim:{telugu:"ప్రియమైన Family,\n\nఈ కష్ట సమయంలో నా సంపూర్ణ సహాయం అందిస్తాను.\n\nDocuments ready చేయండి:\n• Death Certificate (original)\n• Policy Bond\n• Nominee ID Proof\n\n98765 43210 కి call చేయండి. నేను మీతో ఉన్నాను.\nBala Garu",english:"Dear Family,\n\nI'm deeply sorry for your loss. I'm here to support you completely through the claim process.\n\nDocuments needed:\n• Original death certificate\n• Policy bond\n• Nominee's ID proof\n\nCall me: 98765 43210\nBala"}};
+const aiResp={follow:"Today's priority follow-ups:\n\n1. Suresh Reddy — 87 days inactive. Daughter Priya in Class 10. Best opening: 'Suresh garu, Priya padha class lo undi ga...'\n\n2. Ravi Kumar — Premium due in 4 days. Send WhatsApp reminder today.\n\n3. Lakshmi Amma — Birthday tomorrow. Send warm Telugu message tonight.",birthday:"Telugu birthday message for Lakshmi Amma:\n\n🎂 Namaste Lakshmi Amma Garu!\n\nMee puttinroju subhakankshalu! Mee arogya bhagyaalu, kutumba santosham ella unnattugaa unnayi anipistundi.\n\n— Bala Garu, LIC Advisor 🙏\n\nTone: Warm, respectful, WhatsApp-ready.",education:"Approach for Suresh Reddy education planning:\n\nOpening: 'Suresh garu, Priya padi class lo unna ga — engineering aa medical aa?'\n\n1. Acknowledge his pride as a father first\n2. Share cost reality: 'Engineering lo ₹8-12L avutuundi'\n3. Show math: 'Ippudu ₹1,500 start chesthe 2029 ki ready'\n4. Never pressure — plant the seed, follow up in 10 days",objection:"LIC Returns Objection:\n\nEmotional: 'LIC oka promise — meeru lekapothe family ki corpus istundi. MF adi cheyagalava? Ledu.'\n\nLogical: 'Returns vs Protection are different goals. Term plan = insurance, not investment. Separate your investment from protection.'\n\nKey: Agree on returns first, then reframe around protection gaps.",churn:"Highest churn risk customers:\n\n1. Venkat Rao — Trust 55, 120+ days no contact, protection gap pending\n2. Lakshmi Amma — Single policy, elderly, limited engagement\n3. Ravi Kumar — Only 2 years, premium due — critical renewal window\n\nAction: Visit Venkat Rao this week. Birthday message to Lakshmi Amma today. Ravi Kumar reminder now."};
+const heatmapData=[{label:"Referral Champions",color:"#12C499",chips:[{n:"Anitha Garu",s:88},{n:"Suresh Reddy",s:91},{n:"Prasad Babu",s:79}]},{label:"High Trust Families",color:"#F0B429",chips:[{n:"Suresh Reddy",s:91},{n:"Anitha Garu",s:88},{n:"Prasad Babu",s:79},{n:"Ravi Kumar",s:74}]},{label:"Education Priority",color:"#7C5CFC",chips:[{n:"Suresh Reddy",s:91},{n:"Ravi Kumar",s:74}]},{label:"At Risk",color:"#E05C3A",chips:[{n:"Venkat Rao",s:55}]},{label:"Inactive (90d+)",color:"#6B7A8D",chips:[{n:"Venkat Rao",s:55},{n:"Lakshmi Amma",s:62}]}];
+
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));const el=document.getElementById('screen-'+n);if(el)el.classList.add('active');const titles={dashboard:'Good Morning, Bala Garu 🙏',customers:'Customers',profile:'Suresh Reddy Garu',reminders:'Reminders',messages:'AI Message Generator',ai:'AI Assistant',objections:'Objection Handling',analytics:'Analytics',heatmap:'Relationship Heatmap'};const subs={dashboard:'Wednesday, 10 June 2026 · 7 urgent actions',customers:'124 active families',profile:'Customer Profile · Trust 91',reminders:'7 items due',messages:'Telugu + English · WhatsApp ready',ai:'Ask anything about your customers',objections:'Telugu + English response scripts',analytics:'Performance YTD 2026',heatmap:'Visual relationship strength'};document.getElementById('topbar-title').textContent=titles[n]||n;document.getElementById('topbar-sub').textContent=subs[n]||'';document.querySelectorAll('.nav-item').forEach(i=>{if(i.getAttribute('onclick')===`showScreen('${n}')`){i.classList.add('active')}});}
+function renderCustomers(list){const g=document.getElementById('customer-grid');if(!g)return;g.innerHTML=list.map(c=>`<div class="customer-card" onclick="showScreen('profile')"><div class="cc-top"><div style="display:flex;align-items:center;gap:10px"><div class="cc-avatar" style="background:${c.bg};color:${c.tc}">${c.initials}</div><div><div class="cc-name">${c.name}</div><div class="cc-occ">${c.occ}</div></div></div><div class="trust-pill ${c.tl==='high'?'trust-high':c.tl==='med'?'trust-med':'trust-low'}">${c.trust}</div></div><div class="cc-tags">${c.tags.map(t=>`<div class="tag">${t}</div>`).join('')}</div><div class="cc-meta"><div class="cc-meta-item"><div class="cc-meta-val">${c.policies}</div><div class="cc-meta-lbl">Policies</div></div><div class="cc-meta-item"><div class="cc-meta-val">${c.premium}</div><div class="cc-meta-lbl">Annual</div></div><div class="cc-meta-item"><div class="cc-meta-val">${c.years}y</div><div class="cc-meta-lbl">Relationship</div></div><div class="cc-meta-item"><div class="cc-meta-val" style="color:${c.active?'var(--teal2)':'var(--coral)'}">${c.active?'Active':'Inactive'}</div><div class="cc-meta-lbl">Status</div></div></div></div>`).join('');}
+function filterCustomers(q){renderCustomers(customers.filter(c=>c.name.toLowerCase().includes(q.toLowerCase())||c.occ.toLowerCase().includes(q.toLowerCase())));}
+function filterByTrust(l){renderCustomers(l==='referral'?customers.filter(c=>c.trust>=80):customers.filter(c=>c.tl===l));}
+function renderReminders(id){const c=document.getElementById(id);if(!c)return;const limit=id==='dash-reminders'?5:reminders.length;c.innerHTML=reminders.slice(0,limit).map(r=>`<div class="reminder-item"><div class="ri-icon ${r.color}" style="font-size:16px">${r.icon}</div><div class="ri-info"><div class="ri-name">${r.name}</div><div class="ri-desc">${r.desc}</div></div><div class="ri-time ${r.u===0?'ri-urgent':''}">${r.time}</div></div>`).join('');}
+function renderHeatmap(){const c=document.getElementById('dash-heatmap');if(!c)return;const v=[0,1,2,3,4,3,2,1,2,3,4,4,3,2,1,0,1,2,3,2,1,0,1,2,3,4,3,2,1,0,1,2,3,3,2,1,0,1,2,3,4,3,2,1,0,1,2,3];c.innerHTML=v.map(x=>`<div class="hm-cell hm-${x}"></div>`).join('');}
+function renderBars(){const m=['Jan','Feb','Mar','Apr','May','Jun'],v=[38,52,65,48,71,84],mx=84,cl=['rgba(240,180,41,0.4)','rgba(240,180,41,0.5)','rgba(240,180,41,0.6)','rgba(14,159,122,0.5)','rgba(14,159,122,0.7)','#F0B429'];const b=document.getElementById('monthly-bars'),l=document.getElementById('monthly-bar-labels');if(b)b.innerHTML=v.map((x,i)=>`<div class="bar" style="height:${Math.round(x/mx*90)}%;background:${cl[i]}"></div>`).join('');if(l)l.innerHTML=m.map(x=>`<div><div class="bar-label">${x}</div></div>`).join('');const am=['J','F','M','A','M','J','J','A','S','O','N','D'],av=[3,5,4,7,6,8,5,9,7,8,6,10],amax=10;const ab=document.getElementById('analytics-bars'),al=document.getElementById('analytics-bar-labels');if(ab)ab.innerHTML=av.map((x,i)=>`<div class="bar" style="height:${Math.round(x/amax*110)}px;background:rgba(124,92,252,${(0.3+x/amax*0.6).toFixed(2)})"></div>`).join('');if(al)al.innerHTML=am.map(x=>`<div><div class="bar-label">${x}</div></div>`).join('');}
+function renderObjections(){const c=document.getElementById('objection-list');if(!c)return;c.innerHTML=objections.map((o,i)=>`<div class="objection-card"><div class="obj-q" onclick="toggleObj(${i})">❝ ${o.q}</div><div class="obj-body" id="ob${i}"><div class="obj-lang-tabs"><div class="obj-lang-tab active" onclick="showLang(${i},'en')">English</div><div class="obj-lang-tab" onclick="showLang(${i},'te')">Telugu</div></div><div class="obj-a" id="oen${i}">${o.en}</div><div class="obj-tel" id="ote${i}">${o.te}</div></div></div>`).join('');}
+function toggleObj(i){const b=document.getElementById('ob'+i);if(b)b.style.display=b.style.display==='block'?'none':'block';}
+function showLang(i,l){const en=document.getElementById('oen'+i),te=document.getElementById('ote'+i);if(en)en.style.display=l==='en'?'block':'none';if(te)te.style.display=l==='te'?'block':'none';document.querySelectorAll(`#ob${i} .obj-lang-tab`).forEach((t,j)=>t.classList.toggle('active',(j===0&&l==='en')||(j===1&&l==='te')));}
+function renderFullHeatmap(){const c=document.getElementById('heatmap-full');if(!c)return;c.innerHTML=heatmapData.map(cat=>`<div class="hm-full-category"><div class="hm-full-label" style="color:${cat.color}">${cat.label}</div><div>${cat.chips.map(d=>`<div class="hm-chip" onclick="showScreen('profile')"><div class="hm-chip-dot" style="background:${cat.color}"></div><span style="font-size:12px">${d.n}</span><span style="font-size:11px;font-weight:500;color:${cat.color}">${d.s}</span></div>`).join('')}</div></div>`).join('');}
+function generateMessage(){const t=document.getElementById('msg-type-select'),la=document.getElementById('msg-lang-select'),p=document.getElementById('msg-preview-area');if(!t||!p)return;const ms=msgs[t.value]||msgs.birthday;const lang=la?la.value:'telugu';let tx=lang==='bilingual'?(ms.telugu||'')+(ms.english?'\n\n─────\n\n'+ms.english:''):lang==='english'?(ms.english||''):(ms.telugu||'');p.innerHTML=`<div class="msg-preview-box"><div class="msg-preview-label">AI Generated Message</div><div class="msg-preview-text">${tx}</div></div>`;}
+function copyMsg(){const e=document.querySelector('.msg-preview-text');if(e)navigator.clipboard.writeText(e.textContent||'').then(()=>showToast('📋 Copied!'));}
+function goToMsg(t){showScreen('messages');setTimeout(()=>{const s=document.getElementById('msg-type-select');if(s){s.value=t;generateMessage();}},100);}
+let chat=[{r:'ai',t:"Namaste Bala Garu! 🙏 I'm your AI relationship assistant. I know all 124 customer families — their milestones, policies, concerns and relationship history.\n\nToday I've identified 7 priority actions including Suresh Reddy's education planning gap and Lakshmi Amma's birthday tomorrow.\n\nHow can I help you serve your customers better today?"}];
+function renderChat(){const c=document.getElementById('chat-messages');if(!c)return;c.innerHTML=chat.map(m=>`<div class="msg-row ${m.r==='user'?'user':''}"><div class="msg-avatar ${m.r==='ai'?'msg-ai-avatar':'msg-user-avatar'}">${m.r==='ai'?'AI':'B'}</div><div class="msg-bubble ${m.r==='ai'?'bubble-ai':'bubble-user'}">${m.t}</div></div>`).join('');c.scrollTop=c.scrollHeight;}
+function sendAI(pre){const inp=document.getElementById('chat-input');const tx=pre||(inp?inp.value.trim():'');if(!tx)return;if(inp)inp.value='';chat.push({r:'user',t:tx});renderChat();const tl=tx.toLowerCase();let rs="Analysing your 124 customer relationships...\n\nHere's my recommendation based on your portfolio data.";if(tl.includes('follow'))rs=aiResp.follow;else if(tl.includes('birthday'))rs=aiResp.birthday;else if(tl.includes('education')||tl.includes('suresh'))rs=aiResp.education;else if(tl.includes('objection')||tl.includes('returns')||tl.includes('low'))rs=aiResp.objection;else if(tl.includes('churn')||tl.includes('risk'))rs=aiResp.churn;setTimeout(()=>{chat.push({r:'ai',t:rs});renderChat();},700);}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendAI();}}
+function openModal(id){const m=document.getElementById('modal-'+id);if(m)m.classList.add('open');}
+function closeModal(id){const m=document.getElementById('modal-'+id);if(m)m.classList.remove('open');}
+document.querySelectorAll('.modal-backdrop').forEach(b=>b.addEventListener('click',e=>{if(e.target===b)b.classList.remove('open');}));
+let voiceOn=false;
+function toggleVoice(){voiceOn=!voiceOn;const b=document.getElementById('voice-btn'),s=document.getElementById('voice-status');if(voiceOn){b.classList.add('recording');b.innerHTML='<i class="ti ti-player-stop" style="color:var(--coral)"></i>';if(s){s.textContent='Recording... Speak now';s.style.color='var(--coral)';}}else{b.classList.remove('recording');b.innerHTML='<i class="ti ti-microphone" style="color:var(--gold2)"></i>';if(s){s.textContent='Processing...';s.style.color='var(--gold2)';}setTimeout(()=>{if(s)s.textContent='Ready to save';},1000);}}
+function saveVoice(){showToast('✅ Voice note saved to CRM!');closeModal('voice');voiceOn=false;}
+function saveCustomer(){showToast('✅ Customer added!');closeModal('addCustomer');}
+function saveNote(){showToast('📝 Note added to timeline!');closeModal('addNote');}
+let tt;function showToast(tx){const t=document.getElementById('toast'),te=document.getElementById('toast-text');if(!t||!te)return;te.textContent=tx;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),3000);}
+document.addEventListener('DOMContentLoaded',()=>{renderCustomers(customers);renderReminders('dash-reminders');renderReminders('all-reminders');renderHeatmap();renderBars();renderObjections();renderFullHeatmap();renderChat();generateMessage();});
+</script>
+</body>
+</html>
