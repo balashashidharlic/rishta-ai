@@ -529,7 +529,8 @@ function customerCardHTML(c) {
   if (c.referred_by) tags.push('📣 Referred');
   if (c.goals) tags.push('🎯 Goals set');
   if (parseInt(c.trust_score) >= 75) tags.push('⭐ High Trust');
-  return `<div class="customer-card" onclick="showProfile('${c.id}')">
+  const idx = allCustomers.findIndex(x => x.id === c.id);
+  return `<div class="customer-card" onclick="showProfile(${idx})" style="cursor:pointer">
     <div class="cc-top">
       <div style="display:flex;align-items:center;gap:10px">
         <div class="cc-avatar" style="background:${col.bg};color:${col.tc}">${getInitials(c.name)}</div>
@@ -575,10 +576,10 @@ function filterByTrust(level) {
 }
 
 // ===== PROFILE =====
-function showProfile(id) {
-  currentCustomerId = id;
-  const c = allCustomers.find(x => String(x.id) === String(id));
-  if (!c) return;
+function showProfile(idx) {
+  const c = allCustomers[idx];
+  if (!c) { showToast("Customer not found. Please refresh."); return; }
+  currentCustomerId = c.id;
   const col = getColor(c.name||'');
   const trust = parseInt(c.trust_score) || 50;
 
@@ -632,7 +633,7 @@ function showProfile(id) {
           <div class="panel-head"><div class="panel-title">💬 Quick Actions</div></div>
           <div class="panel-body">
             <div style="display:flex;flex-direction:column;gap:8px">
-              <button class="btn btn-teal" style="justify-content:flex-start" onclick="quickMsg('${c.id}','followup')"><i class="ti ti-message"></i> Send Follow-up Message</button>
+              <button class="btn btn-teal" style="justify-content:flex-start" onclick="quickMsg('${String(c.id)}','followup')"><i class="ti ti-message"></i> Send Follow-up Message</button>
               <button class="btn btn-ghost" style="justify-content:flex-start" onclick="quickMsg('${c.id}','birthday')"><i class="ti ti-cake"></i> Send Birthday Wishes</button>
               <button class="btn btn-ghost" style="justify-content:flex-start" onclick="quickMsg('${c.id}','premium')"><i class="ti ti-receipt"></i> Premium Reminder</button>
               <button class="btn btn-ghost" style="justify-content:flex-start" onclick="quickMsg('${c.id}','edu')"><i class="ti ti-school"></i> Education Planning</button>
@@ -708,7 +709,7 @@ function clearForm() {
 async function deleteCurrentCustomer() {
   if (!currentCustomerId) return;
   const c = allCustomers.find(x => String(x.id) === String(currentCustomerId));
-  if (!c) return;
+  if (!c) { showToast("Customer not found. Please refresh."); return; }
   if (!confirm('Delete ' + c.name + '? This will permanently remove them from Google Sheet.')) return;
 
   showLoading('Deleting ' + c.name + '...');
@@ -838,14 +839,18 @@ function openWhatsApp() {
   const el = document.getElementById('msg-text');
   if (!el) { showToast('⚠️ Generate a message first'); return; }
   const c = custId ? getCustomerById(custId) : null;
-  const rawPhone = (c?.phone||'').replace(/\D/g,'');
-  const phone = rawPhone.length >= 10 ? rawPhone.slice(-10) : '';
-  const msg = encodeURIComponent(el.textContent);
-  if (phone) {
-    window.open('https://wa.me/91' + phone + '?text=' + msg, '_blank');
+  const el2 = document.getElementById('msg-text');
+  if (!el2) { showToast('⚠️ Generate a message first'); return; }
+  const custId2 = document.getElementById('msg-customer').value;
+  const c2 = custId2 ? getCustomerById(custId2) : null;
+  const rawPhone2 = (c2?.phone||'').replace(/\D/g,'');
+  const phone2 = rawPhone2.length >= 10 ? rawPhone2.slice(-10) : rawPhone2;
+  const msgText = encodeURIComponent(el2.textContent);
+  if (phone2 && phone2.length >= 10) {
+    window.open('https://wa.me/91' + phone2 + '?text=' + msgText, '_blank');
+    showToast('📱 Opening WhatsApp for ' + (c2?.name||'customer'));
   } else {
-    showToast('⚠️ No phone number for this customer. Save phone first.');
-    window.open('https://wa.me/?text=' + msg, '_blank');
+    showToast('⚠️ No valid phone number. Please add phone number first.');
   }
 }
 
@@ -853,7 +858,7 @@ function quickMsg(id, type) {
   showScreen('messages');
   setTimeout(() => {
     const sel = document.getElementById('msg-customer');
-    if (sel) sel.value = id;
+    if (sel) { sel.value = id; }
     const typeEl = document.getElementById('msg-type');
     if (typeEl) typeEl.value = type;
     generateMessage();
