@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rishta AI — Relationship Operating System</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#0F1B2D;--navy2:#162236;--gold2:#F0B429;--gold3:#FDD87A;--teal2:#12C499;--coral:#E05C3A;--purple:#7C5CFC;--blue:#2D8EFF;--card:#1A2A3F;--card2:#223044;--border:rgba(255,255,255,0.08);--text1:#F0EDE6;--text2:#A8B4C0;--text3:#6B7A8D}
+html,body{height:100%;background:var(--navy);color:var(--text1);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow-x:hidden}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;min-width:220px;background:var(--navy2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.logo-area{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.logo-title{font-size:15px;font-weight:600;color:var(--gold2)}
+.logo-sub{font-size:10px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:1px}
+.logo-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(212,150,10,0.15);border:1px solid rgba(212,150,10,0.3);border-radius:20px;padding:2px 8px;font-size:9px;color:var(--gold2);margin-top:8px}
+.pulse-dot{width:5px;height:5px;border-radius:50%;background:var(--teal2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.nav-section{padding:12px 8px 4px}
+.nav-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;padding:0 8px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;position:relative;user-select:none}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:var(--text1)}
+.nav-item.active{background:rgba(240,180,41,0.15);color:var(--gold2)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--gold2);border-radius:0 3px 3px 0}
+.nav-icon{font-size:15px;width:18px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--coral);color:#fff;font-size:9px;padding:1px 5px;border-radius:10px;font-weight:600}
+.sidebar-bottom{margin-top:auto;padding:12px;border-top:1px solid var(--border)}
+.advisor-card{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:10px;padding:10px}
+.advisor-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#F0B429,#12C499);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--navy);flex-shrink:0}
+.advisor-name{font-size:12px;font-weight:500}
+.advisor-role{font-size:10px;color:var(--text3)}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--navy);position:sticky;top:0;z-index:10;flex-wrap:wrap}
+.topbar-title{font-size:16px;font-weight:500}
+.topbar-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.topbar-actions{display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap}
+.content{flex:1;overflow-y:auto;padding:20px}
+.screen{display:none}
+.screen.active{display:block}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;transition:all .15s;border:none;font-family:inherit;white-space:nowrap}
+.btn-primary{background:var(--gold2);color:var(--navy);font-weight:600}
+.btn-primary:hover{background:var(--gold3)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{background:rgba(255,255,255,0.06);color:var(--text1)}
+.btn-teal{background:rgba(14,159,122,0.2);color:var(--teal2);border:1px solid rgba(14,159,122,0.3)}
+.btn-danger{background:rgba(224,92,58,0.2);color:var(--coral);border:1px solid rgba(224,92,58,0.3)}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--border)}
+.panel-title{font-size:13px;font-weight:500}
+.panel-action{font-size:11px;color:var(--gold2);cursor:pointer}
+.panel-body{padding:16px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s}
+.stat-card:hover{border-color:rgba(255,255,255,0.15);transform:translateY(-1px)}
+.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.stat-value{font-size:24px;font-weight:500;line-height:1}
+.stat-delta{font-size:11px;margin-top:4px}
+.delta-up{color:var(--teal2)}
+.delta-warn{color:var(--gold2)}
+.delta-alert{color:var(--coral)}
+.ai-greeting{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.greeting-head{font-size:18px;font-weight:500;margin-bottom:4px}
+.greeting-sub{font-size:13px;color:var(--text2);margin-bottom:14px}
+.ai-insight{background:rgba(240,180,41,0.08);border:1px solid rgba(240,180,41,0.2);border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:var(--gold2);margin-top:4px;flex-shrink:0;animation:pulse 2s infinite}
+.ai-insight-text{font-size:12px;color:var(--text2);line-height:1.6}
+.ai-insight-text strong{color:var(--gold2);font-weight:500}
+.search-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:16px}
+.search-bar input{background:none;border:none;outline:none;flex:1;min-width:160px;font-size:13px;color:var(--text1);font-family:inherit}
+.search-bar input::placeholder{color:var(--text3)}
+.customer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.customer-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:all .15s;position:relative}
+.customer-card:hover{border-color:rgba(240,180,41,0.3);transform:translateY(-1px)}
+.cc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.cc-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex-shrink:0}
+.cc-name{font-size:14px;font-weight:500;margin-top:2px}
+.cc-occ{font-size:11px;color:var(--text3);margin-top:1px}
+.cc-phone{font-size:11px;color:var(--blue);margin-top:2px}
+.trust-pill{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:500}
+.trust-high{background:rgba(14,159,122,0.15);color:var(--teal2)}
+.trust-med{background:rgba(240,180,41,0.15);color:var(--gold2)}
+.trust-low{background:rgba(224,92,58,0.15);color:var(--coral)}
+.cc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.cc-meta{display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:10px}
+.cc-meta-item{text-align:center}
+.cc-meta-val{font-size:13px;font-weight:500}
+.cc-meta-lbl{font-size:9px;color:var(--text3);margin-top:1px}
+.tag{font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(255,255,255,0.07);color:var(--text2)}
+.form-group{margin-bottom:14px}
+.form-label{font-size:11px;color:var(--text3);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.6px}
+.form-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text1);font-family:inherit;outline:none;transition:border-color .15s}
+.form-input:focus{border-color:rgba(240,180,41,0.4)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;align-items:center;justify-content:center}
+.modal-backdrop.open{display:flex}
+.modal{background:var(--navy2);border:1px solid var(--border);border-radius:16px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--navy2);z-index:1}
+.modal-head h3{font-size:15px;font-weight:500}
+.modal-close{background:none;border:none;color:var(--text3);font-size:22px;cursor:pointer;padding:0 4px;line-height:1}
+.modal-body{padding:20px}
+.modal-footer{padding:12px 20px 16px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border);position:sticky;bottom:0;background:var(--navy2)}
+.toast{position:fixed;bottom:20px;right:20px;z-index:200;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;transform:translateY(80px);transition:transform .3s;max-width:320px;box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.toast.show{transform:translateY(0)}
+.toast-text{font-size:12px;color:var(--text1)}
+.loading-overlay{position:fixed;inset:0;background:rgba(15,27,45,0.85);z-index:300;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.loading-spinner{width:40px;height:40px;border:3px solid rgba(240,180,41,0.2);border-top:3px solid var(--gold2);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:var(--text2)}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty-icon{font-size:40px;margin-bottom:12px}
+.empty-title{font-size:14px;font-weight:500;color:var(--text2);margin-bottom:6px}
+.empty-desc{font-size:12px;line-height:1.6}
+.profile-hero{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.ph-avatar{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;flex-shrink:0;border:2px solid rgba(240,180,41,0.3)}
+.ph-name{font-size:20px;font-weight:500;margin-bottom:4px}
+.ph-desc{font-size:12px;color:var(--text2);margin-bottom:10px}
+.ph-badges{display:flex;flex-wrap:wrap;gap:6px}
+.ph-badge{font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.07);border:1px solid var(--border);color:var(--text2)}
+.detail-row{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.detail-row:last-child{border-bottom:none}
+.detail-label{font-size:11px;color:var(--text3);width:120px;flex-shrink:0;padding-top:1px}
+.detail-value{font-size:12px;color:var(--text1);flex:1;line-height:1.5}
+.note-item{background:var(--card2);border-radius:8px;padding:10px 12px;margin-bottom:8px}
+.note-date{font-size:10px;color:var(--text3);margin-bottom:4px}
+.note-text{font-size:12px;color:var(--text2);line-height:1.5}
+.trust-bar-wrap{display:flex;align-items:center;gap:10px;margin-top:8px}
+.trust-bar-track{flex:1;height:8px;background:rgba(255,255,255,0.08);border-radius:4px}
+.trust-bar-fill{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--coral),var(--gold2),var(--teal2));transition:width .6s}
+.trust-num{font-size:13px;font-weight:600;width:28px;text-align:right}
+.chat-area{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;min-height:300px;display:flex;flex-direction:column;margin-bottom:12px;gap:14px;overflow-y:auto;max-height:400px}
+.msg-row{display:flex;gap:10px;align-items:flex-start}
+.msg-row.user{flex-direction:row-reverse}
+.msg-avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+.msg-ai-avatar{background:rgba(240,180,41,0.2);color:var(--gold2)}
+.msg-user-avatar{background:rgba(45,142,255,0.2);color:var(--blue)}
+.msg-bubble{max-width:80%;padding:10px 13px;border-radius:12px;font-size:12px;line-height:1.6;color:var(--text1);white-space:pre-line}
+.bubble-ai{background:var(--card2);border:1px solid var(--border);border-radius:4px 12px 12px 12px}
+.bubble-user{background:rgba(45,142,255,0.15);border:1px solid rgba(45,142,255,0.2);border-radius:12px 4px 12px 12px}
+.quick-prompts{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.qp{background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:11px;color:var(--text2);cursor:pointer;transition:all .15s}
+.qp:hover{border-color:rgba(240,180,41,0.3);color:var(--gold2)}
+.chat-input-area{display:flex;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;align-items:flex-end}
+.chat-input{flex:1;background:none;border:none;outline:none;resize:none;font-family:inherit;font-size:13px;color:var(--text1);min-height:36px;max-height:100px}
+.chat-input::placeholder{color:var(--text3)}
+.send-btn{width:32px;height:32px;border-radius:8px;background:var(--gold2);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--navy);flex-shrink:0;align-self:flex-end}
+.send-btn:hover{background:var(--gold3)}
+.msg-preview-box{background:var(--card2);border:1px solid rgba(240,180,41,0.2);border-radius:10px;padding:14px;margin-top:8px}
+.msg-preview-label{font-size:10px;color:var(--gold2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.msg-preview-text{font-size:12px;color:var(--text1);line-height:1.8;white-space:pre-line}
+.objection-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all .15s}
+.objection-card:hover{border-color:rgba(124,92,252,0.4)}
+.obj-q{font-size:12px;font-weight:500;color:var(--coral);margin-bottom:8px}
+.obj-body{display:none;padding-top:8px}
+.obj-lang-tabs{display:flex;gap:5px;margin-bottom:8px}
+.obj-lang-tab{font-size:10px;padding:2px 8px;border-radius:10px;cursor:pointer;background:rgba(255,255,255,0.06);color:var(--text3)}
+.obj-lang-tab.active{background:rgba(124,92,252,0.2);color:var(--purple)}
+.obj-a{font-size:11px;color:var(--text2);line-height:1.6}
+.obj-tel{font-size:11px;color:var(--purple);display:none;margin-top:6px;border-top:1px solid var(--border);padding-top:6px;line-height:1.6}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){.sidebar{width:54px;min-width:54px}.sidebar .nav-item span,.sidebar .logo-title,.sidebar .logo-sub,.sidebar .logo-badge,.sidebar .advisor-name,.sidebar .advisor-role{display:none}.two-col,.customer-grid,.form-row{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Loading Rishta AI...</div>
+</div>
+
+<div class="app">
+<div class="sidebar">
+  <div class="logo-area">
+    <div class="logo-title">Rishta AI</div>
+    <div class="logo-sub">Relationship OS</div>
+    <div class="logo-badge"><div class="pulse-dot"></div> Live</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Core</div>
+    <div class="nav-item active" onclick="showScreen('dashboard')"><i class="ti ti-layout-dashboard nav-icon"></i><span>Dashboard</span></div>
+    <div class="nav-item" onclick="showScreen('customers')"><i class="ti ti-users nav-icon"></i><span>Customers</span><div class="nav-badge" id="cust-count">0</div></div>
+    <div class="nav-item" onclick="showScreen('addcustomer')"><i class="ti ti-user-plus nav-icon"></i><span>Add Customer</span></div>
+    <div class="nav-item" onclick="showScreen('messages')"><i class="ti ti-message-circle nav-icon"></i><span>Messages</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Intelligence</div>
+    <div class="nav-item" onclick="showScreen('ai')"><i class="ti ti-brain nav-icon"></i><span>AI Assistant</span></div>
+    <div class="nav-item" onclick="showScreen('objections')"><i class="ti ti-shield nav-icon"></i><span>Objections</span></div>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="advisor-card">
+      <div class="advisor-avatar">B</div>
+      <div><div class="advisor-name">Bala Garu</div><div class="advisor-role">LIC Advisor</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="topbar-title">Good Morning, Bala Garu 🙏</div>
+      <div class="topbar-sub" id="topbar-sub">Loading your customer data...</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost" onclick="loadCustomers()"><i class="ti ti-refresh"></i> Refresh</button>
+      <button class="btn btn-primary" onclick="showScreen('addcustomer')"><i class="ti ti-plus"></i> Add Customer</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="screen active" id="screen-dashboard">
+      <div class="ai-greeting">
+        <div class="greeting-head">AI Relationship Briefing</div>
+        <div class="greeting-sub">Live data from your Google Sheet</div>
+        <div class="ai-insight">
+          <div class="ai-dot"></div>
+          <div class="ai-insight-text" id="ai-briefing">Loading your customer intelligence...</div>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card" onclick="showScreen('customers')">
+          <div class="stat-label">Total Customers</div>
+          <div class="stat-value" style="color:var(--gold2)" id="stat-total">0</div>
+          <div class="stat-delta delta-up">Saved in Google Sheet</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active</div>
+          <div class="stat-value" style="color:var(--teal2)" id="stat-active">0</div>
+          <div class="stat-delta delta-up">Currently engaged</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">High Trust (75+)</div>
+          <div class="stat-value" style="color:var(--purple)" id="stat-trust">0</div>
+          <div class="stat-delta delta-warn">Strong relationships</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Need Follow-up</div>
+          <div class="stat-value" style="color:var(--coral)" id="stat-followup">0</div>
+          <div class="stat-delta delta-alert">Low trust score</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><i class="ti ti-users" style="margin-right:6px;color:var(--gold2)"></i>Recent Customers</div><div class="panel-action" onclick="showScreen('customers')">View All →</div></div>
+        <div class="panel-body" id="recent-customers"><div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">No customers yet</div><div class="empty-desc">Add your first customer using the Add Customer button</div></div></div>
+      </div>
+    </div>
+
+    <!-- CUSTOMERS LIST -->
+    <div class="screen" id="screen-customers">
+      <div class="search-bar">
+        <i class="ti ti-search" style="color:var(--text3);font-size:15px"></i>
+        <input type="text" placeholder="Search by name, phone, occupation..." id="customer-search" oninput="filterCustomers(this.value)"/>
+        <div style="display:flex;gap:6px">
+          <div class="tag" style="cursor:pointer" onclick="filterCustomers('')">All</div>
+          <div class="tag" style="cursor:pointer;color:var(--coral)" onclick="filterByTrust('low')">At Risk</div>
+          <div class="tag" style="cursor:pointer;color:var(--teal2)" onclick="filterByTrust('high')">High Trust</div>
+        </div>
+      </div>
+      <div class="customer-grid" id="customer-grid">
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-icon">👥</div>
+          <div class="empty-title">Loading customers...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOMER PROFILE -->
+    <div class="screen" id="screen-profile">
+      <div style="margin-bottom:16px;display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="showScreen('customers')"><i class="ti ti-arrow-left"></i> Back</button>
+        <button class="btn btn-danger" id="delete-btn" onclick="deleteCurrentCustomer()"><i class="ti ti-trash"></i> Delete</button>
+      </div>
+      <div id="profile-content"></div>
+    </div>
+
+    <!-- ADD CUSTOMER -->
+    <div class="screen" id="screen-addcustomer">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><i class="ti ti-user-plus" style="margin-right:6px;color:var(--gold2)"></i>Add New Customer</div></div>
+        <div class="panel-body">
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Full Name *</label><input class="form-input" id="f-name" placeholder="e.g. Ravi Kumar Garu"/></div>
+            <div class="form-group"><label class="form-label">Phone Number *</label><input class="form-input" id="f-phone" placeholder="+91 98765 43210"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Date of Birth</label><input type="date" class="form-input" id="f-dob"/></div>
+            <div class="form-group"><label class="form-label">Occupation</label><input class="form-input" id="f-occupation" placeholder="e.g. Govt Teacher"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Monthly Income</label><select class="form-input" id="f-income"><option>Under ₹20K</option><option>₹20K–40K</option><option>₹40K–70K</option><option>₹70K–1L</option><option>Above ₹1L</option></select></div>
+            <div class="form-group"><label class="form-label">Language</label><select class="form-input" id="f-language"><option>Telugu</option><option>Hindi</option><option>English</option><option>Telugu + English</option></select></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Spouse Name</label><input class="form-input" id="f-spouse" placeholder="Optional"/></div>
+            <div class="form-group"><label class="form-label">Children</label><input class="form-input" id="f-children" placeholder="e.g. Priya (15), Arjun (11)"/></div>
+          </div>
+          <div class="form-group"><label class="form-label">Financial Goals</label><textarea class="form-input" id="f-goals" rows="2" placeholder="e.g. Daughter education, retirement at 60, house loan..."></textarea></div>
+          <div class="form-group"><label class="form-label">Emotional Notes / Life Context</label><textarea class="form-input" id="f-notes" rows="2" placeholder="e.g. Worried about aging parents, recently promoted..."></textarea></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Referred By</label><input class="form-input" id="f-referred" placeholder="e.g. Suresh Reddy Garu"/></div>
+            <div class="form-group"><label class="form-label">Initial Trust Score (1-100)</label><input type="number" class="form-input" id="f-trust" value="50" min="1" max="100"/></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn btn-primary" onclick="saveCustomer()" id="save-btn"><i class="ti ti-device-floppy"></i> Save to Google Sheet</button>
+            <button class="btn btn-ghost" onclick="clearForm()"><i class="ti ti-x"></i> Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="screen" id="screen-messages">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><i class="ti ti-wand" style="margin-right:6px;color:var(--purple)"></i>AI Message Generator</div></div>
+        <div class="panel-body">
+          <div class="form-row" style="margin-bottom:12px">
+            <div><label class="form-label">Select Customer</label><select class="form-input" id="msg-customer"><option value="">-- Select Customer --</option></select></div>
+            <div><label class="form-label">Message Type</label><select class="form-input" id="msg-type" onchange="generateMessage()"><option value="birthday">Birthday Wishes</option><option value="festival">Festival Greetings</option><option value="premium">Premium Reminder</option><option value="edu">Education Planning</option><option value="followup">Friendly Follow-up</option><option value="claim">Claim Support</option></select></div>
+          </div>
+          <div class="form-row" style="margin-bottom:12px">
+            <div><label class="form-label">Language</label><select class="form-input" id="msg-lang" onchange="generateMessage()"><option value="telugu">Telugu</option><option value="english">English</option><option value="bilingual">Telugu + English</option></select></div>
+            <div><label class="form-label">Tone</label><select class="form-input"><option>Warm &amp; Respectful</option><option>Professional</option><option>Emotional &amp; Personal</option></select></div>
+          </div>
+          <div id="msg-preview"></div>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="generateMessage()"><i class="ti ti-wand"></i> Generate</button>
+            <button class="btn btn-teal" onclick="openWhatsApp()"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button>
+            <button class="btn btn-ghost" onclick="copyMsg()"><i class="ti ti-copy"></i> Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI ASSISTANT -->
+    <div class="screen" id="screen-ai">
+      <div class="chat-area" id="chat-messages"></div>
+      <div class="quick-prompts">
+        <div class="qp" onclick="sendAI('Who should I follow up with today?')">Follow up today?</div>
+        <div class="qp" onclick="sendAI('Which customers have low trust scores?')">Low trust customers</div>
+        <div class="qp" onclick="sendAI('How to handle: LIC returns are low?')">LIC returns objection</div>
+        <div class="qp" onclick="sendAI('Generate Telugu birthday message')">Telugu birthday msg</div>
+      </div>
+      <div class="chat-input-area">
+        <textarea class="chat-input" id="chat-input" rows="1" placeholder="Ask about your customers, objections, strategy..." onkeydown="handleKey(event)"></textarea>
+        <button class="send-btn" onclick="sendAI()"><i class="ti ti-send"></i></button>
+      </div>
+    </div>
+
+    <!-- OBJECTIONS -->
+    <div class="screen" id="screen-objections">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><i class="ti ti-brain" style="margin-right:6px;color:var(--purple)"></i>Objection Handling — Telugu + English</div></div>
+        <div class="panel-body"><div id="objection-list"></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ADD NOTE MODAL -->
+<div class="modal-backdrop" id="modal-note">
+  <div class="modal">
+    <div class="modal-head"><h3>Add Note / Interaction</h3><button class="modal-close" onclick="closeModal('note')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Interaction Type</label><select class="form-input" id="note-type"><option>Phone Call</option><option>In-Person Meeting</option><option>WhatsApp</option><option>Festival Greeting</option><option>Policy Discussion</option></select></div>
+      <div class="form-group"><label class="form-label">Notes (Telugu or English)</label><textarea class="form-input" id="note-text" rows="4" placeholder="What was discussed? Concerns? Plans mentioned?"></textarea></div>
+      <div class="form-group"><label class="form-label">Update Trust Score</label><input type="number" class="form-input" id="note-trust" min="1" max="100" placeholder="Enter new trust score (1-100)"/></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('note')">Cancel</button><button class="btn btn-primary" onclick="saveNote()">Save Note</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><div class="toast-text" id="toast-text"></div></div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbzbU2favZPPWKHUA6sP3cBVeIv9UGiBrCDYGjV9MOMsHNu6lO88HN_xitA9C-kDnx-paA/exec';
+let allCustomers = [];
+let currentCustomerId = null;
+
+// ===== API CALLS =====
+async function apiGet() {
+  try {
+    const res = await fetch(API + '?action=getCustomers');
+    const data = await res.json();
+    return data.success ? data.data : [];
+  } catch(e) { showToast('⚠️ Connection error. Check internet.'); return []; }
+}
+
+async function apiPost(payload) {
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    return await res.json();
+  } catch(e) { showToast('⚠️ Save failed. Check internet.'); return {success:false}; }
+}
+
+// ===== LOAD CUSTOMERS =====
+async function loadCustomers() {
+  showLoading('Loading customers from Google Sheet...');
+  allCustomers = await apiGet();
+  hideLoading();
+  updateStats();
+  renderDashboard();
+  renderCustomerGrid(allCustomers);
+  updateMsgDropdown();
+  updateTopbar();
+}
+
+function updateStats() {
+  const total = allCustomers.length;
+  const active = allCustomers.filter(c => c.active === 'active').length;
+  const highTrust = allCustomers.filter(c => parseInt(c.trust_score) >= 75).length;
+  const lowTrust = allCustomers.filter(c => parseInt(c.trust_score) < 40).length;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-active').textContent = active;
+  document.getElementById('stat-trust').textContent = highTrust;
+  document.getElementById('stat-followup').textContent = lowTrust;
+  document.getElementById('cust-count').textContent = total;
+}
+
+function updateTopbar() {
+  const now = new Date();
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  document.getElementById('topbar-sub').textContent = `${days[now.getDay()]}, ${now.toLocaleDateString('en-IN')} · ${allCustomers.length} customers in database`;
+}
+
+function renderDashboard() {
+  const briefing = document.getElementById('ai-briefing');
+  if (allCustomers.length === 0) {
+    briefing.innerHTML = 'No customers yet. Add your first customer using the <strong>Add Customer</strong> button above.';
+    document.getElementById('recent-customers').innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">No customers yet</div><div class="empty-desc">Click Add Customer to get started</div></div>';
+    return;
+  }
+  const lowTrust = allCustomers.filter(c => parseInt(c.trust_score) < 50);
+  const highTrust = allCustomers.filter(c => parseInt(c.trust_score) >= 75);
+  let msg = `You have <strong>${allCustomers.length} customers</strong> in your database. `;
+  if (highTrust.length > 0) msg += `<strong>${highTrust.length} high trust</strong> relationships are strong. `;
+  if (lowTrust.length > 0) msg += `<strong>${lowTrust.length} customers</strong> need follow-up (low trust score). `;
+  msg += 'Use AI Assistant for personalized guidance on each customer.';
+  briefing.innerHTML = msg;
+
+  const recent = allCustomers.slice(-4).reverse();
+  document.getElementById('recent-customers').innerHTML = recent.map(c => customerCardHTML(c)).join('');
+}
+
+// ===== CUSTOMER GRID =====
+function getInitials(name) {
+  return name.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase() || '??';
+}
+function getAvatarColor(name) {
+  const colors = [
+    {bg:'rgba(240,180,41,0.25)',tc:'#F0B429'},
+    {bg:'rgba(14,159,122,0.25)',tc:'#12C499'},
+    {bg:'rgba(124,92,252,0.25)',tc:'#7C5CFC'},
+    {bg:'rgba(45,142,255,0.25)',tc:'#2D8EFF'},
+    {bg:'rgba(224,92,58,0.25)',tc:'#E05C3A'}
+  ];
+  const i = name.charCodeAt(0) % colors.length;
+  return colors[i];
+}
+function getTrustClass(score) {
+  const s = parseInt(score);
+  if (s >= 75) return 'trust-high';
+  if (s >= 45) return 'trust-med';
+  return 'trust-low';
+}
+
+function customerCardHTML(c) {
+  const col = getAvatarColor(c.name||'');
+  const initials = getInitials(c.name||'?');
+  const trust = parseInt(c.trust_score)||50;
+  const tags = [];
+  if (c.children) tags.push('👨‍👩‍👧 ' + c.children.split(',').length + ' children');
+  if (c.referred_by) tags.push('📣 Referred');
+  if (c.goals) tags.push('🎯 Goals set');
+  return `<div class="customer-card" onclick="showProfile('${c.id}')">
+    <div class="cc-top">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="cc-avatar" style="background:${col.bg};color:${col.tc}">${initials}</div>
+        <div>
+          <div class="cc-name">${c.name||'Unknown'}</div>
+          <div class="cc-occ">${c.occupation||'—'}</div>
+          <div class="cc-phone">${c.phone||''}</div>
+        </div>
+      </div>
+      <div class="trust-pill ${getTrustClass(trust)}">${trust}</div>
+    </div>
+    <div class="cc-tags">${tags.map(t=>`<div class="tag">${t}</div>`).join('')}${c.language?`<div class="tag">${c.language}</div>`:''}</div>
+    <div class="cc-meta">
+      <div class="cc-meta-item"><div class="cc-meta-val" style="color:var(--gold2)">${trust}/100</div><div class="cc-meta-lbl">Trust</div></div>
+      <div class="cc-meta-item"><div class="cc-meta-val">${c.income||'—'}</div><div class="cc-meta-lbl">Income</div></div>
+      <div class="cc-meta-item"><div class="cc-meta-val" style="color:${c.active==='active'?'var(--teal2)':'var(--coral)'}">${c.active==='active'?'Active':'Inactive'}</div><div class="cc-meta-lbl">Status</div></div>
+    </div>
+  </div>`;
+}
+
+function renderCustomerGrid(list) {
+  const grid = document.getElementById('customer-grid');
+  if (!grid) return;
+  if (list.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🔍</div><div class="empty-title">No customers found</div><div class="empty-desc">Try a different search or add new customers</div></div>';
+    return;
+  }
+  grid.innerHTML = list.map(c => customerCardHTML(c)).join('');
+}
+
+function filterCustomers(q) {
+  const filtered = allCustomers.filter(c =>
+    (c.name||'').toLowerCase().includes(q.toLowerCase()) ||
+    (c.phone||'').includes(q) ||
+    (c.occupation||'').toLowerCase().includes(q.toLowerCase())
+  );
+  renderCustomerGrid(filtered);
+}
+
+function filterByTrust(level) {
+  if (level === 'high') renderCustomerGrid(allCustomers.filter(c => parseInt(c.trust_score) >= 75));
+  else renderCustomerGrid(allCustomers.filter(c => parseInt(c.trust_score) < 45));
+}
+
+// ===== PROFILE =====
+function showProfile(id) {
+  currentCustomerId = id;
+  const c = allCustomers.find(x => x.id == id);
+  if (!c) return;
+  const col = getAvatarColor(c.name||'');
+  const initials = getInitials(c.name||'?');
+  const trust = parseInt(c.trust_score)||50;
+  const notes = (c.notes||'').split('\n').filter(n=>n.trim()).map(n => {
+    const dateMatch = n.match(/\[(.+?)\]/);
+    const date = dateMatch ? dateMatch[1] : '';
+    const text = n.replace(/\[.+?\]\s*/,'');
+    return `<div class="note-item"><div class="note-date">${date}</div><div class="note-text">${text}</div></div>`;
+  }).join('') || '<div style="font-size:12px;color:var(--text3);padding:8px 0">No notes yet. Add your first interaction note.</div>';
+
+  document.getElementById('profile-content').innerHTML = `
+    <div class="profile-hero">
+      <div class="ph-avatar" style="background:${col.bg};color:${col.tc}">${initials}</div>
+      <div style="flex:1">
+        <div class="ph-name">${c.name||'Unknown'}</div>
+        <div class="ph-desc">${c.occupation||''} ${c.occupation&&c.language?'·':''} ${c.language||''}</div>
+        <div class="ph-badges">
+          ${c.phone?`<div class="ph-badge">📞 ${c.phone}</div>`:''}
+          ${c.dob?`<div class="ph-badge">🎂 ${c.dob}</div>`:''}
+          ${c.income?`<div class="ph-badge">💰 ${c.income}</div>`:''}
+          ${c.spouse?`<div class="ph-badge">👫 ${c.spouse}</div>`:''}
+          ${c.children?`<div class="ph-badge">👨‍👩‍👧 ${c.children}</div>`:''}
+          ${c.referred_by?`<div class="ph-badge">📣 Ref: ${c.referred_by}</div>`:''}
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">Customer Details</div></div>
+          <div class="panel-body">
+            ${c.goals?`<div class="detail-row"><div class="detail-label">Financial Goals</div><div class="detail-value">${c.goals}</div></div>`:''}
+            ${c.created_date?`<div class="detail-row"><div class="detail-label">Added On</div><div class="detail-value">${c.created_date}</div></div>`:''}
+            <div class="detail-row">
+              <div class="detail-label">Trust Score</div>
+              <div class="detail-value">
+                <div style="font-size:18px;font-weight:600;color:${trust>=75?'var(--teal2)':trust>=45?'var(--gold2)':'var(--coral)'}">${trust}/100</div>
+                <div class="trust-bar-wrap"><div class="trust-bar-track"><div class="trust-bar-fill" style="width:${trust}%"></div></div><div class="trust-num">${trust}</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Notes &amp; Timeline</div>
+            <button class="btn btn-ghost" style="font-size:10px;padding:4px 8px" onclick="openNoteModal('${c.id}',${trust})">+ Add Note</button>
+          </div>
+          <div class="panel-body">${notes}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title"><i class="ti ti-message-circle" style="margin-right:6px;color:var(--blue)"></i>Quick Message</div></div>
+      <div class="panel-body">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-teal" onclick="quickMsg('${c.name}','${c.phone||''}','followup')"><i class="ti ti-message"></i> Follow-up</button>
+          <button class="btn btn-ghost" onclick="quickMsg('${c.name}','${c.phone||''}','birthday')"><i class="ti ti-cake"></i> Birthday</button>
+          <button class="btn btn-ghost" onclick="quickMsg('${c.name}','${c.phone||''}','premium')"><i class="ti ti-receipt"></i> Premium</button>
+        </div>
+      </div>
+    </div>
+  `;
+  showScreen('profile');
+}
+
+// ===== SAVE CUSTOMER =====
+async function saveCustomer() {
+  const name = document.getElementById('f-name').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  if (!name) { showToast('⚠️ Please enter customer name'); return; }
+  if (!phone) { showToast('⚠️ Please enter phone number'); return; }
+
+  const btn = document.getElementById('save-btn');
+  btn.textContent = 'Saving...';
+  btn.disabled = true;
+
+  const data = {
+    action: 'addCustomer',
+    name, phone,
+    dob: document.getElementById('f-dob').value,
+    occupation: document.getElementById('f-occupation').value,
+    income: document.getElementById('f-income').value,
+    language: document.getElementById('f-language').value,
+    spouse: document.getElementById('f-spouse').value,
+    children: document.getElementById('f-children').value,
+    goals: document.getElementById('f-goals').value,
+    notes: document.getElementById('f-notes').value,
+    referred_by: document.getElementById('f-referred').value,
+    trust_score: document.getElementById('f-trust').value || 50
+  };
+
+  const result = await apiPost(data);
+  btn.textContent = '💾 Save to Google Sheet';
+  btn.disabled = false;
+
+  if (result.success) {
+    showToast('✅ Customer saved to Google Sheet!');
+    clearForm();
+    await loadCustomers();
+    showScreen('customers');
+  } else {
+    showToast('❌ Save failed. Please try again.');
+  }
+}
+
+function clearForm() {
+  ['f-name','f-phone','f-dob','f-occupation','f-spouse','f-children','f-goals','f-notes','f-referred'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  const trust = document.getElementById('f-trust');
+  if (trust) trust.value = 50;
+}
+
+// ===== NOTES =====
+let noteCustomerId = null;
+let noteCurrentTrust = 50;
+
+function openNoteModal(id, trust) {
+  noteCustomerId = id;
+  noteCurrentTrust = trust;
+  document.getElementById('note-text').value = '';
+  document.getElementById('note-trust').value = trust;
+  openModal('note');
+}
+
+async function saveNote() {
+  const text = document.getElementById('note-text').value.trim();
+  const noteType = document.getElementById('note-type').value;
+  const newTrust = document.getElementById('note-trust').value;
+  if (!text) { showToast('⚠️ Please enter a note'); return; }
+
+  const fullNote = noteType + ': ' + text;
+  const result = await apiPost({ action: 'addNote', id: noteCustomerId, note: fullNote });
+  if (result.success && newTrust != noteCurrentTrust) {
+    await apiPost({ action: 'updateTrust', id: noteCustomerId, trust_score: newTrust });
+  }
+  if (result.success) {
+    showToast('✅ Note saved to Google Sheet!');
+    closeModal('note');
+    await loadCustomers();
+    showProfile(noteCustomerId);
+  }
+}
+
+// ===== DELETE =====
+async function deleteCurrentCustomer() {
+  if (!currentCustomerId) return;
+  const c = allCustomers.find(x => x.id == currentCustomerId);
+  if (!confirm(`Delete ${c?.name}? This cannot be undone.`)) return;
+  showToast('ℹ️ To delete: open Google Sheet and delete that row manually.');
+}
+
+// ===== MESSAGES =====
+function updateMsgDropdown() {
+  const sel = document.getElementById('msg-customer');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">-- Select Customer --</option>' +
+    allCustomers.map(c => `<option value="${c.id}">${c.name} — ${c.phone||''}</option>`).join('');
+}
+
+const msgTemplates = {
+  birthday: { telugu: (n)=>`Namaste! 🙏\n\nప్రియమైన ${n} గారికి పుట్టినరోజు శుభాకాంక్షలు! 🎂\n\nమీరు ఎప్పటికీ ఆరోగ్యంగా, సంతోషంగా ఉండాలని కోరుకుంటున్నాను.\n\nమీ విశ్వాసానికి ధన్యవాదాలు 🌸\nBala Garu, LIC Advisor`, english: (n)=>`Dear ${n},\n\nWishing you a very Happy Birthday! 🎂 May this year bring you excellent health and happiness.\n\nThank you for trusting me as your advisor.\n\nWarm regards,\nBala, LIC Advisor` },
+  festival: { telugu: (n)=>`🌸 పండుగ శుభాకాంక్షలు! 🌸\n\nప్రియమైన ${n} గారికి,\n\nమీకు మరియు మీ కుటుంబానికి అన్ని శుభాలు కలుగాలని హృదయపూర్వకంగా కోరుకుంటున్నాను.\n\nBala Garu, LIC Advisor 🙏`, english: (n)=>`Dear ${n},\n\nWishing you and your family a wonderful festival season! May it bring joy, prosperity and good health.\n\nWarm regards,\nBala, LIC Advisor` },
+  premium: { telugu: (n)=>`Namaste ${n} Garu 🙏\n\nMee policy premium due avutundi. Timely payment cheyyadam valla mee family ki poorna protection continue avutundi.\n\nEmi help kavaalante call cheyyandi.\nBala Garu: 98765 43210`, english: (n)=>`Dear ${n},\n\nFriendly reminder: Your policy premium is due soon.\n\nPlease ensure timely payment to keep your family's protection active.\n\nCall me anytime: 98765 43210\nBala, LIC Advisor` },
+  edu: { telugu: (n)=>`${n} Garu,\n\nMee pillala education planning gurinchi oka mukhyamaina vishayam share cheyyalani anipistundi.\n\nIppude plan start chesthe future ki strong foundation veyachu. Okasari matladdam?\n\nBala Garu 🙏`, english: (n)=>`Dear ${n},\n\nI wanted to share something important about education planning for your children.\n\nStarting early can make a huge difference. Can we have a quick 15-minute call?\n\nWarm regards, Bala` },
+  followup: { telugu: (n)=>`Namaste ${n} Garu 🙏\n\nMeeru, family andaru bagunnaaraa ani choodaalani anipistundi.\n\nConvenient ainapudu oka saari call cheyyandi.\n\nMee Bala Garu 🙏`, english: (n)=>`Dear ${n},\n\nJust checking in — hope you and your family are doing well!\n\nPlease call when convenient. No pressure, just a friendly catch-up.\n\nYour advisor, Bala` },
+  claim: { telugu: (n)=>`Priyamaina ${n} Family,\n\nEe kashtakaalamlo meeru saampoorna sahayam andistanu.\n\nDocuments ready cheyyandi:\n• Death Certificate (original)\n• Policy Bond\n• Nominee ID Proof\n\n98765 43210 ki call cheyyandi.\nBala Garu`, english: (n)=>`Dear ${n} Family,\n\nI'm here to support you completely through the claim process.\n\nDocuments needed:\n• Original death certificate\n• Policy bond\n• Nominee's ID proof\n\nCall me directly: 98765 43210\nBala` }
+};
+
+function generateMessage() {
+  const custId = document.getElementById('msg-customer').value;
+  const type = document.getElementById('msg-type').value;
+  const lang = document.getElementById('msg-lang').value;
+  const preview = document.getElementById('msg-preview');
+  const c = allCustomers.find(x => x.id == custId);
+  const name = c ? c.name : 'Customer';
+  const tmpl = msgTemplates[type] || msgTemplates.followup;
+  let text = lang === 'english' ? tmpl.english(name) : lang === 'bilingual' ? tmpl.telugu(name) + '\n\n─────\n\n' + tmpl.english(name) : tmpl.telugu(name);
+  preview.innerHTML = `<div class="msg-preview-box"><div class="msg-preview-label">Generated for: ${name}</div><div class="msg-preview-text" id="msg-text">${text}</div></div>`;
+}
+
+function copyMsg() {
+  const el = document.getElementById('msg-text');
+  if (el) navigator.clipboard.writeText(el.textContent).then(() => showToast('📋 Copied!'));
+}
+
+function openWhatsApp() {
+  const custId = document.getElementById('msg-customer').value;
+  const c = allCustomers.find(x => x.id == custId);
+  const el = document.getElementById('msg-text');
+  if (!el) { showToast('⚠️ Generate message first'); return; }
+  const phone = c?.phone?.replace(/\D/g,'') || '';
+  const msg = encodeURIComponent(el.textContent);
+  if (phone) window.open(`https://wa.me/91${phone}?text=${msg}`,'_blank');
+  else window.open(`https://wa.me/?text=${msg}`,'_blank');
+}
+
+function quickMsg(name, phone, type) {
+  showScreen('messages');
+  setTimeout(() => {
+    const sel = document.getElementById('msg-customer');
+    const c = allCustomers.find(x => x.name === name);
+    if (sel && c) sel.value = c.id;
+    document.getElementById('msg-type').value = type;
+    generateMessage();
+  }, 100);
+}
+
+// ===== AI CHAT =====
+let chatHistory = [{r:'ai',t:`Namaste Bala Garu! 🙏 I'm your AI assistant connected to your live customer database.\n\nI can see all your customers, their trust scores, notes and goals in real time.\n\nAsk me anything about your customers or how to handle situations!`}];
+
+function renderChat() {
+  const c = document.getElementById('chat-messages');
+  if (!c) return;
+  c.innerHTML = chatHistory.map(m=>`<div class="msg-row ${m.r==='user'?'user':''}"><div class="msg-avatar ${m.r==='ai'?'msg-ai-avatar':'msg-user-avatar'}">${m.r==='ai'?'AI':'B'}</div><div class="msg-bubble ${m.r==='ai'?'bubble-ai':'bubble-user'}">${m.t}</div></div>`).join('');
+  c.scrollTop = c.scrollHeight;
+}
+
+function sendAI(preset) {
+  const inp = document.getElementById('chat-input');
+  const text = preset||(inp?inp.value.trim():'');
+  if (!text) return;
+  if (inp) inp.value = '';
+  chatHistory.push({r:'user',t:text});
+  renderChat();
+  const tl = text.toLowerCase();
+  let response = '';
+  if (tl.includes('follow')) {
+    const low = allCustomers.filter(c=>parseInt(c.trust_score)<50);
+    response = low.length > 0 ? `Follow up priority list:\n\n${low.map((c,i)=>`${i+1}. ${c.name} — Trust: ${c.trust_score} — Phone: ${c.phone||'No phone'}`).join('\n')}\n\nRecommend calling the lowest trust score first.` : `All customers have good trust scores! Focus on maintaining relationships with your top customers.`;
+  } else if (tl.includes('low trust') || tl.includes('risk')) {
+    const low = allCustomers.filter(c=>parseInt(c.trust_score)<50);
+    response = low.length > 0 ? `Low trust customers:\n\n${low.map(c=>`• ${c.name} — Score: ${c.trust_score} — ${c.phone||''}`).join('\n')}\n\nSuggestion: Call them this week for a friendly check-in.` : 'Great news! No customers with critically low trust scores right now.';
+  } else if (tl.includes('birthday') || tl.includes('telugu')) {
+    response = 'Telugu birthday message:\n\n🎂 Namaste! Mee puttinroju subhakankshalu!\n\nMee arogya bhagyaalu, kutumba santosham ella unnattugaa unnayi anipistundi.\n\nMee Bala Garu, LIC Advisor 🙏\n\nGo to Messages section to generate personalized messages for specific customers!';
+  } else if (tl.includes('returns') || tl.includes('objection')) {
+    response = 'LIC Returns Objection:\n\nEmotional response: "LIC is not an investment — it\'s a promise. If something happens to you, your family gets protected immediately. No mutual fund can do that."\n\nLogical response: "Separate your investment (MF) from your protection (LIC). Both serve different goals."\n\nKey: Agree on returns first, then reframe around protection.';
+  } else if (tl.includes('customer') || tl.includes('total')) {
+    response = `Your database summary:\n\n• Total customers: ${allCustomers.length}\n• Active: ${allCustomers.filter(c=>c.active==='active').length}\n• High trust (75+): ${allCustomers.filter(c=>parseInt(c.trust_score)>=75).length}\n• Need follow-up (<50): ${allCustomers.filter(c=>parseInt(c.trust_score)<50).length}\n\nAll data is live from your Google Sheet!`;
+  } else {
+    response = `I understand you asked about: "${text}"\n\nYour current database has ${allCustomers.length} customers.\n\nI can help you with:\n• Who to follow up with\n• Low trust customers\n• Objection handling\n• Message generation\n• Customer summaries\n\nTry asking one of the quick prompts above!`;
+  }
+  setTimeout(()=>{ chatHistory.push({r:'ai',t:response}); renderChat(); }, 600);
+}
+
+function handleKey(e) { if (e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendAI();} }
+
+// ===== OBJECTIONS =====
+const objections = [
+  {q:"LIC returns are too low compared to mutual funds",en:"I understand — equity MFs can beat LIC on returns. But LIC is not an investment, it's a promise. If something happens tomorrow, a ₹1 crore term plan pays your family ₹1 crore instantly. No mutual fund does that. Think of LIC as safety, not investment.",te:"Meeru cheppindi nijame. Kaani LIC oka promise — meeru lekapothe family ki ₹1 crore istundi. Mutual funds adi cheyagalava? Ledu. LIC protection kosam, investment kosam kaadu."},
+  {q:"I don't have budget right now",en:"Totally understand. But if you couldn't work for 6 months tomorrow, where would your family's money come from? ₹500/month today prevents that crisis. We can start with the minimum.",te:"Artham ayindi. Kaani — meeru 6 nelalu panicheyakapothe family emichestundi? Nela ₹500 tho start cheyachu."},
+  {q:"I already have employer insurance",en:"Great — group cover is a bonus. But that cover disappears when you change jobs or retire. Personal LIC policy stays with you forever.",te:"Job cover manchidi. Kaani job marcheste aa cover untundaa? Personal LIC policy life ante untundi."},
+  {q:"I need time to think about it",en:"Of course — take your time. May I ask, is there a specific concern I can help clarify? Often there's a specific worry underneath.",te:"Chukka ledu. Kaani emi doubt aithe meeru cheppandi? Daani gurinchi honest ga matladdam."}
+];
+
+function renderObjections() {
+  const c = document.getElementById('objection-list');
+  if (!c) return;
+  c.innerHTML = objections.map((o,i)=>`<div class="objection-card"><div class="obj-q" onclick="toggleObj(${i})">❝ ${o.q}</div><div class="obj-body" id="ob${i}"><div class="obj-lang-tabs"><div class="obj-lang-tab active" onclick="showLang(${i},'en')">English</div><div class="obj-lang-tab" onclick="showLang(${i},'te')">Telugu</div></div><div class="obj-a" id="oen${i}">${o.en}</div><div class="obj-tel" id="ote${i}">${o.te}</div></div></div>`).join('');
+}
+function toggleObj(i){const b=document.getElementById('ob'+i);if(b)b.style.display=b.style.display==='block'?'none':'block';}
+function showLang(i,l){document.getElementById('oen'+i).style.display=l==='en'?'block':'none';document.getElementById('ote'+i).style.display=l==='te'?'block':'none';document.querySelectorAll(`#ob${i} .obj-lang-tab`).forEach((t,j)=>t.classList.toggle('active',(j===0&&l==='en')||(j===1&&l==='te')));}
+
+// ===== NAVIGATION =====
+const screenMeta = {
+  dashboard:{title:'Good Morning, Bala Garu 🙏'},
+  customers:{title:'All Customers'},
+  profile:{title:'Customer Profile'},
+  addcustomer:{title:'Add New Customer'},
+  messages:{title:'AI Message Generator'},
+  ai:{title:'AI Assistant'},
+  objections:{title:'Objection Handling'}
+};
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+  const el = document.getElementById('screen-'+name);
+  if (el) el.classList.add('active');
+  const meta = screenMeta[name]||{};
+  document.getElementById('topbar-title').textContent = meta.title||name;
+  document.querySelectorAll('.nav-item').forEach(i=>{if(i.getAttribute('onclick')===`showScreen('${name}')`)i.classList.add('active');});
+}
+
+// ===== MODALS =====
+function openModal(id){const m=document.getElementById('modal-'+id);if(m)m.classList.add('open');}
+function closeModal(id){const m=document.getElementById('modal-'+id);if(m)m.classList.remove('open');}
+document.querySelectorAll('.modal-backdrop').forEach(b=>b.addEventListener('click',e=>{if(e.target===b)b.classList.remove('open');}));
+
+// ===== LOADING =====
+function showLoading(msg){const o=document.getElementById('loading-overlay');const t=o.querySelector('.loading-text');if(t)t.textContent=msg||'Loading...';o.style.display='flex';}
+function hideLoading(){document.getElementById('loading-overlay').style.display='none';}
+
+// ===== TOAST =====
+let tt;
+function showToast(text){const t=document.getElementById('toast'),te=document.getElementById('toast-text');if(!t||!te)return;te.textContent=text;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),3500);}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', async () => {
+  renderObjections();
+  renderChat();
+  await loadCustomers();
+});
+</script>
+</body>
+</html>
