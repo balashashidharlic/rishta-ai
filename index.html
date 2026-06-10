@@ -1487,6 +1487,7 @@ async function boot() {
   await loadAll();
 }
 document.addEventListener('DOMContentLoaded', async () => {
+  hideL();
   if (!sb || SUPABASE_URL.indexOf('PASTE') >= 0) {
     showLogin();
     el_('lerr').textContent = '⚠️ Setup needed: paste your Supabase URL and anon key at the top of this file (search for SUPABASE_URL).';
