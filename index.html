@@ -567,6 +567,22 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
   </div>
 </div>
 
+<!-- QUICK COMPOSE MODAL -->
+<div class="mb" id="MB-compose">
+  <div class="mo">
+    <div class="mh"><h3 id="cmptitle">📲 Edit & Send</h3><button class="mx" onclick="closeM('compose')">×</button></div>
+    <div class="mbody">
+      <div style="font-size:11px;color:var(--t3);margin-bottom:8px">Edit the message below — it opens in WhatsApp exactly as you draft it.</div>
+      <textarea id="cmptxt" class="fi" style="width:100%;min-height:240px;line-height:1.6;font-size:12.5px;resize:vertical"></textarea>
+    </div>
+    <div class="mf">
+      <button class="btn bg" onclick="copyCompose()" style="margin-right:auto">📋 Copy</button>
+      <button class="btn bg" onclick="closeM('compose')">Cancel</button>
+      <button class="btn bp" onclick="sendCompose()">📲 Send via WhatsApp</button>
+    </div>
+  </div>
+</div>
+
 <!-- TEAM MEMBER MODAL -->
 <div class="mb" id="MB-member">
   <div class="mo">
@@ -1139,13 +1155,13 @@ function genMsg() {
   const tmpl = MT[ty?ty.value:'followup'] || MT.followup;
   const lang = la ? la.value : 'telugu';
   const txt = lang==='english' ? tmpl.en(c) : lang==='bilingual' ? tmpl.te(c)+'\n\n━━━━━━━━━━\n\n'+tmpl.en(c) : tmpl.te(c);
-  pr.innerHTML = `<div class="mpb"><div class="mpl">Message for: ${c.name}${c.phone?' · 📞 '+c.phone:''}</div><div class="mpt" id="msgtxt">${txt}</div></div>`;
+  pr.innerHTML = `<div class="mpb"><div class="mpl">Message for: ${c.name}${c.phone?' · 📞 '+c.phone:''} <span style="color:var(--teal);font-weight:400">— edit freely below, then send</span></div><textarea id="msgtxt" class="fi" style="width:100%;min-height:230px;margin-top:8px;line-height:1.6;font-size:12.5px;resize:vertical">${esc(txt)}</textarea></div>`;
 }
 
 function copyM() {
   const e = el_('msgtxt');
   if (!e) { showT('⚠️ Generate a message first'); return; }
-  navigator.clipboard.writeText(e.textContent).then(()=>showT('📋 Copied to clipboard!'));
+  navigator.clipboard.writeText(e.value).then(()=>showT('📋 Copied to clipboard!'));
 }
 
 function sendWA() {
@@ -1156,7 +1172,7 @@ function sendWA() {
   const c = (!isNaN(idx)&&DB[idx]) ? DB[idx] : null;
   const ph = c ? (c.phone||'').replace(/\D/g,'').slice(-10) : '';
   if (ph && ph.length===10) {
-    window.open('https://wa.me/91'+ph+'?text='+encodeURIComponent(e.textContent), '_blank');
+    window.open('https://wa.me/91'+ph+'?text='+encodeURIComponent(e.value), '_blank');
     showT('📱 Opening WhatsApp for '+c.name);
   } else {
     showT('⚠️ Please save a valid 10-digit phone number first');
@@ -1553,15 +1569,31 @@ function smartRow(x, sub, col, rank) {
   const cc = getCol(x.c.name||'');
   return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b);cursor:pointer" onclick="openProf(${x.i})">${rank?`<div style="width:18px;font-size:11px;color:var(--t3);font-weight:700">${rank}</div>`:''}<div style="width:30px;height:30px;border-radius:50%;background:${cc.bg};color:${cc.tc};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">${ini(x.c.name)}</div><div style="flex:1"><div style="font-size:12.5px;font-weight:700">${esc(x.c.name)}</div><div style="font-size:10.5px;color:${col}">${sub}</div></div><i class="ti ti-chevron-right" style="color:var(--t3)"></i></div>`;
 }
+let CMP_PHONE = '';
+function openCompose(title, phone, text) {
+  CMP_PHONE = phone || '';
+  el_('cmptitle').textContent = '\U0001f4f2 ' + title;
+  el_('cmptxt').value = text;
+  openM('compose');
+}
+function sendCompose() {
+  const txt = el_('cmptxt').value.trim();
+  if (!txt) { showT('\u26a0\ufe0f Message is empty'); return; }
+  if (CMP_PHONE.length !== 10) { showT('\u26a0\ufe0f No valid phone number saved'); return; }
+  window.open('https://wa.me/91' + CMP_PHONE + '?text=' + encodeURIComponent(txt), '_blank');
+  closeM('compose');
+  showT('\U0001f4f2 Opening WhatsApp...');
+}
+function copyCompose() {
+  navigator.clipboard.writeText(el_('cmptxt').value).then(()=>showT('\U0001f4cb Copied!'));
+}
 function waRemind(i, kind) {
   const c = DB[i]; if (!c) return;
   const ph = String(c.phone||'').replace(/\D/g,'').slice(-10);
   if (ph.length !== 10) { showT('\u26a0\ufe0f No valid phone number for ' + c.name); return; }
   const lang = /english/i.test(c.language||'') && !/telugu/i.test(c.language||'') ? 'en' : 'te';
-  const tpl = kind === 'mat' ? MSGS.maturity : MSGS.premium;
-  const msg = tpl[lang](c);
-  window.open('https://wa.me/91' + ph + '?text=' + encodeURIComponent(msg), '_blank');
-  showT('\U0001f4f2 WhatsApp opened for ' + c.name);
+  const tpl = kind === 'mat' ? MT.maturity : MT.premium;
+  openCompose((kind==='mat'?'Congratulate ':'Remind ') + c.name, ph, tpl[lang](c));
 }
 
 function renderSmart() {
@@ -1694,9 +1726,9 @@ async function convertLead(id) {
 function waLead(id) {
   const l = LEADS.find(x => x.id === id); if (!l) return;
   const ph = String(l.phone||'').replace(/\D/g,'').slice(-10);
-  if (ph.length !== 10) { showT('⚠️ No valid phone for ' + l.name); return; }
-  const msg = `Namaste ${l.name} Garu 🙏\n\nNenu Bala Shashidhar, LIC Advisor, Anantapur.\n\n${l.interest && l.interest!=='Not sure yet' ? l.interest + ' gurinchi meeru adigina vishayam meeda konni manchi options unnayi.' : 'Mee family financial security gurinchi oka chinna conversation ki time istaaraa?'}\n\nMee veelu unnappudu matladudaam — emi pressure ledu 🙏\n\nBala Shashidhar\n📞 98765 43210`;
-  window.open('https://wa.me/91' + ph + '?text=' + encodeURIComponent(msg), '_blank');
+  if (ph.length !== 10) { showT('\u26a0\ufe0f No valid phone for ' + l.name); return; }
+  const msg = `Namaste ${l.name} Garu \U0001f64f\n\nNenu Bala Shashidhar, LIC Advisor, Anantapur.\n\n${l.interest && l.interest!=='Not sure yet' ? l.interest + ' gurinchi meeru adigina vishayam meeda konni manchi options unnayi.' : 'Mee family financial security gurinchi oka chinna conversation ki time istaaraa?'}\n\nMee veelu unnappudu matladudaam \u2014 emi pressure ledu \U0001f64f\n\nBala Shashidhar\n\U0001f4de 98765 43210`;
+  openCompose('Message ' + l.name, ph, msg);
 }
 function renderLeads() {
   const ll = el_('leadlist'); if (!ll) return;
