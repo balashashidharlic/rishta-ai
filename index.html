@@ -251,6 +251,11 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
 .tks{color:var(--gold);font-size:9px;flex-shrink:0}
 
 /* ============ PREMIUM REFINEMENT LAYER ============ */
+/* HARD-LOCK SIDEBAR: position:fixed is immune to the overflow-x:hidden
+   on body that silently breaks position:sticky */
+.sb{position:fixed!important;left:0;top:0;bottom:0;height:100vh;z-index:90}
+.mn{margin-left:220px;min-width:0}
+@media(max-width:680px){.mn{margin-left:54px}}
 .sb::-webkit-scrollbar{width:3px}
 .sb::-webkit-scrollbar-thumb{background:rgba(240,180,41,0.15);border-radius:3px}
 /* VISION BOARD */
@@ -259,6 +264,15 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
 .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
 .vmini{display:flex;gap:26px;flex-wrap:wrap;align-items:center;padding:16px 24px;background:var(--card);border:1px solid var(--b);border-radius:16px;cursor:pointer;transition:border-color .25s}
 .vmini:hover{border-color:rgba(240,180,41,0.3)}
+.vcard.vimg{position:relative;overflow:hidden;min-height:150px;border:none}
+.vcard.vimg::before{content:'';position:absolute;inset:0;background:var(--gimg) center/cover no-repeat;z-index:0;transition:transform .4s ease}
+.vcard.vimg:hover::before{transform:scale(1.04)}
+.vcard.vimg::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,12,22,0.88) 30%,rgba(7,12,22,0.45));z-index:1}
+.vcard.vimg>*{position:relative;z-index:2}
+.vpre{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 4px}
+.vpre img{width:52px;height:38px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .2s;opacity:0.75}
+.vpre img:hover{opacity:1;transform:scale(1.06)}
+.vpre img.sel{border-color:var(--gold);opacity:1}
 /* Editorial panel headers: quiet, spaced, confident */
 .pt{font-size:10.5px!important;letter-spacing:1.8px;text-transform:uppercase;color:var(--t3);font-weight:800;font-family:'Sora','Noto Sans Telugu',sans-serif}
 /* Breathing room */
@@ -542,6 +556,7 @@ body::after{content:'';position:fixed;inset:-20%;pointer-events:none;z-index:0;b
             <div class="fr"><div class="fg"><label class="fl">Target (₹)</label><input class="fi" id="vtar" type="number" min="0" placeholder="e.g. 5000000"/></div><div class="fg"><label class="fl">Reached So Far (₹)</label><input class="fi" id="vcur" type="number" min="0" value="0"/></div></div>
             <div class="fg"><label class="fl">Target Date</label><input class="fi" id="vdl" type="date"/></div>
             <div class="fg"><label class="fl">Why this matters (one line)</label><input class="fi" id="vmo" placeholder="e.g. Every family protected takes me closer."/></div>
+            <div class="fg"><label class="fl">Goal Image (optional)</label><input class="fi" id="vimg" placeholder="paste any image URL, or pick below"/><div class="vpre" id="vpre"></div></div>
             <button class="btn bp" onclick="addGoal()" style="width:100%;justify-content:center">Add to My Vision</button>
             <div style="font-size:10px;color:var(--t3);margin-top:10px">Ideas: 🏆 MDRT Qualification · 🏠 House · 🚗 Car · ✈️ Family Trip · 💰 ₹1 Crore Wealth · 🎓 Children's Education</div>
           </div>
@@ -688,6 +703,7 @@ body::after{content:'';position:fixed;inset:-20%;pointer-events:none;z-index:0;b
       <div class="fr"><div class="fg"><label class="fl">Target (₹)</label><input class="fi" id="gvtar" type="number" min="0"/></div><div class="fg"><label class="fl">Reached So Far (₹)</label><input class="fi" id="gvcur" type="number" min="0"/></div></div>
       <div class="fg"><label class="fl">Target Date</label><input class="fi" id="gvdl" type="date"/></div>
       <div class="fg"><label class="fl">Why this matters</label><input class="fi" id="gvmo"/></div>
+      <div class="fg"><label class="fl">Goal Image (optional)</label><input class="fi" id="gvimg" placeholder="paste any image URL, or pick below"/><div class="vpre" id="gvpre"></div></div>
     </div>
     <div class="mf"><button class="btn bd" onclick="delGoal()" style="margin-right:auto">Remove</button><button class="btn bg" onclick="closeM('goal')">Cancel</button><button class="btn bp" onclick="saveGoal()">Save</button></div>
   </div>
@@ -1970,6 +1986,26 @@ function renderRefChamps() {
 
 // =============== VISION BOARD ===============
 let GOALS = [], GID = null, UID = null;
+// Curated dream-image library served from YOUR GitHub repo.
+// Create a folder named  goals  next to index.html and upload
+// images with these exact names (jpg). Add more lines anytime.
+const GOAL_IMAGES = [
+  ['goals/house.jpg',     'House'],
+  ['goals/car.jpg',       'Car'],
+  ['goals/travel.jpg',    'Travel'],
+  ['goals/wealth.jpg',    'Wealth'],
+  ['goals/education.jpg', 'Education'],
+  ['goals/mdrt.jpg',      'MDRT'],
+  ['goals/office.jpg',    'Office'],
+  ['goals/family.jpg',    'Family']
+];
+function fillPresets(preId, inputId) {
+  const pre = el_(preId); if (!pre || pre.dataset.done) return;
+  pre.dataset.done = '1';
+  pre.innerHTML = GOAL_IMAGES.map(([u, t]) =>
+    `<img src="${u}" title="${t}" loading="lazy" onerror="this.remove()" onclick="el_('${inputId}').value='${u}';this.parentNode.querySelectorAll('img').forEach(i=>i.classList.remove('sel'));this.classList.add('sel')"/>`
+  ).join('');
+}
 function gpct(g) { const t = parseFloat(g.target_amount)||0; return t > 0 ? Math.min(100, (parseFloat(g.current_amount)||0)/t*100) : 0; }
 function ring(pct, size) {
   size = size || 64;
@@ -1985,10 +2021,12 @@ async function loadGoals() {
 function myGoals() { return GOALS.filter(g => g.advisor_id === UID); }
 function renderVision() {
   const vl = el_('vlist'); if (!vl) return;
+  fillPresets('vpre', 'vimg');
   const gs = myGoals();
   vl.innerHTML = gs.length ? gs.map(g => {
     const dl = g.deadline ? Math.ceil((new Date(g.deadline) - Date.now())/86400000) : null;
-    return `<div class="vcard" onclick="openGoal('${g.id}')">
+    const hasImg = g.image_url && g.image_url.trim();
+    return `<div class="vcard${hasImg?' vimg':''}" ${hasImg?`style="--gimg:url('${esc(g.image_url)}')"`:''} onclick="openGoal('${g.id}')">
       ${ring(gpct(g), 68)}
       <div style="flex:1;min-width:0">
         <div style="font-size:22px;line-height:1">${esc(g.emoji||'\ud83c\udfaf')}</div>
@@ -2005,7 +2043,7 @@ function renderVisionMini() {
   if (!gs.length) { vm.innerHTML = ''; return; }
   vm.innerHTML = `<div class="vmini" onclick="go('vision')">
     <div style="font-size:10.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--t3);font-weight:800;font-family:'Sora',sans-serif;flex-shrink:0">Your Bigger Vision</div>
-    ${gs.map(g => `<div style="display:flex;align-items:center;gap:10px">${ring(gpct(g), 46)}<div><div style="font-size:12px;font-weight:700">${esc(g.emoji||'')} ${esc(g.title)}</div><div style="font-size:10px;color:var(--t3)">${fmtINR(g.current_amount)} / ${fmtINR(g.target_amount)}</div></div></div>`).join('')}
+    ${gs.map(g => `<div style="display:flex;align-items:center;gap:10px">${g.image_url?`<img src="${esc(g.image_url)}" onerror="this.remove()" style="width:46px;height:46px;object-fit:cover;border-radius:12px;flex-shrink:0"/>`:''}${ring(gpct(g), 46)}<div><div style="font-size:12px;font-weight:700">${esc(g.emoji||'')} ${esc(g.title)}</div><div style="font-size:10px;color:var(--t3)">${fmtINR(g.current_amount)} / ${fmtINR(g.target_amount)}</div></div></div>`).join('')}
     <div style="margin-left:auto;font-size:11px;color:var(--gold);flex-shrink:0">View all \u2192</div>
   </div>`;
 }
@@ -2015,10 +2053,12 @@ async function addGoal() {
   const { error } = await sb.from('goals').insert({
     title, emoji: el_('ve').value.trim() || '\ud83c\udfaf',
     target_amount: parseFloat(el_('vtar').value)||0, current_amount: parseFloat(el_('vcur').value)||0,
-    deadline: el_('vdl').value || null, motivation: el_('vmo').value.trim()
+    deadline: el_('vdl').value || null, motivation: el_('vmo').value.trim(),
+    image_url: el_('vimg').value.trim()
   });
   if (error) { showT('\u274c ' + error.message); return; }
-  ['vt','ve','vtar','vdl','vmo'].forEach(id => { const e = el_(id); if (e) e.value = ''; });
+  ['vt','ve','vtar','vdl','vmo','vimg'].forEach(id => { const e = el_(id); if (e) e.value = ''; });
+  const vp = el_('vpre'); if (vp) vp.querySelectorAll('img').forEach(i=>i.classList.remove('sel'));
   el_('vcur').value = 0;
   showT('\u2728 Goal added \u2014 now go build it!');
   loadGoals();
@@ -2029,6 +2069,8 @@ function openGoal(id) {
   el_('gve').value = g.emoji||''; el_('gvt').value = g.title||'';
   el_('gvtar').value = parseFloat(g.target_amount)||0; el_('gvcur').value = parseFloat(g.current_amount)||0;
   el_('gvdl').value = g.deadline||''; el_('gvmo').value = g.motivation||'';
+  el_('gvimg').value = g.image_url||'';
+  fillPresets('gvpre', 'gvimg');
   openM('goal');
 }
 async function saveGoal() {
@@ -2038,7 +2080,7 @@ async function saveGoal() {
   const { error } = await sb.from('goals').update({
     title, emoji: el_('gve').value.trim(), target_amount: parseFloat(el_('gvtar').value)||0,
     current_amount: parseFloat(el_('gvcur').value)||0, deadline: el_('gvdl').value || null,
-    motivation: el_('gvmo').value.trim()
+    motivation: el_('gvmo').value.trim(), image_url: el_('gvimg').value.trim()
   }).eq('id', GID);
   if (error) { showT('\u274c ' + error.message); return; }
   closeM('goal');
