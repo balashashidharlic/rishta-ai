@@ -319,7 +319,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
 .tkids{margin:8px 0 4px 19px;padding-left:20px;border-left:2px dashed rgba(240,180,41,0.22)}
 
 @media(max-width:900px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:1fr 1fr}.tgrid{grid-template-columns:1fr}}
-@media(max-width:680px){.sb{width:54px;min-width:54px}.sb .ni span,.sb .logo-t,.sb .logo-s,.sb .logo-v,.sb .an,.sb .ar{display:none}.g2,.cgrid,.fr{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}.tchips{margin-left:0;width:100%}.tkl span{display:none}}
+@media(max-width:680px){.sb{width:54px;min-width:54px}.sb .ni span,.sb .logo-t,.sb .logo-s,.sb .logo-v,.sb .an,.sb .ar,.sb .nl{display:none}.sb .acard{flex-direction:column;padding:8px 4px;gap:8px;align-items:center}.tt{font-size:15.5px}.g2,.cgrid,.fr{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}.tchips{margin-left:0;width:100%}.tkl span{display:none}}
 </style>
 </head>
 <body>
@@ -382,7 +382,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
 
 <div class="mn">
   <div class="tb">
-    <div><div class="tt" id="TT">Relationship Intelligence Universe 🌌</div><div class="ts" id="TS">Loading...</div></div>
+    <div><div class="tt" id="TT">Your Relationship Universe</div><div class="ts" id="TS">Loading...</div></div>
     <div class="ta">
       <button class="btn bg" onclick="loadAll()"><i class="ti ti-refresh"></i> Sync</button>
       <button class="btn bp" onclick="go('addcustomer')"><i class="ti ti-plus"></i> Add Customer</button>
@@ -1448,7 +1448,7 @@ function olang(i,l){el_('oen'+i).style.display=l==='en'?'block':'none';el_('ote'
 // NAVIGATION
 // ============================================================
 const TITLES = {
-  dashboard:'Relationship Intelligence Universe 🌌',
+  dashboard:'Your Relationship Universe',
   customers:'Customer Universe',
   profile:'Customer Intelligence Profile',
   addcustomer:'Add New Soul ✨',
