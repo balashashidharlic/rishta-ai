@@ -250,6 +250,30 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
 .tki{font-size:11.5px;color:var(--t2);flex-shrink:0}
 .tks{color:var(--gold);font-size:9px;flex-shrink:0}
 
+/* ============ PREMIUM REFINEMENT LAYER ============ */
+/* Editorial panel headers: quiet, spaced, confident */
+.pt{font-size:10.5px!important;letter-spacing:1.8px;text-transform:uppercase;color:var(--t3);font-weight:800;font-family:'Sora','Noto Sans Telugu',sans-serif}
+/* Breathing room */
+.con{padding:30px 34px}
+.pb{padding:22px 26px}
+.ph{padding:18px 26px 6px;border-bottom:none}
+.p{margin-bottom:22px;border-color:rgba(255,255,255,0.055)}
+.sc2{padding:22px 24px}
+.g2,.g3,.g4{gap:18px}
+.tt{font-size:19px}
+/* Calm surfaces: soften decorations */
+.sc2::before{background:linear-gradient(90deg,rgba(240,180,41,0.45),transparent)!important}
+/* Gentle motion */
+.sc.on{animation:scfade .35s ease}
+@keyframes scfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.p,.sc2,.cc,.tnc{transition:border-color .25s ease, transform .25s ease, box-shadow .25s ease}
+.p:hover{border-color:rgba(240,180,41,0.18)}
+/* Ambient gold haze, very slow, very subtle */
+body::after{content:'';position:fixed;inset:-20%;pointer-events:none;z-index:0;background:radial-gradient(600px 400px at 70% 20%,rgba(240,180,41,0.045),transparent 70%);animation:haze 36s ease-in-out infinite alternate}
+@keyframes haze{from{transform:translate(0,0)}to{transform:translate(-6%,8%)}}
+.sb,.mn{position:relative;z-index:1}
+@media(max-width:680px){.con{padding:18px 14px}.pb{padding:16px 16px}.ph{padding:14px 16px 4px}}
+
 /* LOGIN */
 .lgw{position:fixed;inset:0;background:radial-gradient(900px 600px at 75% 20%,rgba(240,180,41,0.08),transparent 60%),var(--bg);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px}
 .lgc{width:100%;max-width:380px;background:var(--card);border:1px solid var(--b);border-radius:18px;padding:34px 30px;box-shadow:0 30px 70px -30px rgba(0,0,0,0.8)}
@@ -324,9 +348,9 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
   <div class="ni" id="nav-team" onclick="go('team')"><i class="ti ti-sitemap" style="font-size:15px;width:18px;text-align:center"></i><span>My Team</span><div class="nbadge" id="tcount" style="background:var(--teal)">0</div></div>
   <div class="ni" id="nav-messages" onclick="go('messages')"><i class="ti ti-message-circle" style="font-size:15px;width:18px;text-align:center"></i><span>Messages</span></div>
   <div class="nl">Intelligence</div>
-  <div class="ni" id="nav-ai" onclick="go('ai')"><i class="ti ti-brain" style="font-size:15px;width:18px;text-align:center"></i><span>Jarvis AI</span><div class="nbadge" id="jcount" style="background:var(--purple)">0</div></div>
+  <div class="ni" id="nav-ai" onclick="go('ai')"><i class="ti ti-brain" style="font-size:15px;width:18px;text-align:center"></i><span>Briefing</span><div class="nbadge" id="jcount" style="background:var(--purple)">0</div></div>
   <div class="ni" id="nav-objections" onclick="go('objections')"><i class="ti ti-shield" style="font-size:15px;width:18px;text-align:center"></i><span>Objections</span></div>
-  <div class="ni" id="nav-universe" onclick="go('universe')"><i class="ti ti-circle-dot" style="font-size:15px;width:18px;text-align:center"></i><span>Galaxy Map</span></div>
+  <div class="ni" id="nav-universe" onclick="go('universe')"><i class="ti ti-circle-dot" style="font-size:15px;width:18px;text-align:center"></i><span>Universe</span></div>
   <div class="sbbot">
     <div class="acard"><div class="aav" id="aav2">AD</div><div style="flex:1"><div class="an" id="aname">Advisor</div><div class="ar" id="arole">LIC Advisor</div></div><i class="ti ti-logout" onclick="doLogout()" title="Sign Out" style="cursor:pointer;color:var(--coral);font-size:16px;padding:4px"></i></div>
   </div>
@@ -342,7 +366,7 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
   </div>
 
   <div class="tk">
-    <div class="tkl"><div class="tkdot"></div><span>Jarvis Radar</span></div>
+    <div class="tkl"><div class="tkdot"></div><span>Today</span></div>
     <div class="tkv"><div class="tkt" id="tktrack"></div></div>
   </div>
 
@@ -350,9 +374,7 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
 
     <!-- DASHBOARD -->
     <div class="sc on" id="sc-dashboard">
-      <div class="p" style="border-color:rgba(240,180,41,0.35);background:linear-gradient(135deg,rgba(240,180,41,0.07),rgba(18,196,153,0.04))">
-        <div class="pb" id="missionp"></div>
-      </div>
+      <div style="margin-bottom:26px" id="missionp"></div>
       <div class="p" style="margin-bottom:16px;border-color:rgba(167,139,250,0.2)">
         <div class="ph"><div class="pt">🌤️ Today's Relationship Climate</div><div class="pa" onclick="go('customers')">View all →</div></div>
         <div class="pb">
@@ -368,16 +390,16 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
         <div class="sc2 sg" onclick="go('customers')"><div class="sl">Total Families</div><div class="sv" id="s1" style="color:var(--gold)">0</div><div class="sd">In your universe</div></div>
         <div class="sc2 st"><div class="sl">Avg Trust Score</div><div class="sv" id="s2" style="color:var(--teal)">0</div><div class="sd">Relationship strength</div></div>
         <div class="sc2" style="border-color:rgba(167,139,250,0.15)"><div class="sl">Champions</div><div class="sv" id="s3" style="color:var(--purple)">0</div><div class="sd">Trust score 75+</div></div>
-        <div class="sc2 sr" onclick="go('ai')"><div class="sl">Jarvis Alerts</div><div class="sv" id="s4" style="color:var(--coral)">0</div><div class="sd">Need attention</div></div>
+        <div class="sc2 sr" onclick="go('ai')"><div class="sl">Needs Attention</div><div class="sv" id="s4" style="color:var(--coral)">0</div><div class="sd">Need attention</div></div>
       </div>
       <div class="g2">
-        <div class="p" style="border-color:rgba(224,92,58,0.25)"><div class="ph"><div class="pt">🚨 Drifting Relationships — 45+ days quiet</div></div><div class="pb" id="driftlist"></div></div>
-        <div class="p" style="border-color:rgba(240,180,41,0.25)"><div class="ph"><div class="pt">🎯 This Week's Focus — top 12</div></div><div class="pb" id="focuslist"></div></div>
+        <div class="p"><div class="ph"><div class="pt">Needs Reconnection</div></div><div class="pb" id="driftlist"></div></div>
+        <div class="p"><div class="ph"><div class="pt">Focus Customers</div></div><div class="pb" id="focuslist"></div></div>
       </div>
-      <div class="p" style="border-color:rgba(18,196,153,0.25)"><div class="ph"><div class="pt">📜 Policy Radar — premiums due & maturities</div></div><div class="pb" id="polradar"></div></div>
-      <div class="p" style="border-color:rgba(167,139,250,0.25)"><div class="ph"><div class="pt">⭐ Referral Champions — who builds your business</div></div><div class="pb" id="refchamps"></div></div>
-      <div class="p" style="margin-bottom:16px;border-color:rgba(167,139,250,0.2)">
-        <div class="ph"><div class="pt">⚡ Jarvis Autonomous Insights</div><div class="pa" onclick="go('ai')">Ask Jarvis →</div></div>
+      <div class="p"><div class="ph"><div class="pt">Premiums Requiring Attention</div></div><div class="pb" id="polradar"></div></div>
+      <div class="p"><div class="ph"><div class="pt">Referral Champions</div></div><div class="pb" id="refchamps"></div></div>
+      <div class="p" style="margin-bottom:16px">
+        <div class="ph"><div class="pt">Advisor Briefing</div><div class="pa" onclick="go('ai')">Open briefing →</div></div>
         <div class="pb" id="jinsd"><div class="empty"><div class="eicon">⚡</div><div class="etit">Loading intelligence...</div></div></div>
       </div>
       <div class="g2">
@@ -472,7 +494,7 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
     <!-- AI JARVIS -->
     <div class="sc" id="sc-ai">
       <div class="p" style="margin-bottom:16px;border-color:rgba(167,139,250,0.2)">
-        <div class="ph"><div class="pt">⚡ Jarvis — Full Intelligence Report</div></div>
+        <div class="ph"><div class="pt">Advisor Briefing — Full Report</div></div>
         <div class="pb" id="jfull"></div>
       </div>
       <div class="cha" id="chat"></div>
@@ -485,7 +507,7 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
         <div class="qp" onclick="ask('Give me full universe summary')">📊 Summary</div>
       </div>
       <div class="cia">
-        <textarea class="cin" id="cinp" rows="1" placeholder="Ask Jarvis anything..." onkeydown="hkey(event)"></textarea>
+        <textarea class="cin" id="cinp" rows="1" placeholder="Ask anything about your customers..." onkeydown="hkey(event)"></textarea>
         <button class="csb" onclick="ask()">↑</button>
       </div>
     </div>
@@ -737,7 +759,7 @@ function getInsights() {
 
 function renderJarvisInsights() {
   const el = el_('jinsd'); if (!el) return;
-  if (!DB.length) { el.innerHTML = empty('⚡','Add customers to activate Jarvis intelligence'); return; }
+  if (!DB.length) { el.innerHTML = empty('⚡','Add customers to activate your briefing'); return; }
   const ins = getInsights();
   el.innerHTML = ins.slice(0,3).map(i => `
     <div class="jc">
@@ -1247,7 +1269,7 @@ function qmsg(idx, type) {
 // ============================================================
 function renderJarvisFull() {
   const el = el_('jfull'); if (!el) return;
-  if (!DB.length) { el.innerHTML = empty('⚡','Add customers to activate Jarvis'); return; }
+  if (!DB.length) { el.innerHTML = empty('⚡','Add customers to activate your briefing'); return; }
   const ins = getInsights();
   el.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">' +
     ins.slice(0,6).map(i=>`<div class="jc"><div class="ju ${i.level==='h'?'jh':i.level==='m'?'jm':'jl'}">${i.level==='h'?'🔴 Urgent':i.level==='m'?'🟡 Important':'🟢 Opportunity'}</div><div class="jn">${i.name}</div><div class="ji" style="font-size:11px">${i.txt}</div><div class="jp">${i.tag}</div></div>`).join('') + '</div>';
@@ -1292,7 +1314,7 @@ function renderU() {
 // ============================================================
 // AI CHAT
 // ============================================================
-let CH = [{r:'ai',t:'Namaste! 🙏\n\nNenu mee Jarvis AI — Relationship Intelligence.\n\nMee customers digital souls, emotional maps, family graphs — anni analyze chestanu.\n\nEmi kanaleddu?'}];
+let CH = [{r:'ai',t:'Namaste! 🙏\n\nNenu mee Rishta assistant — Relationship Intelligence.\n\nMee customers digital souls, emotional maps, family graphs — anni analyze chestanu.\n\nEmi kanaleddu?'}];
 function renderChat() {
   const c = el_('chat'); if (!c) return;
   c.innerHTML = CH.map(m=>`<div class="mr ${m.r==='u'?'u':''}"><div class="mav ${m.r==='u'?'u':'ai'}">${m.r==='u'?PROF.ini:'⚡'}</div><div class="mbu ${m.r==='u'?'u':'ai'}">${m.t}</div></div>`).join('');
@@ -1309,7 +1331,7 @@ function ask(pre) {
   if (tl.includes('call')||tl.includes('today')||tl.includes('who')) {
     const low = DB.filter(c=>parseInt(c.trust_score||50)<50).sort((a,b)=>parseInt(a.trust_score)-parseInt(b.trust_score));
     r = low.length > 0
-      ? '📞 Jarvis Priority Call List:\n\n'+low.map((c,i)=>`${i+1}. ${c.name}\n   📞 ${c.phone||'No phone'}\n   Trust: ${c.trust_score}/100\n   Soul: ${soulMini(c)}`).join('\n\n')+'\n\n⚡ Start with lowest trust first!'
+      ? '📞 Priority Call List:\n\n'+low.map((c,i)=>`${i+1}. ${c.name}\n   📞 ${c.phone||'No phone'}\n   Trust: ${c.trust_score}/100\n   Soul: ${soulMini(c)}`).join('\n\n')+'\n\n⚡ Start with lowest trust first!'
       : '✅ All customers have decent trust scores! Focus on referral conversations with your 75+ trust champions.';
   } else if (tl.includes('soul')) {
     r = DB.length ? '🧠 Digital Soul is available for every customer profile.\n\nOpen any customer → see their Digital Soul, Emotional Journey, Life Stage Cinematic and Family Graph.\n\nTop personality in your universe:\n'+DB.slice(0,3).map(c=>`• ${c.name} — ${parseInt(c.trust_score||50)>=70?'Loyal & Trusting':'Cautious Observer'}`).join('\n') : 'Add customers first!';
@@ -1331,7 +1353,7 @@ function ask(pre) {
     const avg = DB.length ? Math.round(DB.reduce((s,c)=>s+parseInt(c.trust_score||50),0)/DB.length) : 0;
     r = `📊 Universe Summary:\n\n🌌 Total: ${DB.length} customers\n⭐ Champions: ${h.length}${h.length?'\n'+h.map(c=>'   • '+c.name).join('\n'):''}\n⚠️ Need attention: ${l.length}${l.length?'\n'+l.map(c=>'   • '+c.name+' ('+c.trust_score+')').join('\n'):''}\n🌡️ Avg Trust: ${avg}/100\n\n⚡ ${l.length?'Priority: Call '+l[0].name+' first.':'Focus on referral conversations with champions!'}`;
   } else {
-    r = `⚡ Jarvis here.\n\nMee universe lo ${DB.length} customers unnaru.\n\nNenu help cheyagalanu:\n📞 Who to call today\n🧠 Digital Soul\n🌡️ Financial stress\n👨‍👩‍👧 Family opportunities\n💬 Objection handling\n📊 Universe summary\n\nEmi kanaleddu?`;
+    r = `⚡ Rishta assistant here.\n\nMee universe lo ${DB.length} customers unnaru.\n\nNenu help cheyagalanu:\n📞 Who to call today\n🧠 Digital Soul\n🌡️ Financial stress\n👨‍👩‍👧 Family opportunities\n💬 Objection handling\n📊 Universe summary\n\nEmi kanaleddu?`;
   }
   setTimeout(()=>{ CH.push({r:'ai',t:r}); renderChat(); }, 600);
 }
@@ -1362,13 +1384,13 @@ const TITLES = {
   profile:'Customer Intelligence Profile',
   addcustomer:'Add New Soul ✨',
   messages:'AI Message Generator 🪄',
-  ai:'Jarvis — Autonomous Intelligence ⚡',
+  ai:'Advisor Briefing — Intelligence & Assistant',
   objections:'Objection Intelligence Scripts 🛡️',
   team:'My Team — Downline Network 🌿',
   leads:'Lead Pipeline — Future Customers 🎯',
   settings:'My Profile & Settings ⚙️',
   admin:'Admin — Approvals & Audit 🛡️',
-  universe:'Relationship Galaxy Map 🌌'
+  universe:'Your Relationship Universe'
 };
 function go(name) {
   document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
@@ -1657,10 +1679,10 @@ function renderSmart() {
   const dr = el_('driftlist'), fo = el_('focuslist');
   if (!dr || !fo) return;
   const scored = DB.map((c,i) => { const t = parseInt(c.trust_score)||50; const ds = daysSince(lastTouch(c)); return { c, i, t, ds, score: (100-t) + Math.min(ds, 90) }; });
-  const drift = scored.filter(x => x.ds >= 45 && x.t < 70).sort((a,b) => b.ds - a.ds).slice(0,8);
+  const drift = scored.filter(x => x.ds >= 45 && x.t < 70).sort((a,b) => b.ds - a.ds).slice(0,5);
   dr.innerHTML = drift.length ? drift.map(x => smartRow(x, `${x.ds} days quiet · trust ${x.t} — a no-sales check-in call`, 'var(--coral)')).join('') : '<div style="font-size:12px;color:var(--t3);padding:6px 0">No one is drifting — every relationship touched within 45 days 💛</div>';
-  const focus = [...scored].sort((a,b) => b.score - a.score).slice(0,12);
-  fo.innerHTML = focus.length ? focus.map((x,n) => smartRow(x, `trust ${x.t} · ${x.ds}d since contact`, 'var(--gold)', n+1)).join('') : '<div style="font-size:12px;color:var(--t3);padding:6px 0">Add customers to see your weekly priority list.</div>';
+  const focus = [...scored].sort((a,b) => b.score - a.score).slice(0,5);
+  fo.innerHTML = focus.length ? focus.map((x,n) => smartRow(x, `trust ${x.t} · last contact ${x.ds} days ago`, 'var(--gold)', n+1)).join('') : '<div style="font-size:12px;color:var(--t3);padding:6px 0">Add customers to see your weekly priority list.</div>';
   const pr = el_('polradar');
   if (pr) {
     const dTo = ds => { if (!ds) return null; const d = new Date(ds); return isNaN(d) ? null : Math.ceil((d - Date.now())/86400000); };
@@ -1842,19 +1864,35 @@ function renderMission() {
     if (c.children && !c.policy_no && !c.plan_name) oppFam++;
   });
   const folOver = LEADS.filter(l => l.status !== 'Converted' && l.status !== 'Lost' && l.next_follow && dTo(l.next_follow) < 0).length;
-  const chip = (n, label, col, target) => `<div onclick="${target}" style="cursor:pointer;background:var(--card2);border:1px solid var(--b);border-radius:12px;padding:10px 14px;min-width:118px"><div style="font-size:20px;font-weight:800;color:${col};font-family:'Sora',sans-serif">${n}</div><div style="font-size:10px;color:var(--t3);margin-top:2px">${label}</div></div>`;
+  const families = due + claims + bdays;
+  const lines = [];
+  if (families > 0) lines.push(`<b>${families}</b> ${families===1?'family needs':'families need'} your attention today.`);
+  if (dueAmt > 0) lines.push(`<b>${fmtINR(dueAmt)}</b> premium opportunity this month.`);
+  if (drift > 0) lines.push(`<b>${drift}</b> ${drift===1?'relationship needs':'relationships need'} reconnection.`);
+  if (folOver > 0) lines.push(`<b>${folOver}</b> lead follow-up${folOver>1?'s':''} waiting.`);
+  if (!lines.length) lines.push('Your universe is calm. Every relationship is in good hands.');
+  const chip = (n, label, urgent, target) => n > 0 ? `<div onclick="${target}" style="cursor:pointer;display:flex;align-items:baseline;gap:8px;padding:8px 0"><span style="font-family:'Sora',sans-serif;font-size:17px;font-weight:800;color:${urgent?'var(--coral)':'var(--gold)'}">${n}</span><span style="font-size:11.5px;color:var(--t2)">${label}</span></div>` : '';
   mp.innerHTML = `
-    <div style="font-family:'Sora',sans-serif;font-size:17px;font-weight:800;letter-spacing:-0.01em">${greet}, ${PROF.first} Garu 🙏</div>
-    <div style="font-size:11.5px;color:var(--t2);margin:4px 0 14px">Today's mission — ${due+drift+bdays+claims+folOver === 0 ? 'all clear, your universe is calm 💛' : 'here is where your attention matters most:'}</div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      ${chip(due, 'Premiums due (30d)', due?'var(--coral)':'var(--teal)', "go('dashboard');setTimeout(()=>el_('polradar')?.scrollIntoView({behavior:'smooth'}),100)")}
-      ${chip(drift, 'Drifting customers', drift?'var(--gold)':'var(--teal)', "go('dashboard');setTimeout(()=>el_('driftlist')?.scrollIntoView({behavior:'smooth'}),100)")}
-      ${chip(bdays, 'Birthdays this month', 'var(--purple)', "go('customers')")}
-      ${chip(claims, 'Claims in progress', claims?'var(--coral)':'var(--teal)', "go('customers')")}
-      ${chip(folOver, 'Lead follow-ups overdue', folOver?'var(--coral)':'var(--teal)', "go('leads')")}
-      ${chip(oppFam, 'Families, no policy yet', 'var(--gold)', "go('customers')")}
-    </div>
-    ${dueAmt > 0 ? `<div style="font-size:11.5px;color:var(--gold);margin-top:12px;font-weight:700">💰 Premium to collect in next 30 days: ${fmtINR(dueAmt)}</div>` : ''}`;
+    <div style="padding:14px 6px 10px">
+      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:10px">${new Date().toLocaleDateString('en-IN',{weekday:'long', day:'numeric', month:'long'})}</div>
+      <div style="font-family:'Sora',sans-serif;font-size:clamp(22px,4vw,30px);font-weight:800;letter-spacing:-0.02em;line-height:1.15">${greet}, ${PROF.first} Garu</div>
+      <div style="font-size:14px;color:var(--t2);margin:16px 0 22px;line-height:1.9;max-width:560px">${lines.join('<br/>')}</div>
+      <button class="btn bp" onclick="startDay()" style="padding:12px 26px;font-size:13px">Start My Day →</button>
+      <div style="display:flex;gap:26px;flex-wrap:wrap;margin-top:22px;border-top:1px solid var(--b);padding-top:8px">
+        ${chip(due,'premiums due',true,"el_('polradar')?.scrollIntoView({behavior:'smooth',block:'center'})")}
+        ${chip(drift,'need reconnection',false,"el_('driftlist')?.scrollIntoView({behavior:'smooth',block:'center'})")}
+        ${chip(bdays,'birthdays this month',false,"go('customers')")}
+        ${chip(claims,'claims in progress',true,"go('customers')")}
+        ${chip(folOver,'follow-ups overdue',true,"go('leads')")}
+        ${chip(oppFam,'families to protect',false,"go('customers')")}
+      </div>
+    </div>`;
+}
+function startDay() {
+  const pr = el_('polradar'), dr = el_('driftlist');
+  if (pr && pr.children.length && !pr.textContent.includes('No premiums')) pr.scrollIntoView({behavior:'smooth',block:'center'});
+  else if (dr && dr.children.length && !dr.textContent.includes('No one is drifting')) dr.scrollIntoView({behavior:'smooth',block:'center'});
+  else go('customers');
 }
 function renderRefChamps() {
   const rc = el_('refchamps'); if (!rc) return;
@@ -1871,7 +1909,7 @@ function renderRefChamps() {
     const di = DB.findIndex(c => String(c.name||'').toLowerCase().replace(/\s*garu\s*$/,'').trim() === String(r.name||'').toLowerCase().replace(/\s*garu\s*$/,'').trim());
     return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b);${di>=0?'cursor:pointer':''}" ${di>=0?`onclick="openProf(${di})"`:''}>
       <div style="width:22px;font-size:14px">${['🥇','🥈','🥉','⭐','⭐'][i]}</div>
-      <div style="flex:1"><div style="font-size:12.5px;font-weight:700">${esc(r.name)}</div><div style="font-size:10.5px;color:var(--purple)">${r.n} customer${r.n>1?'s':''} referred · nurture this relationship like gold</div></div>
+      <div style="flex:1"><div style="font-size:12.5px;font-weight:700">${esc(r.name)}</div><div style="font-size:10.5px;color:var(--purple)">${r.n} customer${r.n>1?"s":""} referred</div></div>
     </div>`;
   }).join('') : '<div style="font-size:12px;color:var(--t3);padding:6px 0">Fill the "Referred By" field on customers to discover who builds your business.</div>';
 }
