@@ -283,7 +283,7 @@ input[type="date"]{text-transform:uppercase}
 .ph[data-cid]{cursor:pointer;user-select:none;display:flex;align-items:center}
 .ph[data-cid] .pt{margin-right:auto}
 .p.clpsd .pa{display:none}
-.chev{margin-left:10px;color:var(--t3);font-size:11px;transition:transform .25s ease}
+.chev{margin-left:18px;color:var(--t3);font-size:12px;transition:transform .25s ease;padding:6px 8px;border:1px solid rgba(255,255,255,0.06);border-radius:8px;line-height:1}
 .p.clpsd .chev{transform:rotate(-90deg)}
 .p.clpsd .pb{display:none}
 .p.clpsd{opacity:0.82}
@@ -455,10 +455,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
         <div class="ph" data-cid="climate" data-def="1" onclick="togglePanel(this)"><div class="pt">Today's Relationship Climate</div><div class="pa" onclick="event.stopPropagation();go('customers')">View all →</div><span class="chev">▾</span></div>
         <div class="pb">
           <div class="wg">
-            <div class="wi"><div class="wn" id="w1" style="color:var(--teal)">0</div><div class="wl">Families Growing Closer</div></div>
-            <div class="wi"><div class="wn" id="w2" style="color:var(--t2)">0</div><div class="wl">Steady Relationships</div></div>
-            <div class="wi"><div class="wn" id="w3" style="color:var(--coral)">0</div><div class="wl">Waiting for Reconnection</div></div>
-            <div class="wi"><div class="wn" id="w4" style="color:var(--gold)">0</div><div class="wl">Strongest Bonds</div></div>
+            <div class="wi" style="cursor:pointer" onclick="filterSeg('closer')"><div class="wn" id="w1" style="color:var(--teal)">0</div><div class="wl">Families Growing Closer</div></div>
+            <div class="wi" style="cursor:pointer" onclick="filterSeg('steady')"><div class="wn" id="w2" style="color:var(--t2)">0</div><div class="wl">Steady Relationships</div></div>
+            <div class="wi" style="cursor:pointer" onclick="filterSeg('waiting')"><div class="wn" id="w3" style="color:var(--coral)">0</div><div class="wl">Waiting for Reconnection</div></div>
+            <div class="wi" style="cursor:pointer" onclick="filterSeg('bonds')"><div class="wn" id="w4" style="color:var(--gold)">0</div><div class="wl">Strongest Bonds</div></div>
           </div>
         </div>
       </div>
@@ -1001,7 +1001,11 @@ const SEGDEFS = {
   drift:   { label: 'Needs reconnection (45+ days quiet)',   test: c => daysSince(lastTouch(c)) >= 45 && (parseInt(c.trust_score)||50) < 70 },
   bday:    { label: 'Birthdays in the next 3 days',          test: c => { const d = bdayIn(c.dob); return d !== null && d <= 3; } },
   claims:  { label: 'Claims in progress',                    test: c => c.claim_stage && c.claim_stage !== 'Payment Completed' },
-  protect: { label: 'Families to protect (children, no policy)', test: c => c.children && !c.policy_no && !c.plan_name }
+  protect: { label: 'Families to protect (children, no policy)', test: c => c.children && !c.policy_no && !c.plan_name },
+  closer:  { label: 'Families growing closer (trust 65+)',          test: c => (parseInt(c.trust_score)||50) >= 65 },
+  steady:  { label: 'Steady relationships (trust 45\u201364)',       test: c => { const t = parseInt(c.trust_score)||50; return t >= 45 && t < 65; } },
+  waiting: { label: 'Waiting for reconnection (trust below 45)',    test: c => (parseInt(c.trust_score)||50) < 45 },
+  bonds:   { label: 'Strongest bonds (trust 75+)',                  test: c => (parseInt(c.trust_score)||50) >= 75 }
 };
 function filterSeg(seg) { CSEG = seg; SEGKEEP = true; go('customers'); applySeg(); }
 function clearSeg() { CSEG = null; const sb2 = el_('segbar'); if (sb2) sb2.innerHTML = ''; renderCGrid(DB); }
@@ -2322,7 +2326,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 11-Jun-P';
+const APP_VERSION = 'v1.0 · build 11-Jun-Q';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
