@@ -13,7 +13,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#080F1A;--bg2:#0D1829;--bg3:#112035;
-  --gold:#B7A06A;--teal:#12C499;--coral:#E05C3A;--purple:#A78BFA;--blue:#60A5FA;--pink:#F472B6;
+  --gold:#B7A06A;--teal:#12C499;--coral:#E05C3A;--purple:#9AA3B8;--blue:#8FA3C0;--pink:#9AA3B8;
   --card:#0F1E30;--card2:#152640;--b:rgba(255,255,255,0.08);
   --t1:#F0EDE6;--t2:#94A3B8;--t3:#4A5568;
 }
@@ -29,7 +29,7 @@ html,body{height:100%;overflow:hidden}
 .logo{padding:18px 16px;border-bottom:1px solid var(--b)}
 .logo-t{font-size:16px;font-weight:700;background:linear-gradient(135deg,var(--gold),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .logo-s{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:2px;margin-top:2px}
-.logo-v{display:inline-flex;align-items:center;gap:4px;background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.3);border-radius:20px;padding:2px 10px;font-size:9px;color:var(--purple);margin-top:8px}
+.logo-v{display:inline-flex;align-items:center;gap:4px;background:rgba(154,163,184,0.15);border:1px solid rgba(154,163,184,0.3);border-radius:20px;padding:2px 10px;font-size:9px;color:var(--purple);margin-top:8px}
 .nl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;padding:14px 16px 6px;font-weight:700}
 .ni{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;cursor:pointer;font-size:12px;color:var(--t2);transition:all .15s;margin:1px 8px;user-select:none}
 .ni:hover{background:rgba(255,255,255,0.05);color:var(--t1)}
@@ -61,7 +61,7 @@ html,body{height:100%;overflow:hidden}
 .bg:hover{background:rgba(255,255,255,0.05);color:var(--t1)}
 .bt{background:rgba(18,196,153,0.15);color:var(--teal);border:1px solid rgba(18,196,153,0.3)}
 .bt:hover{background:rgba(18,196,153,0.25)}
-.bpu{background:rgba(167,139,250,0.15);color:var(--purple);border:1px solid rgba(167,139,250,0.3)}
+.bpu{background:rgba(154,163,184,0.15);color:var(--purple);border:1px solid rgba(154,163,184,0.3)}
 .bd{background:rgba(224,92,58,0.15);color:var(--coral);border:1px solid rgba(224,92,58,0.3)}
 
 /* PANELS */
@@ -97,7 +97,7 @@ html,body{height:100%;overflow:hidden}
 .wl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.8px}
 
 /* JARVIS */
-.jc{background:linear-gradient(135deg,rgba(167,139,250,0.08),rgba(183,160,106,0.04));border:1px solid rgba(167,139,250,0.2);border-radius:14px;padding:16px;margin-bottom:12px;position:relative}
+.jc{background:linear-gradient(135deg,rgba(154,163,184,0.08),rgba(183,160,106,0.04));border:1px solid rgba(154,163,184,0.2);border-radius:14px;padding:16px;margin-bottom:12px;position:relative}
 .ju{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
 .jh{background:rgba(224,92,58,0.2);color:var(--coral)}
 .jm{background:rgba(183,160,106,0.2);color:var(--gold)}
@@ -144,7 +144,7 @@ html,body{height:100%;overflow:hidden}
 .str{background:var(--card2);border-radius:10px;padding:12px;border:1px solid var(--b)}
 .strl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:700}
 .strv{font-size:12px;color:var(--t1);line-height:1.5}
-.soul-tag{display:inline-flex;padding:2px 8px;border-radius:10px;font-size:10px;background:rgba(167,139,250,0.12);color:var(--purple);border:1px solid rgba(167,139,250,0.2);margin:2px}
+.soul-tag{display:inline-flex;padding:2px 8px;border-radius:10px;font-size:10px;background:rgba(154,163,184,0.12);color:var(--purple);border:1px solid rgba(154,163,184,0.2);margin:2px}
 
 /* TIMELINE */
 .tline{position:relative;padding-left:22px}
@@ -209,9 +209,9 @@ html,body{height:100%;overflow:hidden}
 .obody{display:none;padding-top:12px}
 .otabs{display:flex;gap:6px;margin-bottom:10px}
 .otab{font-size:10px;padding:3px 10px;border-radius:10px;cursor:pointer;background:rgba(255,255,255,0.05);color:var(--t3);border:1px solid transparent}
-.otab.on{background:rgba(167,139,250,0.15);color:var(--purple);border-color:rgba(167,139,250,0.3)}
+.otab.on{background:rgba(154,163,184,0.15);color:var(--purple);border-color:rgba(154,163,184,0.3)}
 .oan{font-size:12px;color:var(--t2);line-height:1.8;padding:12px;border-radius:10px;background:rgba(255,255,255,0.02)}
-.oat{display:none;font-size:12px;color:var(--t2);line-height:1.8;padding:12px;border-radius:10px;background:rgba(167,139,250,0.04);border-left:3px solid var(--purple)}
+.oat{display:none;font-size:12px;color:var(--t2);line-height:1.8;padding:12px;border-radius:10px;background:rgba(154,163,184,0.04);border-left:3px solid var(--purple)}
 
 /* NOTE ITEM */
 .ni2{background:var(--card2);border-radius:8px;padding:10px 12px;margin-bottom:8px;border-left:3px solid var(--gold)}
@@ -219,7 +219,7 @@ html,body{height:100%;overflow:hidden}
 .nt{font-size:12px;color:var(--t2);line-height:1.5}
 
 /* UNIVERSE */
-.umap{position:relative;width:100%;height:420px;background:radial-gradient(ellipse at center,rgba(167,139,250,0.05) 0%,transparent 70%);border-radius:14px;overflow:hidden;border:1px solid var(--b)}
+.umap{position:relative;width:100%;height:420px;background:radial-gradient(ellipse at center,rgba(154,163,184,0.05) 0%,transparent 70%);border-radius:14px;overflow:hidden;border:1px solid var(--b)}
 .ustar{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer;transition:all .3s;font-size:10px}
 .ustar:hover{transform:scale(1.3);z-index:10}
 .ulbl{position:absolute;font-size:8px;color:var(--t3);transform:translateX(-50%);text-align:center;pointer-events:none}
@@ -411,9 +411,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
 <div class="sb">
   <div class="logo">
     <div class="logo-t">Rishta AI</div>
-    <div class="logo-s">Relationship Intelligence</div>
+    <div class="logo-s">Relationship OS</div>
   </div>
-  <div class="nl">Mission Control</div>
+  <div class="nl">Relationship OS</div>
   <div class="ni on" id="nav-dashboard" onclick="go('dashboard')"><i class="ti ti-planet" style="font-size:15px;width:18px;text-align:center"></i><span>Universe</span></div>
   <div class="ni" id="nav-customers" onclick="go('customers')"><i class="ti ti-users" style="font-size:15px;width:18px;text-align:center"></i><span>Customers</span><div class="nbadge" id="ccount">0</div></div>
   <div class="ni" id="nav-leads" onclick="go('leads')"><i class="ti ti-target-arrow" style="font-size:15px;width:18px;text-align:center"></i><span>Leads</span><div class="nbadge" id="lcount" style="background:var(--purple)">0</div></div>
@@ -422,7 +422,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
   <div class="ni" id="nav-settings" onclick="go('settings')"><i class="ti ti-user-cog" style="font-size:15px;width:18px;text-align:center"></i><span>My Profile</span></div>
   <div class="ni" id="nav-team" onclick="go('team')"><i class="ti ti-sitemap" style="font-size:15px;width:18px;text-align:center"></i><span>My Team</span><div class="nbadge" id="tcount" style="background:var(--teal)">0</div></div>
   <div class="ni" id="nav-messages" onclick="go('messages')"><i class="ti ti-message-circle" style="font-size:15px;width:18px;text-align:center"></i><span>Messages</span></div>
-  <div class="nl">Intelligence</div>
   <div class="ni" id="nav-ai" onclick="go('ai')"><i class="ti ti-brain" style="font-size:15px;width:18px;text-align:center"></i><span>Briefing</span><div class="nbadge" id="jcount" style="background:var(--purple)">0</div></div>
   <div class="ni" id="nav-objections" onclick="go('objections')"><i class="ti ti-shield" style="font-size:15px;width:18px;text-align:center"></i><span>Objections</span></div>
   <div class="ni" id="nav-universe" onclick="go('universe')"><i class="ti ti-circle-dot" style="font-size:15px;width:18px;text-align:center"></i><span>Universe</span></div>
@@ -451,7 +450,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
     <div class="sc on" id="sc-dashboard">
       <div style="margin-bottom:26px" id="missionp"></div>
       <div id="visionmini" style="margin-bottom:26px"></div>
-      <div class="p" style="margin-bottom:16px;border-color:rgba(167,139,250,0.2)">
+      <div class="p" style="margin-bottom:16px;border-color:rgba(154,163,184,0.2)">
         <div class="ph" data-cid="climate" data-def="1" onclick="togglePanel(this)"><div class="pt">Today's Relationship Climate</div><div class="pa" onclick="event.stopPropagation();go('customers')">View all →</div><span class="chev">▾</span></div>
         <div class="pb">
           <div class="wg">
@@ -479,7 +478,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
         <div class="pb" id="jinsd"><div class="empty"><div class="eicon">⚡</div><div class="etit">Loading intelligence...</div></div></div>
       </div>
       <div class="g2">
-        <div class="p"><div class="ph"><div class="pt">Recent Customers</div><div class="pa" onclick="go('customers')">View All →</div></div><div class="pb" id="reccust"></div></div>
+        <div class="p"><div class="ph" data-cid="recent" data-def="1" onclick="togglePanel(this)"><div class="pt">Recent Customers</div><div class="pa" onclick="event.stopPropagation();go('customers')">View All →</div><span class="chev">▾</span></div><div class="pb" id="reccust"></div></div>
         <div class="p" style="border-color:rgba(18,196,153,0.2)"><div class="ph"><div class="pt">Financial Stress Radar</div></div><div class="pb" id="strdr"></div></div>
       </div>
     </div>
@@ -571,7 +570,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
 
     <!-- AI JARVIS -->
     <div class="sc" id="sc-ai">
-      <div class="p" style="margin-bottom:16px;border-color:rgba(167,139,250,0.2)">
+      <div class="p" style="margin-bottom:16px;border-color:rgba(154,163,184,0.2)">
         <div class="ph"><div class="pt">Advisor Briefing — Full Report</div></div>
         <div class="pb" id="jfull"></div>
       </div>
@@ -956,7 +955,7 @@ function renderStress() {
 // ============================================================
 function ini(n) { return (n||'?').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?'; }
 function getCol(n) {
-  const c=[{bg:'rgba(183,160,106,0.2)',tc:'#B7A06A'},{bg:'rgba(18,196,153,0.2)',tc:'#12C499'},{bg:'rgba(167,139,250,0.2)',tc:'#A78BFA'},{bg:'rgba(96,165,250,0.2)',tc:'#60A5FA'},{bg:'rgba(244,114,182,0.2)',tc:'#F472B6'}];
+  const c=[{bg:'rgba(183,160,106,0.2)',tc:'#B7A06A'},{bg:'rgba(18,196,153,0.2)',tc:'#12C499'},{bg:'rgba(154,163,184,0.2)',tc:'#9AA3B8'},{bg:'rgba(96,165,250,0.2)',tc:'#60A5FA'},{bg:'rgba(244,114,182,0.2)',tc:'#F472B6'}];
   return c[(n||'A').charCodeAt(0)%5];
 }
 function aura(t) { return t>=80?'ap2':t>=65?'ag':t>=45?'ay':'ar2'; }
@@ -1053,7 +1052,7 @@ function openProf(idx) {
   const yr = new Date().getFullYear();
   let lev = [];
   if (c.children) c.children.split(',').forEach(ch => { const m=ch.match(/\d+/); if(m){const a=parseInt(m[0]); if(yr+(18-a)>yr) lev.push({y:yr+(18-a),t:ch.trim().replace(/\d+/,'').replace(/[()]/g,'').trim()+' — Higher Education',d:'Engineering/Medical ₹8–15L needed',r:'HIGH RISK',rc:'var(--coral)',dc:'#E05C3A'});} });
-  if (c.goals&&c.goals.toLowerCase().includes('retire')) lev.push({y:yr+15,t:'Retirement Target',d:'Monthly pension ₹30-50K. Corpus ₹60L+ needed.',r:'CRITICAL',rc:'var(--purple)',dc:'#A78BFA'});
+  if (c.goals&&c.goals.toLowerCase().includes('retire')) lev.push({y:yr+15,t:'Retirement Target',d:'Monthly pension ₹30-50K. Corpus ₹60L+ needed.',r:'CRITICAL',rc:'var(--purple)',dc:'#9AA3B8'});
   lev.push({y:yr+1,t:'Tax Planning',d:'80C deadline March. ₹1.5L deduction available.',r:'OPPORTUNITY',rc:'var(--teal)',dc:'#12C499'});
   lev.sort((a,b)=>a.y-b.y);
   const lifehtml = lev.length > 0
@@ -1094,7 +1093,7 @@ function openProf(idx) {
       ${c.doc_date?'<div class="pbadge">📅 Started '+c.doc_date+'</div>':''}
     </div>
     ${dueDays!==null?`<div style="font-size:12px;padding:8px 12px;border-radius:10px;margin-bottom:6px;background:${dueDays<=15?'rgba(224,92,58,0.12)':'rgba(183,160,106,0.1)'};color:${dueDays<=15?'var(--coral)':'var(--gold)'};font-weight:700">⏰ Premium due ${dueDays<0?Math.abs(dueDays)+' days AGO — grace period running!':dueDays===0?'TODAY':'in '+dueDays+' days'} (${c.premium_due})</div>`:''}
-    ${matDays!==null?`<div style="font-size:12px;padding:8px 12px;border-radius:10px;background:rgba(167,139,250,0.1);color:var(--purple);font-weight:700">🎉 Policy matures ${matDays<0?'— matured on '+c.maturity_date+'! Congratulate & discuss reinvestment':matDays<=365?'in '+matDays+' days ('+c.maturity_date+')':'on '+c.maturity_date}</div>`:''}
+    ${matDays!==null?`<div style="font-size:12px;padding:8px 12px;border-radius:10px;background:rgba(154,163,184,0.1);color:var(--purple);font-weight:700">🎉 Policy matures ${matDays<0?'— matured on '+c.maturity_date+'! Congratulate & discuss reinvestment':matDays<=365?'in '+matDays+' days ('+c.maturity_date+')':'on '+c.maturity_date}</div>`:''}
   </div></div>` : '';
   const oppHtml = opps.length ? `<div class="p" style="border-color:rgba(183,160,106,0.25)"><div class="ph"><div class="pt">Hidden Opportunities — from their own words</div></div><div class="pb">${opps.map(o=>`<div style="font-size:12.5px;padding:7px 0;border-bottom:1px solid var(--b)">${o}</div>`).join('')}<div style="font-size:10px;color:var(--t3);margin-top:8px">Detected from goals & notes. Verify in conversation before suggesting anything.</div></div></div>` : '';
   let eduRows = '';
@@ -1108,7 +1107,7 @@ function openProf(idx) {
     const monthly = Math.round(corpus/(yrsUG*12*1.4)/1000);
     eduRows += `<div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--b)"><div style="font-size:20px">🎓</div><div style="flex:1"><div style="font-size:12.5px;font-weight:700">${nm} — higher education in ${ugYear} (${yrsUG} yrs away)</div><div style="font-size:11px;color:var(--t2)">Est. corpus: <b style="color:var(--gold)">₹${lakh} lakh</b> · roughly ₹${monthly}K/month if started now</div></div></div>`;
   });
-  const eduHtml = eduRows ? `<div class="p" style="border-color:rgba(167,139,250,0.25)"><div class="ph"><div class="pt">‍👩‍👧 Child Education Projection</div></div><div class="pb">${eduRows}<div style="font-size:10px;color:var(--t3);margin-top:8px">Rough estimate: ₹12L today's private UG cost, 8% education inflation, simple savings math. A conversation starter — not a quote.</div></div></div>` : '';
+  const eduHtml = eduRows ? `<div class="p" style="border-color:rgba(154,163,184,0.25)"><div class="ph"><div class="pt">‍👩‍👧 Child Education Projection</div></div><div class="pb">${eduRows}<div style="font-size:10px;color:var(--t3);margin-top:8px">Rough estimate: ₹12L today's private UG cost, 8% education inflation, simple savings math. A conversation starter — not a quote.</div></div></div>` : '';
 
   // Soul
   const pers = t>=75?'Loyal & Trusting':t>=60?'Warming Up':t>=45?'Cautious Observer':'Emotionally Distant';
@@ -1118,7 +1117,7 @@ function openProf(idx) {
   // Family
   const fam = [];
   if (c.spouse) fam.push({n:c.spouse,r:'Spouse',op:'Life Insurance',bg:'rgba(18,196,153,0.2)',tc:'#12C499'});
-  if (c.children) c.children.split(',').forEach(ch=>fam.push({n:ch.trim(),r:'Child',op:'Education Plan',bg:'rgba(167,139,250,0.2)',tc:'#A78BFA'}));
+  if (c.children) c.children.split(',').forEach(ch=>fam.push({n:ch.trim(),r:'Child',op:'Education Plan',bg:'rgba(154,163,184,0.2)',tc:'#9AA3B8'}));
   fam.push({n:'Siblings',r:'Brother/Sister',op:'Term Plan',bg:'rgba(183,160,106,0.15)',tc:'#B7A06A'});
 
   document.getElementById('profcont').innerHTML = `
@@ -1148,7 +1147,7 @@ function openProf(idx) {
     </div>
 
     <div class="g3">
-      <div class="p" style="border-color:rgba(167,139,250,0.2)">
+      <div class="p" style="border-color:rgba(154,163,184,0.2)">
         <div class="ph"><div class="pt">Digital Soul</div></div>
         <div class="pb">
           <div class="sg2">
@@ -1397,7 +1396,7 @@ function showBrief() {
       <div style="font-size:10px;color:var(--coral);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:700">🚫 AVOID</div>
       <div style="font-size:12px;color:var(--t2);line-height:1.6">${t<50?'Any product discussion. This is a relationship repair meeting.':'Multiple product suggestions. One focused conversation only.'}</div>
     </div>
-    <div style="background:rgba(167,139,250,0.08);border-radius:10px;padding:12px;border-left:3px solid var(--purple)">
+    <div style="background:rgba(154,163,184,0.08);border-radius:10px;padding:12px;border-left:3px solid var(--purple)">
       <div style="font-size:10px;color:var(--purple);font-weight:700;margin-bottom:6px">🧠 DIGITAL SOUL REMINDER</div>
       <div style="font-size:12px;color:var(--t2);line-height:1.6">${t>=70?'Customer deeply trusts you. Be genuine and consultative. Family stories work best.':t>=50?'Customer is cautious. Use real examples. Give them time. Never pressure.':'Emotionally distant. Be warm and genuine. Relationship repair is the only goal today.'}</div>
     </div>`;
@@ -1793,7 +1792,7 @@ function renderTeam() {
       tl.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px">
         <div style="background:var(--card2);border:1px solid rgba(183,160,106,0.3);border-radius:12px;padding:12px"><div style="font-size:9.5px;color:var(--gold);font-weight:800;letter-spacing:1px">🏆 TOP PREMIUM</div><div style="font-size:13px;font-weight:800;margin-top:4px">${esc(byPrem.name)}</div><div style="font-size:11px;color:var(--t2)">${fmtINR(byPrem.prem)}/yr</div></div>
         <div style="background:var(--card2);border:1px solid rgba(18,196,153,0.3);border-radius:12px;padding:12px"><div style="font-size:9.5px;color:var(--teal);font-weight:800;letter-spacing:1px">🛡 MOST POLICIES</div><div style="font-size:13px;font-weight:800;margin-top:4px">${esc(byPol.name)}</div><div style="font-size:11px;color:var(--t2)">${parseInt(byPol.pol)||0} lives insured</div></div>
-        <div style="background:var(--card2);border:1px solid rgba(167,139,250,0.3);border-radius:12px;padding:12px"><div style="font-size:9.5px;color:var(--purple);font-weight:800;letter-spacing:1px">🌱 NEWEST MEMBER</div><div style="font-size:13px;font-weight:800;margin-top:4px">${esc(newest.name)}</div><div style="font-size:11px;color:var(--t2)">joined ${esc(newest.joined||'—')}</div></div>
+        <div style="background:var(--card2);border:1px solid rgba(154,163,184,0.3);border-radius:12px;padding:12px"><div style="font-size:9.5px;color:var(--purple);font-weight:800;letter-spacing:1px">🌱 NEWEST MEMBER</div><div style="font-size:13px;font-weight:800;margin-top:4px">${esc(newest.name)}</div><div style="font-size:11px;color:var(--t2)">joined ${esc(newest.joined||'—')}</div></div>
       </div>`;
     }
   }
@@ -2134,6 +2133,7 @@ function renderMission() {
       <div style="font-family:'Sora',sans-serif;font-size:clamp(22px,4vw,30px);font-weight:800;letter-spacing:-0.02em;line-height:1.15">${greet}, ${PROF.first} Garu</div>
       <div style="font-size:14px;color:var(--t2);margin:16px 0 22px;line-height:1.9;max-width:560px">${lines.join('<br/>')}</div>
       <button class="btn bp" onclick="startDay()" style="padding:12px 26px;font-size:13px">Start My Day →</button>
+      ${todayNarrative()}
       <div style="display:flex;gap:26px;flex-wrap:wrap;margin-top:22px;border-top:1px solid var(--b);padding-top:8px">
         ${chip(due,'premiums due',true,"filterSeg('due')")}
         ${chip(drift,'need reconnection',false,"filterSeg('drift')")}
@@ -2143,6 +2143,34 @@ function renderMission() {
         ${chip(oppFam,'families to protect',false,"filterSeg('protect')")}
       </div>
     </div>`;
+}
+function todayNarrative() {
+  if (!DB.length) return '';
+  const dTo = ds => { if (!ds) return null; const d = new Date(ds); return isNaN(d) ? null : Math.ceil((d - Date.now())/86400000); };
+  const rows = [];
+  const row = (label, name, line, action) => `<div style="display:flex;align-items:baseline;gap:14px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.04);flex-wrap:wrap">
+    <div style="font-size:9.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--t3);font-weight:800;font-family:'Sora',sans-serif;width:120px;flex-shrink:0">${label}</div>
+    <div style="flex:1;min-width:200px;font-size:13px"><b>${name}</b> <span style="color:var(--t2)">— ${line}</span></div>
+    ${action}</div>`;
+  // Most important family: lowest trust + longest silence
+  const scored = DB.map((c,i) => ({ c, i, t: parseInt(c.trust_score)||50, ds: daysSince(lastTouch(c)) }))
+    .map(x => ({ ...x, score: (100-x.t) + Math.min(x.ds, 90) })).sort((a,b) => b.score - a.score);
+  const f = scored[0];
+  if (f) rows.push(row('Most important', esc(f.c.name), `trust ${f.t}, quiet ${f.ds} days. A warm check-in changes this`,
+    `<button class="btn bg" style="padding:5px 13px;font-size:10.5px" onclick="openProf(${f.i})">Open</button>`));
+  // Biggest risk: most urgent premium
+  let risk = null;
+  DB.forEach((c,i) => { const d = dTo(c.premium_due); if (d !== null && d <= 30 && (!risk || d < risk.d)) risk = { c, i, d }; });
+  if (risk) rows.push(row('Biggest risk', esc(risk.c.name),
+    `${fmtINR(risk.c.premium_amount)} premium ${risk.d < 0 ? Math.abs(risk.d) + ' days overdue' : risk.d === 0 ? 'due today' : 'due in ' + risk.d + ' days'}`,
+    `<button class="btn bp" style="padding:5px 13px;font-size:10.5px" onclick="waRemind(${risk.i},'due')">Send Reminder</button>`));
+  // Biggest opportunity: family with children, no policy
+  const opp = DB.map((c,i)=>({c,i})).filter(x => x.c.children && !x.c.policy_no && !x.c.plan_name)
+    .sort((a,b) => (parseInt(b.c.trust_score)||0) - (parseInt(a.c.trust_score)||0))[0];
+  if (opp) rows.push(row('Opportunity', esc(opp.c.name), `children at home, no policy on record. Education planning conversation`,
+    `<button class="btn bg" style="padding:5px 13px;font-size:10.5px" onclick="openProf(${opp.i})">Open</button>`));
+  if (!rows.length) return '';
+  return `<div style="margin-top:24px;max-width:680px">${rows.join('')}</div>`;
 }
 function startDay() {
   const pr = el_('polradar'), dr = el_('driftlist');
@@ -2295,7 +2323,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 11-Jun-N';
+const APP_VERSION = 'v1.0 · build 11-Jun-O';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
