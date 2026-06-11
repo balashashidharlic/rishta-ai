@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Rishta AI — Bala Shashidhar | LIC Advisor, Anantapur</title>
+<title>Rishta AI — Relationship OS for Advisors</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -279,13 +279,17 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
 
 <div class="lgw" id="LOGIN" style="display:none">
   <div class="lgc">
-    <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--gold),#D4960A);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:18px">&#128155;</div>
-    <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.02em">Welcome back, Bala Garu</div>
+    <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--gold),#D4960A);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:18px">💛</div>
+    <div id="ltitle" style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.02em">Welcome to Rishta AI</div>
     <div style="font-size:12px;color:var(--t3);margin:6px 0 22px">Your relationship universe awaits</div>
-    <div class="fg"><label class="fl">Email</label><input class="fi" id="lemail" type="email" placeholder="you@gmail.com"/></div>
-    <div class="fg"><label class="fl">Password</label><input class="fi" id="lpass" type="password" placeholder="********" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div class="fg" id="lemailg"><label class="fl">Email</label><input class="fi" id="lemail" type="email" placeholder="you@gmail.com"/></div>
+    <div class="fg"><label class="fl">Password</label><input class="fi" id="lpass" type="password" placeholder="********" onkeydown="if(event.key==='Enter')authAction()"/></div>
     <div id="lerr" style="font-size:11.5px;color:var(--coral);min-height:16px;margin:4px 0 10px"></div>
-    <button class="btn bp" id="lbtn" onclick="doLogin()" style="width:100%;justify-content:center;padding:12px">Enter My Universe</button>
+    <button class="btn bp" id="lbtn" onclick="authAction()" style="width:100%;justify-content:center;padding:12px">Sign In</button>
+    <div style="font-size:11px;color:var(--t3);margin-top:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <span id="lswap" onclick="toggleAuth()" style="color:var(--gold);cursor:pointer;font-weight:700">New advisor? Create free account</span>
+      <span onclick="forgotPass()" style="cursor:pointer;text-decoration:underline">Forgot password?</span>
+    </div>
   </div>
 </div>
 <div class="lo" id="LO"><div class="ls"></div><div class="lt" id="LT">Initializing Rishta AI...</div></div>
@@ -300,6 +304,7 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
   <div class="ni on" id="nav-dashboard" onclick="go('dashboard')"><i class="ti ti-planet" style="font-size:15px;width:18px;text-align:center"></i><span>Universe</span></div>
   <div class="ni" id="nav-customers" onclick="go('customers')"><i class="ti ti-users" style="font-size:15px;width:18px;text-align:center"></i><span>Customers</span><div class="nbadge" id="ccount">0</div></div>
   <div class="ni" id="nav-leads" onclick="go('leads')"><i class="ti ti-target-arrow" style="font-size:15px;width:18px;text-align:center"></i><span>Leads</span><div class="nbadge" id="lcount" style="background:var(--purple)">0</div></div>
+  <div class="ni" id="nav-settings" onclick="go('settings')"><i class="ti ti-user-cog" style="font-size:15px;width:18px;text-align:center"></i><span>My Profile</span></div>
   <div class="ni" id="nav-team" onclick="go('team')"><i class="ti ti-sitemap" style="font-size:15px;width:18px;text-align:center"></i><span>My Team</span><div class="nbadge" id="tcount" style="background:var(--teal)">0</div></div>
   <div class="ni" id="nav-messages" onclick="go('messages')"><i class="ti ti-message-circle" style="font-size:15px;width:18px;text-align:center"></i><span>Messages</span></div>
   <div class="nl">Intelligence</div>
@@ -307,7 +312,7 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
   <div class="ni" id="nav-objections" onclick="go('objections')"><i class="ti ti-shield" style="font-size:15px;width:18px;text-align:center"></i><span>Objections</span></div>
   <div class="ni" id="nav-universe" onclick="go('universe')"><i class="ti ti-circle-dot" style="font-size:15px;width:18px;text-align:center"></i><span>Galaxy Map</span></div>
   <div class="sbbot">
-    <div class="acard"><div class="aav">BS</div><div style="flex:1"><div class="an">Bala Shashidhar</div><div class="ar">LIC Advisor · Anantapur</div></div><i class="ti ti-logout" onclick="doLogout()" title="Sign Out" style="cursor:pointer;color:var(--coral);font-size:16px;padding:4px"></i></div>
+    <div class="acard"><div class="aav" id="aav2">AD</div><div style="flex:1"><div class="an" id="aname">Advisor</div><div class="ar" id="arole">LIC Advisor</div></div><i class="ti ti-logout" onclick="doLogout()" title="Sign Out" style="cursor:pointer;color:var(--coral);font-size:16px;padding:4px"></i></div>
   </div>
 </div>
 
@@ -475,6 +480,21 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
     </div>
 
     <!-- MY TEAM -->
+    <!-- PROFILE SETTINGS -->
+    <div class="sc" id="sc-settings">
+      <div class="p" style="max-width:560px">
+        <div class="ph"><div class="pt">👤 Advisor Profile — used across the app & in your messages</div></div>
+        <div class="pb">
+          <div class="fg"><label class="fl">Full Name *</label><input class="fi" id="sname" placeholder="e.g. Bala Shashidhar"/></div>
+          <div class="fr"><div class="fg"><label class="fl">Designation</label><input class="fi" id="srole" placeholder="LIC Advisor" value="LIC Advisor"/></div><div class="fg"><label class="fl">City / Area</label><input class="fi" id="sloc" placeholder="e.g. Anantapur"/></div></div>
+          <div class="fr"><div class="fg"><label class="fl">Phone (shown in messages)</label><input class="fi" id="sphone" maxlength="10" type="tel" placeholder="10-digit mobile"/></div><div class="fg"><label class="fl">WhatsApp Number</label><input class="fi" id="swhats" maxlength="10" type="tel" placeholder="if different from phone"/></div></div>
+          <div class="fg"><label class="fl">Agency / Branch (optional)</label><input class="fi" id="sagency" placeholder="e.g. Anantapur Branch 612"/></div>
+          <button class="btn bp" onclick="saveProfile()" style="width:100%;justify-content:center"><i class="ti ti-device-floppy"></i> Save Profile</button>
+          <div style="font-size:10.5px;color:var(--t3);margin-top:10px">Your name, designation and phone number are automatically stamped into every WhatsApp message template.</div>
+        </div>
+      </div>
+    </div>
+
     <!-- LEADS PIPELINE -->
     <div class="sc" id="sc-leads">
       <div class="tgrid">
@@ -1132,20 +1152,22 @@ function updateMsgDrop() {
   if (pv) s.value = pv;
 }
 
+let PROF = { name:'Advisor', first:'Advisor', role:'LIC Advisor', loc:'', phone:'', whats:'', agency:'', ini:'AD' };
+const SIGPH = () => PROF.whats || PROF.phone || '';
 const MT = {
-  birthday:{te:c=>`Namaste! 🙏\n\nప్రియమైన ${c.name} గారికి పుట్టినరోజు శుభాకాంక్షలు! 🎂🌸\n\nMee puttinroju samayamlo meeru, family andaru aanandinchali.\n\nMeeru naku ichina vishwaasaniki dhanyavaadaalu.\n\nMee Bala Shashidhar 🙏\nLIC Advisor, Anantapur`,en:c=>`Dear ${c.name},\n\nWishing you a very Happy Birthday! 🎂\n\nMay this day bring you joy, health and happiness. Thank you for your trust.\n\nWarm regards,\nBala Shashidhar, LIC Advisor\n📞 98765 43210`},
-  festival:{te:c=>`🌸 Panduga Subhakankshalu! 🌸\n\nPriyamaina ${c.name} Garu,\n\nEe panduga mee jeevitamlo aanandam, samriddhi teestuundani korukuntunnaanu.\n\nMee family andhariki subhakamkshalu!\n\nMee Bala Shashidhar 🙏`,en:c=>`Dear ${c.name},\n\nWishing you and your family a wonderful festival season!\n\nMay it bring joy and prosperity.\n\nWith warm wishes,\nBala Shashidhar, LIC Advisor`},
-  premium:{te:c=>`Namaste ${c.name} Garu 🙏\n\nMee LIC policy premium due avutundi.\n\nSamayaaniki payment chesthe mee family ki poorna protection continue avutundi.\n\nEmi help kaavaali ante call cheyyandi.\n\nBala Shashidhar\n📞 98765 43210`,en:c=>`Dear ${c.name},\n\nFriendly reminder — your LIC policy premium is due soon.\n\nTimely payment keeps your family fully protected.\n\nCall me anytime.\nBala Shashidhar, LIC Advisor\n📞 98765 43210`},
-  edu:{te:c=>`${c.name} Garu 🙏\n\n${c.children?'Mee pillalu '+c.children+' — vaallaki ':'Mee pillalaki '}education planning gurinchi share cheyyalani anipistundi.\n\nIppude start chesthe strong future veyyachu.\n\nOkasaari 15 minutes matladaam?\n\nBala Shashidhar\n📞 98765 43210`,en:c=>`Dear ${c.name},\n\nWanted to discuss your children's education planning — costs are rising every year.\n\nStarting early makes a huge difference.\n\nCan we have a quick call?\n\nWarm regards,\nBala Shashidhar, LIC Advisor\n📞 98765 43210`},
-  followup:{te:c=>`Namaste ${c.name} Garu 🙏\n\nMeeru${c.spouse?', '+c.spouse+' Garu':''}, family ela unnaru ani telsukovadam ki call chesanu.\n\nEpudu convenient aithe okasaari call cheyyandi.\n\nMee Bala Shashidhar 🙏`,en:c=>`Dear ${c.name},\n\nJust checking in to see how you and your family are doing.\n\nPlease call when convenient.\n\nAlways here for you,\nBala Shashidhar, LIC Advisor\n📞 98765 43210`},
-  retirement:{te:c=>`${c.name} Garu 🙏\n\nRetirement tarvata comfortable life kosam oka mukhyamainam vishayam matladaali anipistundi.\n\nMee ki best suit ayye plan suggest cheyyagalanu.\n\nMatladaamaa?\n\nBala Shashidhar\n📞 98765 43210`,en:c=>`Dear ${c.name},\n\nWanted to talk about securing a comfortable retirement for you.\n\nI can suggest a perfect plan. Let's connect soon.\n\nBala Shashidhar, LIC Advisor\n📞 98765 43210`},
-  claim:{te:c=>`Priyamaina ${c.name} Family,\n\nEe kashtakaalamlo nenu poornagaa meeru vaipu unnanu.\n\nClaim process naaku vadalandi — nenu handle chestanu.\n\nDocuments: Death Certificate, Policy Bond, Nominee Aadhaar, Bank Passbook\n\n98765 43210 ki call cheyyandi.\nBala Shashidhar 🙏`,en:c=>`Dear ${c.name} Family,\n\nI'm here for you completely. I will personally handle the entire claim process.\n\nDocuments: Death certificate, Policy bond, Nominee Aadhaar, Bank passbook.\n\nCall me: 98765 43210\nBala Shashidhar, LIC Advisor`},
-  referral:{te:c=>`Namaste ${c.name} Garu 🙏\n\nMeeru naku ichina vishwaasam ki dhanyavaadaalu.\n\nMee friends, relatives lo family future gurinchi chintisthunna vallu evarinayna unnaaraa? Vaallaki kuda help cheyyagalanu.\n\nEmi pressure ledu — just oka introduction.\n\nBala Shashidhar 🙏\n📞 98765 43210`,en:c=>`Dear ${c.name},\n\nThank you so much for your trust.\n\nIf you know anyone thinking about securing their family's future, I'd love to help.\n\nJust a simple introduction is enough.\n\nBala Shashidhar, LIC Advisor\n📞 98765 43210`},
-  girlchild:{te:c=>`${c.name} Garu 🙏\n\nMee paapa future gurinchi okka mukhyamaina maata.\n\nAmmayilaki mundu moodu pedda milestones untayi — education, higher studies, marriage. Anni okkasari vasthe pedda burden.\n\nIppude chinna premium tho start chesthe, aa rojuna meeru relax ga untaru.\n\nOkkasari aalochinchandi — nenu options chupistanu, decision matram meedhe 🙏\n\nBala Shashidhar\n📞 98765 43210`,en:c=>`Dear ${c.name},\n\nA small thought about your daughter's future.\n\nThree big milestones lie ahead — education, higher studies, and marriage. Together they can be a heavy burden if unplanned.\n\nStarting early with a small premium makes that day stress-free.\n\nThink it over once — I'll show you options, the decision is entirely yours.\n\nBala Shashidhar, LIC Advisor\n📞 98765 43210`},
-  boychild:{te:c=>`${c.name} Garu 🙏\n\nMee abbayi education gurinchi oka thought share cheyyali anipinchindi.\n\nEngineering, medicine, foreign studies — costs prathi samvatsaram perigipothunnayi.\n\nIppude start chesthe chinna amount chaalu. Late ayithe pedda amount kuda saripodu.\n\nOkkasari aalochinchandi — 15 minutes matladadaaniki time istaaraa?\n\nBala Shashidhar\n📞 98765 43210`,en:c=>`Dear ${c.name},\n\nA thought about your son's education.\n\nEngineering, medicine, studies abroad — costs rise every single year.\n\nStart now and a small amount is enough. Start late and even a big amount may fall short.\n\nThink it over once — can we talk for 15 minutes?\n\nBala Shashidhar, LIC Advisor\n📞 98765 43210`},
-  termplan:{te:c=>`Namaste ${c.name} Garu 🙏\n\nMee meedha depend ayye family ki, mee income protection ye asalu first policy.\n\nTerm plan — chala thakkuva premium, chala pedda cover. Mee family ki oka strong safety wall.\n\nInvestment plans tarvata — protection mundu.\n\nOkkasari aalochinchandi. Nenu numbers chupistanu, pressure emi ledu 🙏\n\nBala Shashidhar\n📞 98765 43210`,en:c=>`Dear ${c.name},\n\nFor a family that depends on you, protecting your income is the very first policy.\n\nA term plan — very small premium, very large cover. A strong safety wall for your family.\n\nProtection first, investment after.\n\nThink it over once. I'll show you the numbers — zero pressure.\n\nBala Shashidhar, LIC Advisor\n📞 98765 43210`},
-  goodwill:{te:c=>`Namaste ${c.name} Garu 🙏\n\nOka chinna manchi maata.\n\nMee friends, relatives lo family protection gurinchi evaru aalochisthunna — naa number ivvandi. Vaalla family ki sahaayam chesthe, aa goodwill eppatiki mee dhe.\n\nManchi pani lo bhaagam avvadam kanna goppa emi undadu kada 🙏\n\nMee Bala Shashidhar\n📞 98765 43210`,en:c=>`Dear ${c.name},\n\nA small good thought.\n\nIf anyone in your circle is thinking about protecting their family, share my number. Helping their family means the goodwill stays with you forever.\n\nThere's nothing better than being part of a good deed.\n\nBala Shashidhar, LIC Advisor\n📞 98765 43210`},
-  maturity:{te:c=>`🎉 Subhakankshalu ${c.name} Garu! 🙏\n\nMee LIC policy maturity reach ayyindi — idi mee years discipline ki phalitam!\n\nAmount process & documents lo nenu full ga help chestanu.\n\nAa amount ni next goal ki ela use cheyyalo kuda okasari matladudaam.\n\nMee Bala Shashidhar\n📞 98765 43210`,en:c=>`🎉 Congratulations ${c.name}!\n\nYour LIC policy has matured — the reward for years of discipline!\n\nI'll fully help with the payout process and documents.\n\nLet's also discuss how this amount can serve your next goal.\n\nBala Shashidhar, LIC Advisor\n📞 98765 43210`}
+  birthday:{te:c=>`Namaste! 🙏\n\nప్రియమైన ${c.name} గారికి పుట్టినరోజు శుభాకాంక్షలు! 🎂🌸\n\nMee puttinroju samayamlo meeru, family andaru aanandinchali.\n\nMeeru naku ichina vishwaasaniki dhanyavaadaalu.\n\nMee ${PROF.name} 🙏\n${PROF.role}${PROF.loc?", "+PROF.loc:""}`,en:c=>`Dear ${c.name},\n\nWishing you a very Happy Birthday! 🎂\n\nMay this day bring you joy, health and happiness. Thank you for your trust.\n\nWarm regards,\n${PROF.name}, ${PROF.role}\n📞 ${SIGPH()}`},
+  festival:{te:c=>`🌸 Panduga Subhakankshalu! 🌸\n\nPriyamaina ${c.name} Garu,\n\nEe panduga mee jeevitamlo aanandam, samriddhi teestuundani korukuntunnaanu.\n\nMee family andhariki subhakamkshalu!\n\nMee ${PROF.name} 🙏`,en:c=>`Dear ${c.name},\n\nWishing you and your family a wonderful festival season!\n\nMay it bring joy and prosperity.\n\nWith warm wishes,\n${PROF.name}, ${PROF.role}`},
+  premium:{te:c=>`Namaste ${c.name} Garu 🙏\n\nMee LIC policy premium due avutundi.\n\nSamayaaniki payment chesthe mee family ki poorna protection continue avutundi.\n\nEmi help kaavaali ante call cheyyandi.\n\n${PROF.name}\n📞 ${SIGPH()}`,en:c=>`Dear ${c.name},\n\nFriendly reminder — your LIC policy premium is due soon.\n\nTimely payment keeps your family fully protected.\n\nCall me anytime.\n${PROF.name}, ${PROF.role}\n📞 ${SIGPH()}`},
+  edu:{te:c=>`${c.name} Garu 🙏\n\n${c.children?'Mee pillalu '+c.children+' — vaallaki ':'Mee pillalaki '}education planning gurinchi share cheyyalani anipistundi.\n\nIppude start chesthe strong future veyyachu.\n\nOkasaari 15 minutes matladaam?\n\n${PROF.name}\n📞 ${SIGPH()}`,en:c=>`Dear ${c.name},\n\nWanted to discuss your children's education planning — costs are rising every year.\n\nStarting early makes a huge difference.\n\nCan we have a quick call?\n\nWarm regards,\n${PROF.name}, ${PROF.role}\n📞 ${SIGPH()}`},
+  followup:{te:c=>`Namaste ${c.name} Garu 🙏\n\nMeeru${c.spouse?', '+c.spouse+' Garu':''}, family ela unnaru ani telsukovadam ki call chesanu.\n\nEpudu convenient aithe okasaari call cheyyandi.\n\nMee ${PROF.name} 🙏`,en:c=>`Dear ${c.name},\n\nJust checking in to see how you and your family are doing.\n\nPlease call when convenient.\n\nAlways here for you,\n${PROF.name}, ${PROF.role}\n📞 ${SIGPH()}`},
+  retirement:{te:c=>`${c.name} Garu 🙏\n\nRetirement tarvata comfortable life kosam oka mukhyamainam vishayam matladaali anipistundi.\n\nMee ki best suit ayye plan suggest cheyyagalanu.\n\nMatladaamaa?\n\n${PROF.name}\n📞 ${SIGPH()}`,en:c=>`Dear ${c.name},\n\nWanted to talk about securing a comfortable retirement for you.\n\nI can suggest a perfect plan. Let's connect soon.\n\n${PROF.name}, ${PROF.role}\n📞 ${SIGPH()}`},
+  claim:{te:c=>`Priyamaina ${c.name} Family,\n\nEe kashtakaalamlo nenu poornagaa meeru vaipu unnanu.\n\nClaim process naaku vadalandi — nenu handle chestanu.\n\nDocuments: Death Certificate, Policy Bond, Nominee Aadhaar, Bank Passbook\n\n${SIGPH()} ki call cheyyandi.\n${PROF.name} 🙏`,en:c=>`Dear ${c.name} Family,\n\nI'm here for you completely. I will personally handle the entire claim process.\n\nDocuments: Death certificate, Policy bond, Nominee Aadhaar, Bank passbook.\n\nCall me: ${SIGPH()}\n${PROF.name}, ${PROF.role}`},
+  referral:{te:c=>`Namaste ${c.name} Garu 🙏\n\nMeeru naku ichina vishwaasam ki dhanyavaadaalu.\n\nMee friends, relatives lo family future gurinchi chintisthunna vallu evarinayna unnaaraa? Vaallaki kuda help cheyyagalanu.\n\nEmi pressure ledu — just oka introduction.\n\n${PROF.name} 🙏\n📞 ${SIGPH()}`,en:c=>`Dear ${c.name},\n\nThank you so much for your trust.\n\nIf you know anyone thinking about securing their family's future, I'd love to help.\n\nJust a simple introduction is enough.\n\n${PROF.name}, ${PROF.role}\n📞 ${SIGPH()}`},
+  girlchild:{te:c=>`${c.name} Garu 🙏\n\nMee paapa future gurinchi okka mukhyamaina maata.\n\nAmmayilaki mundu moodu pedda milestones untayi — education, higher studies, marriage. Anni okkasari vasthe pedda burden.\n\nIppude chinna premium tho start chesthe, aa rojuna meeru relax ga untaru.\n\nOkkasari aalochinchandi — nenu options chupistanu, decision matram meedhe 🙏\n\n${PROF.name}\n📞 ${SIGPH()}`,en:c=>`Dear ${c.name},\n\nA small thought about your daughter's future.\n\nThree big milestones lie ahead — education, higher studies, and marriage. Together they can be a heavy burden if unplanned.\n\nStarting early with a small premium makes that day stress-free.\n\nThink it over once — I'll show you options, the decision is entirely yours.\n\n${PROF.name}, ${PROF.role}\n📞 ${SIGPH()}`},
+  boychild:{te:c=>`${c.name} Garu 🙏\n\nMee abbayi education gurinchi oka thought share cheyyali anipinchindi.\n\nEngineering, medicine, foreign studies — costs prathi samvatsaram perigipothunnayi.\n\nIppude start chesthe chinna amount chaalu. Late ayithe pedda amount kuda saripodu.\n\nOkkasari aalochinchandi — 15 minutes matladadaaniki time istaaraa?\n\n${PROF.name}\n📞 ${SIGPH()}`,en:c=>`Dear ${c.name},\n\nA thought about your son's education.\n\nEngineering, medicine, studies abroad — costs rise every single year.\n\nStart now and a small amount is enough. Start late and even a big amount may fall short.\n\nThink it over once — can we talk for 15 minutes?\n\n${PROF.name}, ${PROF.role}\n📞 ${SIGPH()}`},
+  termplan:{te:c=>`Namaste ${c.name} Garu 🙏\n\nMee meedha depend ayye family ki, mee income protection ye asalu first policy.\n\nTerm plan — chala thakkuva premium, chala pedda cover. Mee family ki oka strong safety wall.\n\nInvestment plans tarvata — protection mundu.\n\nOkkasari aalochinchandi. Nenu numbers chupistanu, pressure emi ledu 🙏\n\n${PROF.name}\n📞 ${SIGPH()}`,en:c=>`Dear ${c.name},\n\nFor a family that depends on you, protecting your income is the very first policy.\n\nA term plan — very small premium, very large cover. A strong safety wall for your family.\n\nProtection first, investment after.\n\nThink it over once. I'll show you the numbers — zero pressure.\n\n${PROF.name}, ${PROF.role}\n📞 ${SIGPH()}`},
+  goodwill:{te:c=>`Namaste ${c.name} Garu 🙏\n\nOka chinna manchi maata.\n\nMee friends, relatives lo family protection gurinchi evaru aalochisthunna — naa number ivvandi. Vaalla family ki sahaayam chesthe, aa goodwill eppatiki mee dhe.\n\nManchi pani lo bhaagam avvadam kanna goppa emi undadu kada 🙏\n\nMee ${PROF.name}\n📞 ${SIGPH()}`,en:c=>`Dear ${c.name},\n\nA small good thought.\n\nIf anyone in your circle is thinking about protecting their family, share my number. Helping their family means the goodwill stays with you forever.\n\nThere's nothing better than being part of a good deed.\n\n${PROF.name}, ${PROF.role}\n📞 ${SIGPH()}`},
+  maturity:{te:c=>`🎉 Subhakankshalu ${c.name} Garu! 🙏\n\nMee LIC policy maturity reach ayyindi — idi mee years discipline ki phalitam!\n\nAmount process & documents lo nenu full ga help chestanu.\n\nAa amount ni next goal ki ela use cheyyalo kuda okasari matladudaam.\n\nMee ${PROF.name}\n📞 ${SIGPH()}`,en:c=>`🎉 Congratulations ${c.name}!\n\nYour LIC policy has matured — the reward for years of discipline!\n\nI'll fully help with the payout process and documents.\n\nLet's also discuss how this amount can serve your next goal.\n\n${PROF.name}, ${PROF.role}\n📞 ${SIGPH()}`}
 };
 
 function genMsg() {
@@ -1211,7 +1233,7 @@ function renderU() {
   const ctr = document.createElement('div');
   ctr.className = 'ustar float';
   ctr.style.cssText = `width:54px;height:54px;left:${cx-27}px;top:${cy-27}px;background:linear-gradient(135deg,rgba(240,180,41,0.4),rgba(18,196,153,0.2));border:2px solid var(--gold);color:var(--gold);font-size:11px;flex-direction:column;gap:1px`;
-  ctr.innerHTML = '<div>BS</div><div style="font-size:7px;opacity:.7">You</div>';
+  ctr.innerHTML = '<div>'+PROF.ini+'</div><div style="font-size:7px;opacity:.7">You</div>';
   el.appendChild(ctr);
   DB.slice(0,14).forEach((c,i) => {
     const angle = (i/Math.min(DB.length,14))*2*Math.PI - Math.PI/2;
@@ -1238,10 +1260,10 @@ function renderU() {
 // ============================================================
 // AI CHAT
 // ============================================================
-let CH = [{r:'ai',t:'Namaste Bala Garu! 🙏\n\nNenu mee Jarvis AI — Relationship Intelligence.\n\nMee customers digital souls, emotional maps, family graphs — anni analyze chestanu.\n\nEmi kanaleddu?'}];
+let CH = [{r:'ai',t:'Namaste! 🙏\n\nNenu mee Jarvis AI — Relationship Intelligence.\n\nMee customers digital souls, emotional maps, family graphs — anni analyze chestanu.\n\nEmi kanaleddu?'}];
 function renderChat() {
   const c = el_('chat'); if (!c) return;
-  c.innerHTML = CH.map(m=>`<div class="mr ${m.r==='u'?'u':''}"><div class="mav ${m.r==='u'?'u':'ai'}">${m.r==='u'?'BS':'⚡'}</div><div class="mbu ${m.r==='u'?'u':'ai'}">${m.t}</div></div>`).join('');
+  c.innerHTML = CH.map(m=>`<div class="mr ${m.r==='u'?'u':''}"><div class="mav ${m.r==='u'?'u':'ai'}">${m.r==='u'?PROF.ini:'⚡'}</div><div class="mbu ${m.r==='u'?'u':'ai'}">${m.t}</div></div>`).join('');
   c.scrollTop = c.scrollHeight;
 }
 function ask(pre) {
@@ -1312,6 +1334,7 @@ const TITLES = {
   objections:'Objection Intelligence Scripts 🛡️',
   team:'My Team — Downline Network 🌿',
   leads:'Lead Pipeline — Future Customers 🎯',
+  settings:'My Profile & Settings ⚙️',
   universe:'Relationship Galaxy Map 🌌'
 };
 function go(name) {
@@ -1431,7 +1454,7 @@ function rollPrem(m) { return (parseFloat(m.prem)||0) + down(m.id).reduce((s,x)=
 function parentOptions(excludeId) {
   // a member can't report to themselves or anyone in their own downline
   const bad = excludeId ? [excludeId, ...down(excludeId).map(m=>m.id)] : [];
-  return '<option value="root">⭐ Bala Shashidhar (You)</option>' +
+  return '<option value="root">⭐ ' + esc(PROF.name) + ' (You)</option>' +
     TEAM.filter(m=>!bad.includes(m.id)).map(m=>`<option value="${m.id}">${esc(m.name)} — ${esc(m.role)}</option>`).join('');
 }
 
@@ -1463,8 +1486,8 @@ function renderTeam() {
   const p = el_('tpar'); if (p) { const pv = p.value; p.innerHTML = parentOptions(); if (pv) p.value = pv; }
   const rk = kids('root');
   tr.innerHTML = `<div class="tnd"><div class="tnc root">
-      <div class="tav" style="background:linear-gradient(135deg,rgba(240,180,41,0.35),rgba(18,196,153,0.2));color:var(--gold)">BS</div>
-      <div><div class="tnm">Bala Shashidhar <span style="font-size:9px;color:var(--gold);letter-spacing:1px">YOU</span></div><div class="tnr">LIC Advisor · Anantapur</div></div>
+      <div class="tav" style="background:linear-gradient(135deg,rgba(240,180,41,0.35),rgba(18,196,153,0.2));color:var(--gold)">${PROF.ini}</div>
+      <div><div class="tnm">${esc(PROF.name)} <span style="font-size:9px;color:var(--gold);letter-spacing:1px">YOU</span></div><div class="tnr">${esc(PROF.role)}${PROF.loc?' · '+esc(PROF.loc):''}</div></div>
       <div class="tchips"><span class="tchip">👥 Network <b>${tot}</b></span><span class="tchip">🛡 Policies <b>${pol}</b></span><span class="tchip">💰 <b>${fmtINR(prem)}</b></span></div>
     </div>${rk.length?`<div class="tkids">${rk.map(nodeHTML).join('')}</div>`:''}</div>` +
     (tot ? '' : `<div class="empty"><div class="eicon">🌿</div><div class="etit">No team members yet</div><div class="edesc">Add your first agent on the left. Build their downline using "+ Add under" on any member.</div></div>`);
@@ -1727,7 +1750,7 @@ function waLead(id) {
   const l = LEADS.find(x => x.id === id); if (!l) return;
   const ph = String(l.phone||'').replace(/\D/g,'').slice(-10);
   if (ph.length !== 10) { showT('\u26a0\ufe0f No valid phone for ' + l.name); return; }
-  const msg = `Namaste ${l.name} Garu \U0001f64f\n\nNenu Bala Shashidhar, LIC Advisor, Anantapur.\n\n${l.interest && l.interest!=='Not sure yet' ? l.interest + ' gurinchi meeru adigina vishayam meeda konni manchi options unnayi.' : 'Mee family financial security gurinchi oka chinna conversation ki time istaaraa?'}\n\nMee veelu unnappudu matladudaam \u2014 emi pressure ledu \U0001f64f\n\nBala Shashidhar\n\U0001f4de 98765 43210`;
+  const msg = `Namaste ${l.name} Garu \U0001f64f\n\nNenu ${PROF.name}, ${PROF.role}${PROF.loc?", "+PROF.loc:""}.\n\n${l.interest && l.interest!=='Not sure yet' ? l.interest + ' gurinchi meeru adigina vishayam meeda konni manchi options unnayi.' : 'Mee family financial security gurinchi oka chinna conversation ki time istaaraa?'}\n\nMee veelu unnappudu matladudaam \u2014 emi pressure ledu \U0001f64f\n\n${PROF.name}\n\U0001f4de ${SIGPH()}`;
   openCompose('Message ' + l.name, ph, msg);
 }
 function renderLeads() {
@@ -1787,7 +1810,7 @@ function renderMission() {
   const folOver = LEADS.filter(l => l.status !== 'Converted' && l.status !== 'Lost' && l.next_follow && dTo(l.next_follow) < 0).length;
   const chip = (n, label, col, target) => `<div onclick="${target}" style="cursor:pointer;background:var(--card2);border:1px solid var(--b);border-radius:12px;padding:10px 14px;min-width:118px"><div style="font-size:20px;font-weight:800;color:${col};font-family:'Sora',sans-serif">${n}</div><div style="font-size:10px;color:var(--t3);margin-top:2px">${label}</div></div>`;
   mp.innerHTML = `
-    <div style="font-family:'Sora',sans-serif;font-size:17px;font-weight:800;letter-spacing:-0.01em">${greet}, Bala Garu 🙏</div>
+    <div style="font-family:'Sora',sans-serif;font-size:17px;font-weight:800;letter-spacing:-0.01em">${greet}, ${PROF.first} Garu 🙏</div>
     <div style="font-size:11.5px;color:var(--t2);margin:4px 0 14px">Today's mission — ${due+drift+bdays+claims+folOver === 0 ? 'all clear, your universe is calm 💛' : 'here is where your attention matters most:'}</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       ${chip(due, 'Premiums due (30d)', due?'var(--coral)':'var(--teal)', "go('dashboard');setTimeout(()=>el_('polradar')?.scrollIntoView({behavior:'smooth'}),100)")}
@@ -1819,28 +1842,105 @@ function renderRefChamps() {
   }).join('') : '<div style="font-size:12px;color:var(--t3);padding:6px 0">Fill the "Referred By" field on customers to discover who builds your business.</div>';
 }
 
-// =============== AUTH + INIT ===============
+// =============== AUTH + PROFILE + INIT ===============
 function showLogin() { el_('LOGIN').style.display = 'flex'; }
 function hideLogin() { el_('LOGIN').style.display = 'none'; }
-async function doLogin() {
+let AMODE = 'in';
+function toggleAuth() {
+  AMODE = AMODE === 'in' ? 'up' : 'in';
+  el_('ltitle').textContent = AMODE === 'in' ? 'Welcome to Rishta AI' : 'Create your advisor account';
+  el_('lbtn').textContent = AMODE === 'in' ? 'Sign In' : 'Create Account';
+  el_('lswap').textContent = AMODE === 'in' ? 'New advisor? Create free account' : 'Already have an account? Sign in';
+  el_('lerr').textContent = '';
+}
+async function authAction() {
+  if (AMODE === 'newpass') return setNewPass();
   const em = el_('lemail').value.trim(), pw = el_('lpass').value;
-  if (!em || !pw) { el_('lerr').textContent = 'Enter email and password'; return; }
-  el_('lbtn').disabled = true; el_('lbtn').textContent = 'Signing in...';
-  const { error } = await sb.auth.signInWithPassword({ email: em, password: pw });
-  el_('lbtn').disabled = false; el_('lbtn').textContent = 'Enter My Universe';
-  if (error) { el_('lerr').textContent = error.message; return; }
-  hideLogin(); boot();
+  const err = el_('lerr'); err.style.color = 'var(--coral)';
+  if (!em || !pw) { err.textContent = 'Enter email and password'; return; }
+  if (pw.length < 6) { err.textContent = 'Password must be at least 6 characters'; return; }
+  const btn = el_('lbtn'); btn.disabled = true; btn.textContent = 'Please wait...';
+  if (AMODE === 'up') {
+    const { data, error } = await sb.auth.signUp({ email: em, password: pw });
+    btn.disabled = false; btn.textContent = 'Create Account';
+    if (error) { err.textContent = error.message; return; }
+    if (data.session) { hideLogin(); boot(); }
+    else { err.style.color = 'var(--teal)'; err.textContent = '✅ Account created! Check your email for the confirmation link, then sign in.'; AMODE = 'up'; toggleAuth(); }
+  } else {
+    const { error } = await sb.auth.signInWithPassword({ email: em, password: pw });
+    btn.disabled = false; btn.textContent = 'Sign In';
+    if (error) { err.textContent = error.message; return; }
+    hideLogin(); boot();
+  }
+}
+async function forgotPass() {
+  const em = el_('lemail').value.trim();
+  const err = el_('lerr');
+  if (!em) { err.style.color = 'var(--coral)'; err.textContent = 'Type your email above first, then tap Forgot password'; return; }
+  const { error } = await sb.auth.resetPasswordForEmail(em, { redirectTo: location.origin + location.pathname });
+  err.style.color = error ? 'var(--coral)' : 'var(--teal)';
+  err.textContent = error ? error.message : '✅ Reset link sent — check your email and open the link on this device.';
+}
+async function setNewPass() {
+  const pw = el_('lpass').value;
+  const err = el_('lerr');
+  if (pw.length < 6) { err.textContent = 'Password must be at least 6 characters'; return; }
+  const { error } = await sb.auth.updateUser({ password: pw });
+  if (error) { err.textContent = error.message; return; }
+  showT('✅ Password updated!');
+  location.reload();
 }
 async function doLogout() { await sb.auth.signOut(); location.reload(); }
+
+function deriveProf(d) {
+  const name = String(d.full_name || 'Advisor').trim() || 'Advisor';
+  PROF = {
+    name, first: name.split(/\s+/)[0],
+    role: d.designation || 'LIC Advisor', loc: d.location || '',
+    phone: d.phone || '', whats: d.whatsapp || d.phone || '', agency: d.agency || '',
+    ini: name.split(/\s+/).slice(0,2).map(w => w[0]).join('').toUpperCase() || 'AD'
+  };
+}
+function applyProfile() {
+  set('aname', PROF.name);
+  set('arole', PROF.role + (PROF.loc ? ' · ' + PROF.loc : ''));
+  set('aav2', PROF.ini);
+  const f = { sname: PROF.name === 'Advisor' ? '' : PROF.name, srole: PROF.role, sloc: PROF.loc, sphone: PROF.phone, swhats: PROF.whats, sagency: PROF.agency };
+  for (const id in f) { const e = el_(id); if (e) e.value = f[id]; }
+}
+async function loadProfile() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return false;
+  const { data } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
+  if (data && data.full_name) { deriveProf(data); applyProfile(); return true; }
+  deriveProf({}); applyProfile(); return false;
+}
+async function saveProfile() {
+  const name = el_('sname').value.trim();
+  if (!name) { showT('⚠️ Enter your full name'); return; }
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return;
+  const payload = { id: user.id, full_name: name, designation: el_('srole').value.trim() || 'LIC Advisor',
+    location: el_('sloc').value.trim(), phone: el_('sphone').value.trim(),
+    whatsapp: el_('swhats').value.trim() || el_('sphone').value.trim(), agency: el_('sagency').value.trim() };
+  const { error } = await sb.from('profiles').upsert(payload);
+  if (error) { showT('❌ ' + error.message); return; }
+  deriveProf(payload); applyProfile();
+  renderMission(); renderTeam(); renderChat();
+  showT('✅ Profile saved, ' + PROF.first + ' Garu!');
+}
+
 let BOOTED = false;
 async function boot() {
   if (BOOTED) return; BOOTED = true;
   renderOBJ();
   renderChat();
   renderTicker();
+  const hasProfile = await loadProfile();
   loadTeam();
   loadLeads();
   await loadAll();
+  if (!hasProfile) { go('settings'); showT('👋 Welcome! Set up your advisor profile first — it personalises everything.'); }
 }
 document.addEventListener('DOMContentLoaded', async () => {
   hideL();
@@ -1849,6 +1949,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     el_('lerr').textContent = '⚠️ Setup needed: paste your Supabase URL and anon key at the top of this file (search for SUPABASE_URL).';
     return;
   }
+  sb.auth.onAuthStateChange((ev) => {
+    if (ev === 'PASSWORD_RECOVERY') {
+      showLogin();
+      AMODE = 'newpass';
+      el_('ltitle').textContent = 'Set a new password';
+      const eg = el_('lemailg'); if (eg) eg.style.display = 'none';
+      el_('lbtn').textContent = 'Save New Password';
+    }
+  });
   const { data: { session } } = await sb.auth.getSession();
   if (session) { hideLogin(); boot(); }
   else showLogin();
