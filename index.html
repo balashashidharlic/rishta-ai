@@ -288,6 +288,11 @@ input[type="date"]{text-transform:uppercase}
 .p.clpsd .pb{display:none}
 .p.clpsd{opacity:0.82}
 .mb{z-index:200}
+/* SEGMENT LIST POPUP */
+#SEGOV{display:none;position:fixed;inset:0;z-index:140;background:rgba(3,7,14,0.78);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);padding:8vh 14px;overflow-y:auto}
+#SEGOV.on{display:block;animation:scfade .22s ease}
+.segcard{max-width:640px;margin:0 auto;background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:18px;padding:20px 22px;box-shadow:0 30px 80px rgba(0,0,0,0.5)}
+@media(max-width:680px){#SEGOV{padding:14px 8px 100px}}
 /* CUSTOMER PROFILE AS OVERLAY POPUP */
 #sc-profile.on{position:fixed;inset:0;z-index:150;background:rgba(3,7,14,0.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);overflow-y:auto;padding:4vh 14px calc(4vh + 80px);animation:scfade .25s ease}
 #sc-profile.on>*{max-width:1020px;margin-left:auto;margin-right:auto}
@@ -465,8 +470,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
       <div class="g4">
         <div class="sc2 sg" onclick="go('customers')"><div class="sl">Total Families</div><div class="sv" id="s1" style="color:var(--gold)">0</div><div class="sd">In your universe</div></div>
         <div class="sc2 st"><div class="sl">Avg Trust Score</div><div class="sv" id="s2" style="color:var(--teal)">0</div><div class="sd">Relationship strength</div></div>
-        <div class="sc2"><div class="sl">Champions</div><div class="sv" id="s3" style="color:var(--gold)">0</div><div class="sd">Trust score 75+</div></div>
-        <div class="sc2 sr" onclick="go('ai')"><div class="sl">Needs Attention</div><div class="sv" id="s4" style="color:var(--coral)">0</div><div class="sd">Need attention</div></div>
+        <div class="sc2" style="cursor:pointer" onclick="filterSeg('bonds')"><div class="sl">Champions</div><div class="sv" id="s3" style="color:var(--gold)">0</div><div class="sd">Trust score 75+</div></div>
+        <div class="sc2 sr" style="cursor:pointer" onclick="filterSeg('waiting')"><div class="sl">Needs Attention</div><div class="sv" id="s4" style="color:var(--coral)">0</div><div class="sd">Trust below 45</div></div>
       </div>
       <div class="g2">
         <div class="p"><div class="ph"><div class="pt">Needs Reconnection</div></div><div class="pb" id="driftlist"></div></div>
@@ -490,8 +495,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
         <i class="ti ti-search" style="color:var(--t3)"></i>
         <input type="text" placeholder="Search name, phone, city..." id="csearch" oninput="filterC(this.value)" style="background:none;border:none;outline:none;flex:1;font-size:13px;color:var(--t1);font-family:inherit;min-width:140px"/>
         <span class="tag" style="cursor:pointer" onclick="renderCGrid(DB)">All</span>
-        <span class="tag" style="cursor:pointer;color:var(--coral)" onclick="filterTrust('low')">⚠ At Risk</span>
-        <span class="tag" style="cursor:pointer;color:var(--teal)" onclick="filterTrust('high')">⭐ Champions</span>
+        <span class="tag" style="cursor:pointer;color:var(--coral)" onclick="filterSeg('waiting')">⚠ At Risk</span>
+        <span class="tag" style="cursor:pointer;color:var(--teal)" onclick="filterSeg('bonds')">⭐ Champions</span>
         <span class="tag" style="cursor:pointer;color:var(--gold)" onclick="el_('csvfile').click()">📥 Import CSV</span>
         <input type="file" id="csvfile" accept=".csv" style="display:none" onchange="importCSV(this.files[0])"/>
       </div>
@@ -816,6 +821,15 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
   <button class="mtab" data-s="team" onclick="mGo('team')"><i class="ti ti-sitemap"></i>Team<span class="mbdg" id="m_tcount"></span></button>
   <button class="mtab" data-s="more" onclick="mSheet(true)"><i class="ti ti-menu-2"></i>More<span class="mbdg" id="m_acount"></span></button>
 </div>
+<div id="SEGOV" onclick="if(event.target===this)closeSegOv()">
+  <div class="segcard">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <div style="flex:1"><div style="font-size:10.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--t3);font-weight:800;font-family:'Sora',sans-serif" id="segtitle"></div></div>
+      <button onclick="closeSegOv()" style="width:34px;height:34px;border-radius:50%;border:1px solid var(--b);background:var(--card2);color:var(--t1);font-size:15px;cursor:pointer">✕</button>
+    </div>
+    <div id="seglist" style="max-height:62vh;overflow-y:auto"></div>
+  </div>
+</div>
 <div class="toast" id="TOAST"></div>
 
 <script>
@@ -1007,7 +1021,23 @@ const SEGDEFS = {
   waiting: { label: 'Waiting for reconnection (trust below 45)',    test: c => (parseInt(c.trust_score)||50) < 45 },
   bonds:   { label: 'Strongest bonds (trust 75+)',                  test: c => (parseInt(c.trust_score)||50) >= 75 }
 };
-function filterSeg(seg) { CSEG = seg; SEGKEEP = true; go('customers'); applySeg(); }
+function filterSeg(seg) {
+  const d = SEGDEFS[seg]; if (!d) return;
+  const list = DB.map((c, i) => ({ c, i })).filter(x => d.test(x.c));
+  el_('segtitle').textContent = list.length + ' · ' + d.label;
+  el_('seglist').innerHTML = list.length ? list.map(x => {
+    const cc = getCol(x.c.name||'');
+    const t = parseInt(x.c.trust_score)||50, ds = daysSince(lastTouch(x.c));
+    const dd = x.c.premium_due ? Math.ceil((new Date(x.c.premium_due) - Date.now())/86400000) : null;
+    const extra = (dd !== null && !isNaN(dd) && dd <= 30) ? ` · ${fmtINR(x.c.premium_amount)} ${dd < 0 ? Math.abs(dd)+'d overdue' : 'due in '+dd+'d'}` : '';
+    return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.045);cursor:pointer" onclick="openProf(${x.i})">
+      <div style="width:34px;height:34px;border-radius:50%;background:${cc.bg};color:${cc.tc};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">${ini(x.c.name)}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">${esc(x.c.name)}</div><div style="font-size:10.5px;color:var(--t3)">trust ${t} · last contact ${ds}d ago${extra}</div></div>
+      <i class="ti ti-chevron-right" style="color:var(--t3)"></i></div>`;
+  }).join('') : '<div style="font-size:12px;color:var(--t3);padding:10px 0">No one in this group right now.</div>';
+  el_('SEGOV').classList.add('on');
+}
+function closeSegOv() { el_('SEGOV').classList.remove('on'); }
 function clearSeg() { CSEG = null; const sb2 = el_('segbar'); if (sb2) sb2.innerHTML = ''; renderCGrid(DB); }
 function applySeg() {
   const bar = el_('segbar'); if (!bar) return;
@@ -2326,7 +2356,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 11-Jun-Q';
+const APP_VERSION = 'v1.0 · build 11-Jun-S';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
