@@ -585,7 +585,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
               <button class="gchip" onclick="gPreset('New Car','🚗','Driving my family in the comfort I earned.')">🚗 Car</button>
               <button class="gchip" onclick="gPreset('Family Trip Abroad','✈️','Memories my children will never forget.')">✈️ Family Trip</button>
               <button class="gchip" onclick="gPreset('₹1 Crore Wealth','💰','Freedom to work by choice, not by need.')">💰 ₹1 Crore</button>
-              <button class="gchip" onclick="gPreset("Children's Education",'🎓','The best start I can possibly give them.')">🎓 Education</button>
+              <button class="gchip" onclick="gPreset('Children\u2019s Education','🎓','The best start I can possibly give them.')">🎓 Education</button>
             </div>
             <input type="hidden" id="ve"/>
             <div class="fg"><label class="fl">My Goal *</label><input class="fi" id="vt" placeholder="e.g. Own House in Anantapur"/></div>
@@ -2175,7 +2175,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 11-Jun-A';
+const APP_VERSION = 'v1.0 · build 11-Jun-B';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
