@@ -421,7 +421,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
     <div><div class="tt" id="TT">Your Relationship Universe</div><div class="ts" id="TS">Loading...</div></div>
     <div class="ta">
       <button class="btn bg" onclick="loadAll()"><i class="ti ti-refresh"></i> Sync</button>
-      <button class="btn bp" onclick="go('addcustomer')"><i class="ti ti-plus"></i> Add Customer</button>
+      <button class="btn bp" onclick="newCust()"><i class="ti ti-plus"></i> Add Customer</button>
     </div>
   </div>
 
@@ -480,6 +480,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
         <span class="tag" style="cursor:pointer;color:var(--gold)" onclick="el_('csvfile').click()">📥 Import CSV</span>
         <input type="file" id="csvfile" accept=".csv" style="display:none" onchange="importCSV(this.files[0])"/>
       </div>
+      <div id="segbar"></div>
       <div id="cgrid" class="cgrid"></div>
     </div>
 
@@ -488,6 +489,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
       <div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn bg" onclick="go('customers')"><i class="ti ti-arrow-left"></i> Back</button>
         <button class="btn bpu" onclick="showBrief()"><i class="ti ti-clipboard"></i> Meeting Brief</button>
+        <button class="btn bg" onclick="editC()"><i class="ti ti-pencil"></i> Edit</button>
         <button class="btn bd" onclick="deleteC()"><i class="ti ti-trash"></i> Delete</button>
       </div>
       <div id="profcont"></div>
@@ -986,6 +988,24 @@ function renderCGrid(list) {
   g.innerHTML = list.map(c => { const i = DB.indexOf(c); return cardHTML(c, i>=0?i:0); }).join('');
 }
 
+let CSEG = null, SEGKEEP = false;
+const SEGDEFS = {
+  due:     { label: 'Premiums due (next 30 days & overdue)', test: c => { const d = c.premium_due ? Math.ceil((new Date(c.premium_due) - Date.now())/86400000) : null; return d !== null && !isNaN(d) && d <= 30; } },
+  drift:   { label: 'Needs reconnection (45+ days quiet)',   test: c => daysSince(lastTouch(c)) >= 45 && (parseInt(c.trust_score)||50) < 70 },
+  bday:    { label: 'Birthdays in the next 3 days',          test: c => { const d = bdayIn(c.dob); return d !== null && d <= 3; } },
+  claims:  { label: 'Claims in progress',                    test: c => c.claim_stage && c.claim_stage !== 'Payment Completed' },
+  protect: { label: 'Families to protect (children, no policy)', test: c => c.children && !c.policy_no && !c.plan_name }
+};
+function filterSeg(seg) { CSEG = seg; SEGKEEP = true; go('customers'); applySeg(); }
+function clearSeg() { CSEG = null; const sb2 = el_('segbar'); if (sb2) sb2.innerHTML = ''; renderCGrid(DB); }
+function applySeg() {
+  const bar = el_('segbar'); if (!bar) return;
+  if (!CSEG || !SEGDEFS[CSEG]) { bar.innerHTML = ''; renderCGrid(DB); return; }
+  const d = SEGDEFS[CSEG];
+  const list = DB.filter(d.test);
+  bar.innerHTML = `<div style="display:inline-flex;align-items:center;gap:10px;padding:8px 14px;border-radius:20px;background:var(--card);border:1px solid rgba(201,161,78,0.35);font-size:11.5px;margin-bottom:14px"><span style="color:var(--gold);font-weight:800">${list.length}</span> ${d.label} <span onclick="clearSeg()" style="cursor:pointer;color:var(--t3);font-weight:800;padding:0 2px">\u2715 show all</span></div>`;
+  renderCGrid(list);
+}
 function filterC(q) { renderCGrid(DB.filter(c=>(c.name||'').toLowerCase().includes(q.toLowerCase())||(c.phone||'').includes(q)||(c.occupation||'').toLowerCase().includes(q.toLowerCase()))); }
 function filterTrust(l) { renderCGrid(l==='high'?DB.filter(c=>parseInt(c.trust_score||50)>=75):DB.filter(c=>parseInt(c.trust_score||50)<45)); }
 
@@ -1226,6 +1246,22 @@ async function setPersona(v) {
 // ============================================================
 // SAVE CUSTOMER
 // ============================================================
+let CEDIT = -1;
+function newCust() { CEDIT = -1; clearF(); go('addcustomer'); const b = el_('savebtn'); if (b) b.innerHTML = '\ud83d\udcbe Save to Universe'; }
+function editC() {
+  if (CUR < 0) return;
+  const c = DB[CUR]; CEDIT = CUR;
+  const f = { fn:c.name, fp:c.phone, fd:c.dob, fo:c.occupation, fi2:c.income, fl2:c.language,
+    fsp:c.spouse, fch:c.children, fgo:c.goals, fre:c.referred_by, ftr:c.trust_score,
+    fpe:c.persona, fpno:c.policy_no, fplan:c.plan_name, fsa:c.sum_assured, fpa:c.premium_amount,
+    fpm:c.premium_mode, fdoc:c.doc_date, fdue:c.premium_due, fmat:c.maturity_date };
+  for (const id in f) { const e = el_(id); if (e) e.value = f[id] == null ? '' : f[id]; }
+  const no = el_('fno'); if (no) no.value = '';
+  closeM('prof');
+  go('addcustomer');
+  set('TT', 'Edit \u2014 ' + c.name);
+  const b = el_('savebtn'); if (b) b.innerHTML = '\ud83d\udcbe Update Customer';
+}
 async function saveC() {
   const name = el_('fn').value.trim();
   const phone = el_('fp').value.trim().replace(/\D/g,'');
@@ -1235,20 +1271,33 @@ async function saveC() {
   btn.innerHTML = '⏳ Saving...'; btn.disabled = true;
   const stamp = '[' + new Date().toLocaleDateString('en-IN') + '] ';
   const firstNote = el_('fno').value.trim();
-  const { error } = await sb.from('customers').insert({ name, phone,
+  const payload = { name, phone,
     dob:el_('fd').value, occupation:el_('fo').value.trim(),
     income:el_('fi2').value, language:el_('fl2').value,
     spouse:el_('fsp').value.trim(), children:el_('fch').value.trim(),
     goals:el_('fgo').value.trim(), notes:firstNote ? stamp + firstNote : '',
     referred_by:el_('fre').value.trim(), trust_score:parseInt(el_('ftr').value)||50,
-    persona:el_('fpe') ? el_('fpe').value : '', active:'active',
+    persona:el_('fpe') ? el_('fpe').value : '',
     policy_no:el_('fpno').value.trim(), plan_name:el_('fplan').value.trim(),
     sum_assured:parseFloat(el_('fsa').value)||0, premium_amount:parseFloat(el_('fpa').value)||0,
     premium_mode:el_('fpm').value, doc_date:el_('fdoc').value||null,
     premium_due:el_('fdue').value||null, maturity_date:el_('fmat').value||null
-  });
+  };
+  let error;
+  if (CEDIT >= 0 && DB[CEDIT]) {
+    const c = DB[CEDIT];
+    if (firstNote) payload.notes = (c.notes ? c.notes + '\n' : '') + stamp + firstNote;
+    else delete payload.notes;
+    ({ error } = await sb.from('customers').update(payload).eq('id', c.id));
+  } else {
+    payload.active = 'active';
+    ({ error } = await sb.from('customers').insert(payload));
+  }
   btn.innerHTML = '💾 Save to Universe'; btn.disabled = false;
-  if (!error) { showT('✅ '+name+' added!'); clearF(); await loadAll(); go('customers'); }
+  if (!error) {
+    showT(CEDIT >= 0 ? '✅ ' + name + ' updated!' : '✅ ' + name + ' added!');
+    CEDIT = -1; clearF(); await loadAll(); go('customers');
+  }
   else showT('❌ Save failed: ' + error.message);
 }
 function clearF() { ['fn','fp','fd','fo','fsp','fch','fgo','fno','fre','fpno','fplan','fsa','fpa','fdoc','fdue','fmat'].forEach(id=>{const e=el_(id);if(e)e.value='';}); const t=el_('ftr');if(t)t.value=50; }
@@ -1544,6 +1593,7 @@ function go(name) {
   if (name==='team') renderTeam();
   if (name==='leads') renderLeads();
   if (name==='admin') renderAdmin();
+  if (name==='customers') { if (!SEGKEEP) { CSEG = null; const b2 = el_('segbar'); if (b2) b2.innerHTML = ''; } SEGKEEP = false; }
   if (name==='vision') renderVision();
 }
 
@@ -2061,12 +2111,12 @@ function renderMission() {
       <div style="font-size:14px;color:var(--t2);margin:16px 0 22px;line-height:1.9;max-width:560px">${lines.join('<br/>')}</div>
       <button class="btn bp" onclick="startDay()" style="padding:12px 26px;font-size:13px">Start My Day →</button>
       <div style="display:flex;gap:26px;flex-wrap:wrap;margin-top:22px;border-top:1px solid var(--b);padding-top:8px">
-        ${chip(due,'premiums due',true,"el_('polradar')?.scrollIntoView({behavior:'smooth',block:'center'})")}
-        ${chip(drift,'need reconnection',false,"el_('driftlist')?.scrollIntoView({behavior:'smooth',block:'center'})")}
-        ${chip(bdays,'birthdays \u00b7 next 3 days',false,"go('customers')")}
-        ${chip(claims,'claims in progress',true,"go('customers')")}
+        ${chip(due,'premiums due',true,"filterSeg('due')")}
+        ${chip(drift,'need reconnection',false,"filterSeg('drift')")}
+        ${chip(bdays,'birthdays \u00b7 next 3 days',false,"filterSeg('bday')")}
+        ${chip(claims,'claims in progress',true,"filterSeg('claims')")}
         ${chip(folOver,'follow-ups overdue',true,"go('leads')")}
-        ${chip(oppFam,'families to protect',false,"go('customers')")}
+        ${chip(oppFam,'families to protect',false,"filterSeg('protect')")}
       </div>
     </div>`;
 }
@@ -2221,7 +2271,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 11-Jun-H';
+const APP_VERSION = 'v1.0 · build 11-Jun-J';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
