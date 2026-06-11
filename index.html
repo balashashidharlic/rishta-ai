@@ -1591,6 +1591,11 @@ function renderTicker() {
     : FALLBACK_NEWS.map(n => `<span class="tki">${n}</span>`).join('<span class="tks">\u2726</span>');
   const sep = '<span class="tks">✦</span>';
   t.innerHTML = h + sep + h + sep + h + sep + h + sep;
+  // Calm, reading-pace scroll: ~32px per second regardless of content length
+  requestAnimationFrame(() => {
+    const w = t.scrollWidth / 2;
+    if (w > 0) t.style.animationDuration = Math.max(40, Math.round(w / 32)) + 's';
+  });
 }
 
 // ============================================================
