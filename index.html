@@ -274,6 +274,9 @@ html,body{height:100%;overflow:hidden}
 .vpre img{width:52px;height:38px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .2s;opacity:0.75}
 .vpre img:hover{opacity:1;transform:scale(1.06)}
 .vpre img.sel{border-color:var(--gold);opacity:1}
+.gchips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.gchip{padding:8px 13px;border-radius:20px;border:1px solid var(--b);background:var(--card2);font-size:11.5px;cursor:pointer;transition:all .2s;color:var(--t2);font-family:inherit}
+.gchip:hover{border-color:rgba(240,180,41,0.45);color:var(--t1);transform:translateY(-1px)}
 /* ============ MOBILE NAVIGATION (bottom tabs) ============ */
 .mnav,.msheet,.mscrim{display:none}
 .mtab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px;border:none;background:none;color:var(--t3);font-size:9.5px;font-family:inherit;position:relative;cursor:pointer}
@@ -574,13 +577,23 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
         <div class="p">
           <div class="ph"><div class="pt">Add a Goal</div></div>
           <div class="pb">
-            <div class="fr"><div class="fg" style="flex:0 0 70px"><label class="fl">Icon</label><input class="fi" id="ve" placeholder="🏠" maxlength="4" style="text-align:center;font-size:18px"/></div><div class="fg"><label class="fl">Goal *</label><input class="fi" id="vt" placeholder="e.g. Own House in Anantapur"/></div></div>
+            <div style="font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.6">What are you really working for? Tap a dream to start, or write your own.</div>
+            <div class="gchips">
+              <button class="gchip" onclick="gPreset('MDRT Qualification','🏆','My name on that stage, my family in the audience.')">🏆 MDRT</button>
+              <button class="gchip" onclick="gPreset('Own House','🏠','A home my family owns, not rents.')">🏠 Own House</button>
+              <button class="gchip" onclick="gPreset('New Car','🚗','Driving my family in the comfort I earned.')">🚗 Car</button>
+              <button class="gchip" onclick="gPreset('Family Trip Abroad','✈️','Memories my children will never forget.')">✈️ Family Trip</button>
+              <button class="gchip" onclick="gPreset('₹1 Crore Wealth','💰','Freedom to work by choice, not by need.')">💰 ₹1 Crore</button>
+              <button class="gchip" onclick="gPreset("Children's Education",'🎓','The best start I can possibly give them.')">🎓 Education</button>
+            </div>
+            <input type="hidden" id="ve"/>
+            <div class="fg"><label class="fl">My Goal *</label><input class="fi" id="vt" placeholder="e.g. Own House in Anantapur"/></div>
             <div class="fr"><div class="fg"><label class="fl">Target (₹)</label><input class="fi" id="vtar" type="number" min="0" placeholder="e.g. 5000000"/></div><div class="fg"><label class="fl">Reached So Far (₹)</label><input class="fi" id="vcur" type="number" min="0" value="0"/></div></div>
             <div class="fg"><label class="fl">Target Date</label><input class="fi" id="vdl" type="date"/></div>
             <div class="fg"><label class="fl">Why this matters (one line)</label><input class="fi" id="vmo" placeholder="e.g. Every family protected takes me closer."/></div>
             <div class="fg"><label class="fl">Goal Image (optional)</label><input class="fi" id="vimg" placeholder="paste any image URL, or pick below"/><div class="vpre" id="vpre"></div></div>
             <button class="btn bp" onclick="addGoal()" style="width:100%;justify-content:center">Add to My Vision</button>
-            <div style="font-size:10px;color:var(--t3);margin-top:10px">Ideas: 🏆 MDRT Qualification · 🏠 House · 🚗 Car · ✈️ Family Trip · 💰 ₹1 Crore Wealth · 🎓 Children's Education</div>
+
           </div>
         </div>
         <div>
@@ -2050,6 +2063,13 @@ const GOAL_IMAGES = [
   ['goals/office.jpg',    'Office'],
   ['goals/family.jpg',    'Family']
 ];
+function gPreset(title, emoji, why) {
+  el_('vt').value = title;
+  el_('ve').value = emoji;
+  if (!el_('vmo').value.trim()) el_('vmo').value = why;
+  el_('vtar').focus();
+  showT(emoji + ' ' + title + ' — now give it a number and a date');
+}
 function fillPresets(preId, inputId) {
   const pre = el_(preId); if (!pre || pre.dataset.done) return;
   pre.dataset.done = '1';
