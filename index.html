@@ -685,6 +685,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
           <div class="ph"><div class="pt">Add Team Member</div></div>
           <div class="pb">
             <div class="fg"><label class="fl">Full Name *</label><input class="fi" id="tn" placeholder="e.g. Suresh Reddy"/></div>
+            <div class="fg"><label class="fl">Birthday</label><input class="fi" id="tdob" type="date"/></div>
             <div class="fg"><label class="fl">Phone</label><input class="fi" id="tp" placeholder="10-digit mobile" maxlength="10" type="tel"/></div>
             <div class="fg"><label class="fl">Designation</label><select class="fi" id="tr"><option>Agent</option><option>Senior Agent</option><option>Chief Life Insurance Advisor</option><option>Development Officer</option></select></div>
             <div class="fg"><label class="fl">Reports To</label><select class="fi" id="tpar"></select></div>
@@ -1568,6 +1569,8 @@ function el_(id){return document.getElementById(id);}
 function fmtDMY(d){d=d||new Date();const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear();}
 function fmt12(d){d=d||new Date();let h=d.getHours();const m=String(d.getMinutes()).padStart(2,'0');const ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+m+' '+ap;}
 const WDAYS=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+function bdayIn(ds){if(!ds)return null;const b=new Date(ds);if(isNaN(b))return null;const t=new Date();t.setHours(0,0,0,0);let n=new Date(t.getFullYear(),b.getMonth(),b.getDate());if(n<t)n=new Date(t.getFullYear()+1,b.getMonth(),b.getDate());return Math.round((n-t)/86400000);}
+function bdayWord(d){return d===0?'TODAY \ud83c\udf82':d===1?'tomorrow':'in '+d+' days';}
 function updateTS(){const e=document.getElementById('TS');if(!e)return;const d=new Date();e.innerHTML=WDAYS[d.getDay()]+' · '+fmtDMY(d)+' · <span class="tsclock">'+fmt12(d)+'</span> · '+DB.length+' customers';}
 function set(id,v){const e=el_(id);if(e)e.textContent=v;const m=el_('m_'+id);if(m){m.textContent=v;m.dataset.zero=(parseInt(v)||0)===0?'1':'0';}}
 function empty(icon,txt){return`<div class="empty"><div class="eicon">${icon}</div><div class="etit">${txt}</div></div>`;}
@@ -1616,8 +1619,16 @@ function tickerItems() {
 function renderTicker() {
   const t = el_('tktrack'); if (!t) return;
   const items = tickerItems();
+  DB.forEach((c, i) => {
+    const d = bdayIn(c.dob);
+    if (d !== null && d <= 3) items.unshift({ txt: `\ud83c\udf82 ${esc(c.name)} \u2014 birthday ${bdayWord(d)}. A wish builds more trust than ten meetings`, act: `waBday(${i})` });
+  });
+  (TEAM || []).forEach(m => {
+    const d = bdayIn(m.dob);
+    if (d !== null && d <= 3) items.unshift({ txt: `\ud83c\udf89 Team \u2014 ${esc(m.name)}'s birthday ${bdayWord(d)}. Celebrate your people`, act: `waTeamBday('${m.id}')` });
+  });
   const h = items.length
-    ? items.map(x => `<span class="tki" style="cursor:pointer" onclick="openProf(${x.i})">${x.txt}</span>`).join('<span class="tks">\u2726</span>')
+    ? items.map(x => `<span class="tki" style="cursor:pointer" onclick="${x.act || ('openProf(' + x.i + ')')}">${x.txt}</span>`).join('<span class="tks">\u2726</span>')
     : FALLBACK_NEWS.map(n => `<span class="tki">${n}</span>`).join('<span class="tks">\u2726</span>');
   const sep = '<span class="tks">✦</span>';
   t.innerHTML = h + sep + h + sep + h + sep + h + sep;
@@ -1719,10 +1730,10 @@ async function addMem() {
   if (!name) { showT('⚠️ Enter member name'); return; }
   const m = { id:'m'+Date.now(), name, phone:el_('tp').value.trim(), role:el_('tr').value,
     parent:el_('tpar').value||'root', pol:parseInt(el_('tpol').value)||0,
-    prem:parseFloat(el_('tprem').value)||0, joined:new Date().toISOString().slice(0,10) };
+    prem:parseFloat(el_('tprem').value)||0, dob:el_('tdob').value||null, joined:new Date().toISOString().slice(0,10) };
   // show immediately, then save to the TeamMembers sheet
   TEAM.push(m); tcache(); renderTeam();
-  el_('tn').value=''; el_('tp').value=''; el_('tpol').value=0; el_('tprem').value=0;
+  el_('tn').value=''; el_('tp').value=''; el_('tpol').value=0; el_('tprem').value=0; el_('tdob').value='';
   const { error } = await sb.from('team_members').insert(m);
   if (!error) showT('✅ ' + name + ' saved!');
   else showT('⚠️ ' + name + ' added locally — sync failed: ' + error.message);
@@ -1816,6 +1827,20 @@ function sendCompose() {
 }
 function copyCompose() {
   navigator.clipboard.writeText(el_('cmptxt').value).then(()=>showT('📋 Copied!'));
+}
+function waBday(i) {
+  const c = DB[i]; if (!c) return;
+  const ph = String(c.phone||'').replace(/\D/g,'').slice(-10);
+  if (ph.length !== 10) { showT('\u26a0\ufe0f No valid phone for ' + c.name); return; }
+  const lang = /english/i.test(c.language||'') && !/telugu/i.test(c.language||'') ? 'en' : 'te';
+  openCompose('Wish ' + c.name, ph, MT.birthday[lang](c));
+}
+function waTeamBday(id) {
+  const m = (TEAM||[]).find(x => x.id === id); if (!m) return;
+  const ph = String(m.phone||'').replace(/\D/g,'').slice(-10);
+  if (ph.length !== 10) { showT('\u26a0\ufe0f No phone saved for ' + m.name); return; }
+  const msg = `Happy Birthday ${m.name}! \ud83c\udf82\n\nMee dedication and hard work maa team ki oka inspiration. Wishing you a year full of success, health and happiness!\n\n${PROF.name}${SIGPH()?'\n\ud83d\udcde '+SIGPH():''}`;
+  openCompose('Wish ' + m.name, ph, msg);
 }
 function waRemind(i, kind) {
   const c = DB[i]; if (!c) return;
@@ -2010,16 +2035,18 @@ function renderMission() {
     if (dd !== null && dd <= 30) { due++; dueAmt += parseFloat(c.premium_amount)||0; }
     const t = parseInt(c.trust_score)||50;
     if (daysSince(lastTouch(c)) >= 45 && t < 70) drift++;
-    if (c.dob) { const b = new Date(c.dob); if (!isNaN(b) && b.getMonth() === mNow) bdays++; }
+    const bdd = bdayIn(c.dob); if (bdd !== null && bdd <= 3) bdays++;
     if (c.claim_stage && c.claim_stage !== 'Payment Completed') claims++;
     if (c.children && !c.policy_no && !c.plan_name) oppFam++;
   });
+  (TEAM || []).forEach(m => { const d = bdayIn(m.dob); if (d !== null && d <= 3) bdays++; });
   const folOver = LEADS.filter(l => l.status !== 'Converted' && l.status !== 'Lost' && l.next_follow && dTo(l.next_follow) < 0).length;
   const families = due + claims + bdays;
   const lines = [];
   if (families > 0) lines.push(`<b>${families}</b> ${families===1?'family needs':'families need'} your attention today.`);
   if (dueAmt > 0) lines.push(`<b>${fmtINR(dueAmt)}</b> premium opportunity this month.`);
   if (drift > 0) lines.push(`<b>${drift}</b> ${drift===1?'relationship needs':'relationships need'} reconnection.`);
+  if (bdays > 0) lines.push(`<b>${bdays}</b> birthday${bdays>1?'s':''} in the next 3 days \u2014 a call means more than a gift.`);
   if (folOver > 0) lines.push(`<b>${folOver}</b> lead follow-up${folOver>1?'s':''} waiting.`);
   try {
     const tg = myGoals()[0];
@@ -2036,7 +2063,7 @@ function renderMission() {
       <div style="display:flex;gap:26px;flex-wrap:wrap;margin-top:22px;border-top:1px solid var(--b);padding-top:8px">
         ${chip(due,'premiums due',true,"el_('polradar')?.scrollIntoView({behavior:'smooth',block:'center'})")}
         ${chip(drift,'need reconnection',false,"el_('driftlist')?.scrollIntoView({behavior:'smooth',block:'center'})")}
-        ${chip(bdays,'birthdays this month',false,"go('customers')")}
+        ${chip(bdays,'birthdays \u00b7 next 3 days',false,"go('customers')")}
         ${chip(claims,'claims in progress',true,"go('customers')")}
         ${chip(folOver,'follow-ups overdue',true,"go('leads')")}
         ${chip(oppFam,'families to protect',false,"go('customers')")}
@@ -2194,7 +2221,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 11-Jun-G';
+const APP_VERSION = 'v1.0 · build 11-Jun-H';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
