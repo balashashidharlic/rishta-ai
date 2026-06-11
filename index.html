@@ -284,11 +284,26 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
     <div style="font-size:12px;color:var(--t3);margin:6px 0 22px">Your relationship universe awaits</div>
     <div class="fg" id="lemailg"><label class="fl">Email</label><input class="fi" id="lemail" type="email" placeholder="you@gmail.com"/></div>
     <div class="fg"><label class="fl">Password</label><input class="fi" id="lpass" type="password" placeholder="********" onkeydown="if(event.key==='Enter')authAction()"/></div>
+    <div id="lsignup" style="display:none">
+      <div class="fg"><label class="fl">Full Name *</label><input class="fi" id="lsname" placeholder="e.g. Ramesh Kumar"/></div>
+      <div class="fr"><div class="fg"><label class="fl">Mobile *</label><input class="fi" id="lsmob" maxlength="10" type="tel"/></div><div class="fg"><label class="fl">City</label><input class="fi" id="lscity" placeholder="e.g. Anantapur"/></div></div>
+    </div>
     <div id="lerr" style="font-size:11.5px;color:var(--coral);min-height:16px;margin:4px 0 10px"></div>
     <button class="btn bp" id="lbtn" onclick="authAction()" style="width:100%;justify-content:center;padding:12px">Sign In</button>
     <div style="font-size:11px;color:var(--t3);margin-top:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
       <span id="lswap" onclick="toggleAuth()" style="color:var(--gold);cursor:pointer;font-weight:700">New advisor? Create free account</span>
       <span onclick="forgotPass()" style="cursor:pointer;text-decoration:underline">Forgot password?</span>
+    </div>
+  </div>
+</div>
+<div class="lgw" id="GATE" style="display:none">
+  <div class="lgc" style="text-align:center">
+    <div id="gicon" style="font-size:42px;margin-bottom:14px">⏳</div>
+    <div id="gtitle" style="font-family:'Sora',sans-serif;font-size:20px;font-weight:800">Awaiting Approval</div>
+    <div id="gmsg" style="font-size:12.5px;color:var(--t2);margin:10px 0 20px;line-height:1.6">Thank you for registering! Your account is awaiting approval by the administrator. You will get access once approved.</div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn bp" onclick="location.reload()" style="padding:10px 18px">🔄 Check Status</button>
+      <button class="btn bg" onclick="doLogout()" style="padding:10px 18px">Sign Out</button>
     </div>
   </div>
 </div>
@@ -304,6 +319,7 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
   <div class="ni on" id="nav-dashboard" onclick="go('dashboard')"><i class="ti ti-planet" style="font-size:15px;width:18px;text-align:center"></i><span>Universe</span></div>
   <div class="ni" id="nav-customers" onclick="go('customers')"><i class="ti ti-users" style="font-size:15px;width:18px;text-align:center"></i><span>Customers</span><div class="nbadge" id="ccount">0</div></div>
   <div class="ni" id="nav-leads" onclick="go('leads')"><i class="ti ti-target-arrow" style="font-size:15px;width:18px;text-align:center"></i><span>Leads</span><div class="nbadge" id="lcount" style="background:var(--purple)">0</div></div>
+  <div class="ni" id="nav-admin" onclick="go('admin')" style="display:none"><i class="ti ti-shield-check" style="font-size:15px;width:18px;text-align:center"></i><span>Admin</span><div class="nbadge" id="acount" style="background:var(--coral)">0</div></div>
   <div class="ni" id="nav-settings" onclick="go('settings')"><i class="ti ti-user-cog" style="font-size:15px;width:18px;text-align:center"></i><span>My Profile</span></div>
   <div class="ni" id="nav-team" onclick="go('team')"><i class="ti ti-sitemap" style="font-size:15px;width:18px;text-align:center"></i><span>My Team</span><div class="nbadge" id="tcount" style="background:var(--teal)">0</div></div>
   <div class="ni" id="nav-messages" onclick="go('messages')"><i class="ti ti-message-circle" style="font-size:15px;width:18px;text-align:center"></i><span>Messages</span></div>
@@ -480,6 +496,22 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
     </div>
 
     <!-- MY TEAM -->
+    <!-- ADMIN PANEL -->
+    <div class="sc" id="sc-admin">
+      <div class="p" style="border-color:rgba(224,92,58,0.3)">
+        <div class="ph"><div class="pt">⏳ Pending Registrations — approve or reject</div></div>
+        <div class="pb" id="pendlist"></div>
+      </div>
+      <div class="p">
+        <div class="ph"><div class="pt">👥 All Advisors</div></div>
+        <div class="pb" id="userlist"></div>
+      </div>
+      <div class="p" style="border-color:rgba(167,139,250,0.25)">
+        <div class="ph"><div class="pt">📜 Audit Log — recent activity</div></div>
+        <div class="pb" id="auditlist"></div>
+      </div>
+    </div>
+
     <!-- PROFILE SETTINGS -->
     <div class="sc" id="sc-settings">
       <div class="p" style="max-width:560px">
@@ -1335,6 +1367,7 @@ const TITLES = {
   team:'My Team — Downline Network 🌿',
   leads:'Lead Pipeline — Future Customers 🎯',
   settings:'My Profile & Settings ⚙️',
+  admin:'Admin — Approvals & Audit 🛡️',
   universe:'Relationship Galaxy Map 🌌'
 };
 function go(name) {
@@ -1347,6 +1380,7 @@ function go(name) {
   if (name==='universe') setTimeout(renderU,100);
   if (name==='team') renderTeam();
   if (name==='leads') renderLeads();
+  if (name==='admin') renderAdmin();
 }
 
 // ============================================================
@@ -1842,15 +1876,33 @@ function renderRefChamps() {
   }).join('') : '<div style="font-size:12px;color:var(--t3);padding:6px 0">Fill the "Referred By" field on customers to discover who builds your business.</div>';
 }
 
-// =============== AUTH + PROFILE + INIT ===============
-function showLogin() { el_('LOGIN').style.display = 'flex'; }
+// =============== AUTH + PROFILE + ADMIN + INIT ===============
+const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
+const IDLE_MINUTES = 30;
+
+function showLogin() { el_('LOGIN').style.display = 'flex'; el_('GATE').style.display = 'none'; }
 function hideLogin() { el_('LOGIN').style.display = 'none'; }
+function showGate(status) {
+  hideLogin();
+  el_('GATE').style.display = 'flex';
+  if (status === 'rejected') {
+    el_('gicon').textContent = '\u26d4';
+    el_('gtitle').textContent = 'Registration Not Approved';
+    el_('gmsg').textContent = 'Your registration has not been approved. Please contact the administrator for more information.';
+  } else {
+    el_('gicon').textContent = '\u23f3';
+    el_('gtitle').textContent = 'Awaiting Approval';
+    el_('gmsg').textContent = 'Thank you for registering! Your account is awaiting approval by the administrator. Tap Check Status after you have been approved.';
+  }
+}
+
 let AMODE = 'in';
 function toggleAuth() {
   AMODE = AMODE === 'in' ? 'up' : 'in';
-  el_('ltitle').textContent = AMODE === 'in' ? 'Welcome to Rishta AI' : 'Create your advisor account';
-  el_('lbtn').textContent = AMODE === 'in' ? 'Sign In' : 'Create Account';
-  el_('lswap').textContent = AMODE === 'in' ? 'New advisor? Create free account' : 'Already have an account? Sign in';
+  el_('ltitle').textContent = AMODE === 'in' ? 'Welcome to Rishta AI' : 'Request advisor access';
+  el_('lbtn').textContent = AMODE === 'in' ? 'Sign In' : 'Request Access';
+  el_('lswap').textContent = AMODE === 'in' ? 'New advisor? Request access' : 'Already approved? Sign in';
+  el_('lsignup').style.display = AMODE === 'up' ? 'block' : 'none';
   el_('lerr').textContent = '';
 }
 async function authAction() {
@@ -1861,11 +1913,19 @@ async function authAction() {
   if (pw.length < 6) { err.textContent = 'Password must be at least 6 characters'; return; }
   const btn = el_('lbtn'); btn.disabled = true; btn.textContent = 'Please wait...';
   if (AMODE === 'up') {
+    const nm = el_('lsname').value.trim(), mob = el_('lsmob').value.trim();
+    if (!nm || mob.length !== 10) { btn.disabled = false; btn.textContent = 'Request Access'; err.textContent = 'Enter your full name and a 10-digit mobile number'; return; }
     const { data, error } = await sb.auth.signUp({ email: em, password: pw });
-    btn.disabled = false; btn.textContent = 'Create Account';
+    btn.disabled = false; btn.textContent = 'Request Access';
     if (error) { err.textContent = error.message; return; }
-    if (data.session) { hideLogin(); boot(); }
-    else { err.style.color = 'var(--teal)'; err.textContent = '✅ Account created! Check your email for the confirmation link, then sign in.'; AMODE = 'up'; toggleAuth(); }
+    if (data.session) {
+      await sb.from('profiles').insert({ id: data.session.user.id, email: em, full_name: nm, phone: mob, whatsapp: mob, location: el_('lscity').value.trim() });
+      logAct('register', nm + ' \u00b7 ' + em);
+      showGate('pending');
+    } else {
+      err.style.color = 'var(--teal)';
+      err.textContent = '\u2705 Check your email for the confirmation link, then sign in.';
+    }
   } else {
     const { error } = await sb.auth.signInWithPassword({ email: em, password: pw });
     btn.disabled = false; btn.textContent = 'Sign In';
@@ -1879,7 +1939,7 @@ async function forgotPass() {
   if (!em) { err.style.color = 'var(--coral)'; err.textContent = 'Type your email above first, then tap Forgot password'; return; }
   const { error } = await sb.auth.resetPasswordForEmail(em, { redirectTo: location.origin + location.pathname });
   err.style.color = error ? 'var(--coral)' : 'var(--teal)';
-  err.textContent = error ? error.message : '✅ Reset link sent — check your email and open the link on this device.';
+  err.textContent = error ? error.message : '\u2705 Reset link sent \u2014 check your email and open the link on this device.';
 }
 async function setNewPass() {
   const pw = el_('lpass').value;
@@ -1887,66 +1947,133 @@ async function setNewPass() {
   if (pw.length < 6) { err.textContent = 'Password must be at least 6 characters'; return; }
   const { error } = await sb.auth.updateUser({ password: pw });
   if (error) { err.textContent = error.message; return; }
-  showT('✅ Password updated!');
+  showT('\u2705 Password updated!');
   location.reload();
 }
-async function doLogout() { await sb.auth.signOut(); location.reload(); }
+async function doLogout() { logAct('logout',''); await sb.auth.signOut(); setTimeout(()=>location.reload(), 300); }
 
+// ---- profile ----
 function deriveProf(d) {
   const name = String(d.full_name || 'Advisor').trim() || 'Advisor';
   PROF = {
     name, first: name.split(/\s+/)[0],
     role: d.designation || 'LIC Advisor', loc: d.location || '',
     phone: d.phone || '', whats: d.whatsapp || d.phone || '', agency: d.agency || '',
-    ini: name.split(/\s+/).slice(0,2).map(w => w[0]).join('').toUpperCase() || 'AD'
+    ini: name.split(/\s+/).slice(0,2).map(w => w[0]).join('').toUpperCase() || 'AD',
+    urole: d.role || 'advisor', status: d.status || 'pending'
   };
 }
 function applyProfile() {
   set('aname', PROF.name);
-  set('arole', PROF.role + (PROF.loc ? ' · ' + PROF.loc : ''));
+  set('arole', PROF.role + (PROF.loc ? ' \u00b7 ' + PROF.loc : ''));
   set('aav2', PROF.ini);
   const f = { sname: PROF.name === 'Advisor' ? '' : PROF.name, srole: PROF.role, sloc: PROF.loc, sphone: PROF.phone, swhats: PROF.whats, sagency: PROF.agency };
   for (const id in f) { const e = el_(id); if (e) e.value = f[id]; }
 }
-async function loadProfile() {
-  const { data: { user } } = await sb.auth.getUser();
-  if (!user) return false;
-  const { data } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
-  if (data && data.full_name) { deriveProf(data); applyProfile(); return true; }
-  deriveProf({}); applyProfile(); return false;
-}
 async function saveProfile() {
   const name = el_('sname').value.trim();
-  if (!name) { showT('⚠️ Enter your full name'); return; }
+  if (!name) { showT('\u26a0\ufe0f Enter your full name'); return; }
   const { data: { user } } = await sb.auth.getUser();
   if (!user) return;
-  const payload = { id: user.id, full_name: name, designation: el_('srole').value.trim() || 'LIC Advisor',
+  const payload = { id: user.id, email: user.email, full_name: name, designation: el_('srole').value.trim() || 'LIC Advisor',
     location: el_('sloc').value.trim(), phone: el_('sphone').value.trim(),
     whatsapp: el_('swhats').value.trim() || el_('sphone').value.trim(), agency: el_('sagency').value.trim() };
   const { error } = await sb.from('profiles').upsert(payload);
-  if (error) { showT('❌ ' + error.message); return; }
+  if (error) { showT('\u274c ' + error.message); return; }
+  Object.assign(payload, { role: PROF.urole, status: PROF.status });
   deriveProf(payload); applyProfile();
   renderMission(); renderTeam(); renderChat();
-  showT('✅ Profile saved, ' + PROF.first + ' Garu!');
+  showT('\u2705 Profile saved, ' + PROF.first + ' Garu!');
 }
 
+// ---- audit log (fire and forget) ----
+function logAct(action, detail) {
+  try { sb.from('audit_log').insert({ action, detail: String(detail||'') }).then(()=>{}); } catch(e) {}
+}
+
+// ---- admin panel ----
+async function renderAdmin() {
+  const pl = el_('pendlist'), ul = el_('userlist'), al = el_('auditlist');
+  if (!pl) return;
+  const { data: users, error } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
+  if (error) { pl.innerHTML = '<div style="font-size:12px;color:var(--coral)">' + esc(error.message) + '</div>'; return; }
+  const pending = (users||[]).filter(u => u.status === 'pending' && u.role !== 'super_admin');
+  set('acount', pending.length);
+  const ucard = (u, actions) => `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--b);flex-wrap:wrap">
+    <div style="flex:1;min-width:160px"><div style="font-size:13px;font-weight:700">${esc(u.full_name||'(no name)')}</div>
+    <div style="font-size:10.5px;color:var(--t3)">${esc(u.email||'')}${u.phone?' \u00b7 \ud83d\udcde '+esc(u.phone):''}${u.location?' \u00b7 '+esc(u.location):''} \u00b7 ${String(u.created_at||'').slice(0,10)}</div></div>
+    ${actions}</div>`;
+  pl.innerHTML = pending.length ? pending.map(u => ucard(u,
+    `<button class="btn bt" style="padding:6px 12px;font-size:11px" onclick="setUserStatus('${u.id}','approved','${esc(u.full_name||'')}')">\u2705 Approve</button>
+     <button class="btn bd" style="padding:6px 12px;font-size:11px" onclick="setUserStatus('${u.id}','rejected','${esc(u.full_name||'')}')">\u274c Reject</button>`)).join('')
+    : '<div style="font-size:12px;color:var(--t3)">No pending registrations. \ud83c\udf89</div>';
+  ul.innerHTML = (users||[]).map(u => ucard(u,
+    `<span class="tchip" style="color:${u.role==='super_admin'?'var(--gold)':u.status==='approved'?'var(--teal)':u.status==='rejected'?'var(--coral)':'var(--t2)'}">${u.role==='super_admin'?'\ud83d\udc51 Super Admin':esc(u.status||'pending')}</span>
+     ${u.role!=='super_admin' ? (u.status==='approved'
+       ? `<button class="btn bd" style="padding:5px 11px;font-size:10.5px" onclick="setUserStatus('${u.id}','rejected','${esc(u.full_name||'')}')">Suspend</button>`
+       : `<button class="btn bt" style="padding:5px 11px;font-size:10.5px" onclick="setUserStatus('${u.id}','approved','${esc(u.full_name||'')}')">Approve</button>`) : ''}`)).join('');
+  const { data: logs } = await sb.from('audit_log').select('*').order('created_at', { ascending: false }).limit(50);
+  al.innerHTML = (logs&&logs.length) ? logs.map(l => `<div style="font-size:11px;padding:5px 0;border-bottom:1px solid var(--b);color:var(--t2)"><b style="color:var(--t1)">${esc(l.action)}</b> ${esc(l.detail||'')} <span style="color:var(--t3)">\u00b7 ${String(l.created_at||'').replace('T',' ').slice(0,16)}</span></div>`).join('') : '<div style="font-size:12px;color:var(--t3)">No activity yet.</div>';
+}
+async function setUserStatus(id, st, nm) {
+  const { error } = await sb.rpc('set_user_status', { target: id, new_status: st });
+  if (error) { showT('\u274c ' + error.message); return; }
+  logAct('admin_' + st, nm);
+  showT(st === 'approved' ? '\u2705 ' + nm + ' approved!' : '\u26d4 ' + nm + ' set to rejected');
+  renderAdmin();
+}
+
+// ---- demo protection ----
+function enableDemoProtection() {
+  const wm = document.createElement('div');
+  wm.textContent = 'RISHTA AI DEMO \u00b7 Authorized Access Only';
+  wm.style.cssText = 'position:fixed;bottom:8px;right:12px;font-size:9px;letter-spacing:1.5px;color:rgba(240,180,41,0.35);z-index:9999;pointer-events:none;font-family:Sora,sans-serif;text-transform:uppercase';
+  document.body.appendChild(wm);
+  document.addEventListener('contextmenu', e => { e.preventDefault(); });
+  document.addEventListener('keydown', e => {
+    const k = e.key.toUpperCase();
+    if (k === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(k)) || (e.ctrlKey && k === 'U')) {
+      e.preventDefault();
+      showT('\ud83d\udd12 Developer tools are disabled in demo mode');
+    }
+  });
+  let idleTimer;
+  const resetIdle = () => { clearTimeout(idleTimer); idleTimer = setTimeout(async () => { showT('\u23f0 Signed out due to inactivity'); await sb.auth.signOut(); setTimeout(()=>location.reload(), 800); }, IDLE_MINUTES * 60 * 1000); };
+  ['click','keydown','mousemove','touchstart'].forEach(ev => document.addEventListener(ev, resetIdle, { passive: true }));
+  resetIdle();
+}
+
+// ---- boot ----
 let BOOTED = false;
 async function boot() {
   if (BOOTED) return; BOOTED = true;
-  renderOBJ();
-  renderChat();
-  renderTicker();
-  const hasProfile = await loadProfile();
-  loadTeam();
-  loadLeads();
+  renderOBJ(); renderChat(); renderTicker();
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) { BOOTED = false; showLogin(); return; }
+  let { data: prof } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
+  if (!prof) {
+    await sb.from('profiles').insert({ id: user.id, email: user.email });
+    logAct('register', user.email + ' (auto)');
+    BOOTED = false;
+    return showGate('pending');
+  }
+  if (prof.role !== 'super_admin' && prof.status !== 'approved') { BOOTED = false; return showGate(prof.status); }
+  deriveProf(prof); applyProfile();
+  if (prof.role === 'super_admin') {
+    const na = el_('nav-admin'); if (na) na.style.display = 'flex';
+    sb.from('profiles').select('id', { count: 'exact', head: true }).eq('status','pending').then(r => set('acount', r.count||0));
+  }
+  logAct('login', PROF.name);
+  loadTeam(); loadLeads();
   await loadAll();
-  if (!hasProfile) { go('settings'); showT('👋 Welcome! Set up your advisor profile first — it personalises everything.'); }
+  if (!prof.full_name) { go('settings'); showT('\ud83d\udc4b Welcome! Set up your advisor profile first \u2014 it personalises everything.'); }
 }
 document.addEventListener('DOMContentLoaded', async () => {
   hideL();
+  if (DEMO_MODE) enableDemoProtection();
   if (!sb || SUPABASE_URL.indexOf('PASTE') >= 0) {
     showLogin();
-    el_('lerr').textContent = '⚠️ Setup needed: paste your Supabase URL and anon key at the top of this file (search for SUPABASE_URL).';
+    el_('lerr').textContent = '\u26a0\ufe0f Setup needed: paste your Supabase URL and anon key at the top of this file (search for SUPABASE_URL).';
     return;
   }
   sb.auth.onAuthStateChange((ev) => {
@@ -1955,6 +2082,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       AMODE = 'newpass';
       el_('ltitle').textContent = 'Set a new password';
       const eg = el_('lemailg'); if (eg) eg.style.display = 'none';
+      const ls = el_('lsignup'); if (ls) ls.style.display = 'none';
       el_('lbtn').textContent = 'Save New Password';
     }
   });
