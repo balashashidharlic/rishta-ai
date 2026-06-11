@@ -277,6 +277,7 @@ html,body{height:100%;overflow:hidden}
 .gchips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .gchip{padding:8px 13px;border-radius:20px;border:1px solid var(--b);background:var(--card2);font-size:11.5px;cursor:pointer;transition:all .2s;color:var(--t2);font-family:inherit}
 .gchip:hover{border-color:rgba(183,160,106,0.45);color:var(--t1);transform:translateY(-1px)}
+.gchip.sel{border-color:var(--gold);color:var(--gold);background:rgba(183,160,106,0.08)}
 input[type="date"]{text-transform:uppercase}
 /* ELITE PHASE 2: implied boundaries + layered complexity */
 .ph[data-cid]{cursor:pointer;user-select:none;display:flex;align-items:center}
@@ -542,15 +543,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
         <div class="pb">
           <div class="fr" style="margin-bottom:12px">
             <div><label class="fl">Customer</label><select class="fi" id="msgcust" onchange="genMsg()"><option value="">-- Select Customer --</option></select></div>
-            <div><label class="fl">Message Type</label><select class="fi" id="msgtype" onchange="genMsg()">
-              <option value="birthday">🎂 Birthday Wishes</option><option value="festival">🌸 Festival Greetings</option>
-              <option value="premium">📋 Premium Reminder</option><option value="edu">🎓 Education Planning</option>
-              <option value="followup">📞 Follow-up</option><option value="retirement">🏡 Retirement</option>
-              <option value="claim">🤝 Claim Support</option><option value="referral">⭐ Referral Request</option>
-              <option value="girlchild">🎀 Daughter's Future</option><option value="boychild">🎓 Son's Future</option>
-              <option value="termplan">🛡️ Term Plan (Family Head)</option><option value="goodwill">💛 Protect Your Circle</option>
-              <option value="maturity">🎉 Maturity Congratulations</option>
-            </select></div>
+            <div><label class="fl">Message Type</label><input type="hidden" id="msgtype" value="birthday"/><div class="gchips" style="margin-bottom:0"><button class="gchip mtchip sel" data-v="birthday" onclick="pickMsgType(this)">🎂 Birthday Wishes</button><button class="gchip mtchip" data-v="festival" onclick="pickMsgType(this)">🌸 Festival Greetings</button><button class="gchip mtchip" data-v="premium" onclick="pickMsgType(this)">📋 Premium Reminder</button><button class="gchip mtchip" data-v="edu" onclick="pickMsgType(this)">🎓 Education Planning</button><button class="gchip mtchip" data-v="followup" onclick="pickMsgType(this)">📞 Follow-up</button><button class="gchip mtchip" data-v="retirement" onclick="pickMsgType(this)">🏡 Retirement</button><button class="gchip mtchip" data-v="claim" onclick="pickMsgType(this)">🤝 Claim Support</button><button class="gchip mtchip" data-v="referral" onclick="pickMsgType(this)">⭐ Referral Request</button><button class="gchip mtchip" data-v="girlchild" onclick="pickMsgType(this)">🎀 Daughter's Future</button><button class="gchip mtchip" data-v="boychild" onclick="pickMsgType(this)">🎓 Son's Future</button><button class="gchip mtchip" data-v="termplan" onclick="pickMsgType(this)">🛡️ Term Plan (Family Head)</button><button class="gchip mtchip" data-v="goodwill" onclick="pickMsgType(this)">💛 Protect Your Circle</button><button class="gchip mtchip" data-v="maturity" onclick="pickMsgType(this)">🎉 Maturity Congratulations</button></div></div>
           </div>
           <div class="fr" style="margin-bottom:12px">
             <div><label class="fl">Language</label><select class="fi" id="msglang" onchange="genMsg()">
@@ -2214,6 +2207,12 @@ const GOAL_IMAGES = [
   ['goals/family.jpg',    'Family']
 ];
 let GMO_AUTO = '';
+function pickMsgType(b) {
+  el_('msgtype').value = b.dataset.v;
+  b.parentNode.querySelectorAll('.mtchip').forEach(x => x.classList.remove('sel'));
+  b.classList.add('sel');
+  genMsg();
+}
 function gPreset(title, emoji, why) {
   el_('vt').value = title;
   el_('ve').value = emoji;
@@ -2323,7 +2322,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 11-Jun-O';
+const APP_VERSION = 'v1.0 · build 11-Jun-P';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
