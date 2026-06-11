@@ -251,6 +251,14 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
 .tks{color:var(--gold);font-size:9px;flex-shrink:0}
 
 /* ============ PREMIUM REFINEMENT LAYER ============ */
+.sb::-webkit-scrollbar{width:3px}
+.sb::-webkit-scrollbar-thumb{background:rgba(240,180,41,0.15);border-radius:3px}
+/* VISION BOARD */
+.vcard{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:22px;cursor:pointer;transition:all .25s ease;display:flex;gap:18px;align-items:center}
+.vcard:hover{border-color:rgba(240,180,41,0.3);transform:translateY(-2px)}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.vmini{display:flex;gap:26px;flex-wrap:wrap;align-items:center;padding:16px 24px;background:var(--card);border:1px solid var(--b);border-radius:16px;cursor:pointer;transition:border-color .25s}
+.vmini:hover{border-color:rgba(240,180,41,0.3)}
 /* Editorial panel headers: quiet, spaced, confident */
 .pt{font-size:10.5px!important;letter-spacing:1.8px;text-transform:uppercase;color:var(--t3);font-weight:800;font-family:'Sora','Noto Sans Telugu',sans-serif}
 /* Breathing room */
@@ -343,6 +351,7 @@ body::after{content:'';position:fixed;inset:-20%;pointer-events:none;z-index:0;b
   <div class="ni on" id="nav-dashboard" onclick="go('dashboard')"><i class="ti ti-planet" style="font-size:15px;width:18px;text-align:center"></i><span>Universe</span></div>
   <div class="ni" id="nav-customers" onclick="go('customers')"><i class="ti ti-users" style="font-size:15px;width:18px;text-align:center"></i><span>Customers</span><div class="nbadge" id="ccount">0</div></div>
   <div class="ni" id="nav-leads" onclick="go('leads')"><i class="ti ti-target-arrow" style="font-size:15px;width:18px;text-align:center"></i><span>Leads</span><div class="nbadge" id="lcount" style="background:var(--purple)">0</div></div>
+  <div class="ni" id="nav-vision" onclick="go('vision')"><i class="ti ti-sparkles" style="font-size:15px;width:18px;text-align:center"></i><span>Vision</span></div>
   <div class="ni" id="nav-admin" onclick="go('admin')" style="display:none"><i class="ti ti-shield-check" style="font-size:15px;width:18px;text-align:center"></i><span>Admin</span><div class="nbadge" id="acount" style="background:var(--coral)">0</div></div>
   <div class="ni" id="nav-settings" onclick="go('settings')"><i class="ti ti-user-cog" style="font-size:15px;width:18px;text-align:center"></i><span>My Profile</span></div>
   <div class="ni" id="nav-team" onclick="go('team')"><i class="ti ti-sitemap" style="font-size:15px;width:18px;text-align:center"></i><span>My Team</span><div class="nbadge" id="tcount" style="background:var(--teal)">0</div></div>
@@ -375,6 +384,7 @@ body::after{content:'';position:fixed;inset:-20%;pointer-events:none;z-index:0;b
     <!-- DASHBOARD -->
     <div class="sc on" id="sc-dashboard">
       <div style="margin-bottom:26px" id="missionp"></div>
+      <div id="visionmini" style="margin-bottom:26px"></div>
       <div class="p" style="margin-bottom:16px;border-color:rgba(167,139,250,0.2)">
         <div class="ph"><div class="pt">🌤️ Today's Relationship Climate</div><div class="pa" onclick="go('customers')">View all →</div></div>
         <div class="pb">
@@ -518,6 +528,30 @@ body::after{content:'';position:fixed;inset:-20%;pointer-events:none;z-index:0;b
     </div>
 
     <!-- MY TEAM -->
+    <!-- VISION BOARD -->
+    <div class="sc" id="sc-vision">
+      <div style="padding:6px 4px 22px;max-width:640px">
+        <div style="font-family:'Sora',sans-serif;font-size:clamp(20px,3vw,26px);font-weight:800;letter-spacing:-0.02em">What are you building toward?</div>
+        <div style="font-size:13px;color:var(--t2);margin-top:8px;line-height:1.7">Every premium collected, every family protected, every relationship nurtured — moves these forward. Keep them where you can see them.</div>
+      </div>
+      <div class="tgrid">
+        <div class="p">
+          <div class="ph"><div class="pt">Add a Goal</div></div>
+          <div class="pb">
+            <div class="fr"><div class="fg" style="flex:0 0 70px"><label class="fl">Icon</label><input class="fi" id="ve" placeholder="🏠" maxlength="4" style="text-align:center;font-size:18px"/></div><div class="fg"><label class="fl">Goal *</label><input class="fi" id="vt" placeholder="e.g. Own House in Anantapur"/></div></div>
+            <div class="fr"><div class="fg"><label class="fl">Target (₹)</label><input class="fi" id="vtar" type="number" min="0" placeholder="e.g. 5000000"/></div><div class="fg"><label class="fl">Reached So Far (₹)</label><input class="fi" id="vcur" type="number" min="0" value="0"/></div></div>
+            <div class="fg"><label class="fl">Target Date</label><input class="fi" id="vdl" type="date"/></div>
+            <div class="fg"><label class="fl">Why this matters (one line)</label><input class="fi" id="vmo" placeholder="e.g. Every family protected takes me closer."/></div>
+            <button class="btn bp" onclick="addGoal()" style="width:100%;justify-content:center">Add to My Vision</button>
+            <div style="font-size:10px;color:var(--t3);margin-top:10px">Ideas: 🏆 MDRT Qualification · 🏠 House · 🚗 Car · ✈️ Family Trip · 💰 ₹1 Crore Wealth · 🎓 Children's Education</div>
+          </div>
+        </div>
+        <div>
+          <div class="vgrid" id="vlist"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ADMIN PANEL -->
     <div class="sc" id="sc-admin">
       <div class="p" style="border-color:rgba(224,92,58,0.3)">
@@ -528,8 +562,12 @@ body::after{content:'';position:fixed;inset:-20%;pointer-events:none;z-index:0;b
         <div class="ph"><div class="pt">👥 All Advisors</div></div>
         <div class="pb" id="userlist"></div>
       </div>
-      <div class="p" style="border-color:rgba(167,139,250,0.25)">
-        <div class="ph"><div class="pt">📜 Audit Log — recent activity</div></div>
+      <div class="p">
+        <div class="ph"><div class="pt">Team Ambitions — every advisor's goals</div></div>
+        <div class="pb" id="adgoals"></div>
+      </div>
+      <div class="p">
+        <div class="ph"><div class="pt">Audit Log — recent activity</div></div>
         <div class="pb" id="auditlist"></div>
       </div>
     </div>
@@ -638,6 +676,20 @@ body::after{content:'';position:fixed;inset:-20%;pointer-events:none;z-index:0;b
     <div class="mh"><h3>⚡ AI Meeting Brief</h3><button class="mx" onclick="closeM('brief')">×</button></div>
     <div class="mbody" id="briefcont"></div>
     <div class="mf"><button class="btn bg" onclick="closeM('brief')">Close</button></div>
+  </div>
+</div>
+
+<!-- GOAL MODAL -->
+<div class="mb" id="MB-goal">
+  <div class="mo">
+    <div class="mh"><h3 id="gmtitle">Edit Goal</h3><button class="mx" onclick="closeM('goal')">×</button></div>
+    <div class="mbody">
+      <div class="fr"><div class="fg" style="flex:0 0 70px"><label class="fl">Icon</label><input class="fi" id="gve" maxlength="4" style="text-align:center;font-size:18px"/></div><div class="fg"><label class="fl">Goal</label><input class="fi" id="gvt"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Target (₹)</label><input class="fi" id="gvtar" type="number" min="0"/></div><div class="fg"><label class="fl">Reached So Far (₹)</label><input class="fi" id="gvcur" type="number" min="0"/></div></div>
+      <div class="fg"><label class="fl">Target Date</label><input class="fi" id="gvdl" type="date"/></div>
+      <div class="fg"><label class="fl">Why this matters</label><input class="fi" id="gvmo"/></div>
+    </div>
+    <div class="mf"><button class="btn bd" onclick="delGoal()" style="margin-right:auto">Remove</button><button class="btn bg" onclick="closeM('goal')">Cancel</button><button class="btn bp" onclick="saveGoal()">Save</button></div>
   </div>
 </div>
 
@@ -1389,6 +1441,7 @@ const TITLES = {
   team:'My Team — Downline Network 🌿',
   leads:'Lead Pipeline — Future Customers 🎯',
   settings:'My Profile & Settings ⚙️',
+  vision:'Vision Board — What You Are Building Toward',
   admin:'Admin — Approvals & Audit 🛡️',
   universe:'Your Relationship Universe'
 };
@@ -1403,6 +1456,7 @@ function go(name) {
   if (name==='team') renderTeam();
   if (name==='leads') renderLeads();
   if (name==='admin') renderAdmin();
+  if (name==='vision') renderVision();
 }
 
 // ============================================================
@@ -1914,6 +1968,92 @@ function renderRefChamps() {
   }).join('') : '<div style="font-size:12px;color:var(--t3);padding:6px 0">Fill the "Referred By" field on customers to discover who builds your business.</div>';
 }
 
+// =============== VISION BOARD ===============
+let GOALS = [], GID = null, UID = null;
+function gpct(g) { const t = parseFloat(g.target_amount)||0; return t > 0 ? Math.min(100, (parseFloat(g.current_amount)||0)/t*100) : 0; }
+function ring(pct, size) {
+  size = size || 64;
+  const r = (size - 10) / 2, c = 2 * Math.PI * r, off = c * (1 - Math.min(pct, 100) / 100);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="flex-shrink:0"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="6"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--gold)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}" transform="rotate(-90 ${size/2} ${size/2})"/><text x="50%" y="56%" text-anchor="middle" fill="var(--t1)" font-size="${Math.round(size*0.23)}" font-weight="800" font-family="Sora">${Math.round(pct)}%</text></svg>`;
+}
+async function loadGoals() {
+  const { data, error } = await sb.from('goals').select('*').order('created_at');
+  if (error) { if (!/does not exist/.test(error.message)) showT('⚠️ Goals: ' + error.message); return; }
+  GOALS = data || [];
+  renderVision(); renderVisionMini();
+}
+function myGoals() { return GOALS.filter(g => g.advisor_id === UID); }
+function renderVision() {
+  const vl = el_('vlist'); if (!vl) return;
+  const gs = myGoals();
+  vl.innerHTML = gs.length ? gs.map(g => {
+    const dl = g.deadline ? Math.ceil((new Date(g.deadline) - Date.now())/86400000) : null;
+    return `<div class="vcard" onclick="openGoal('${g.id}')">
+      ${ring(gpct(g), 68)}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:22px;line-height:1">${esc(g.emoji||'\ud83c\udfaf')}</div>
+        <div style="font-family:'Sora',sans-serif;font-size:14.5px;font-weight:800;margin-top:6px">${esc(g.title)}</div>
+        <div style="font-size:11px;color:var(--t2);margin-top:5px">${fmtINR(g.current_amount)} of ${fmtINR(g.target_amount)}${dl!==null?` \u00b7 ${dl>0?dl+' days left':'target date passed'}`:''}</div>
+        ${g.motivation?`<div style="font-size:10.5px;color:var(--t3);font-style:italic;margin-top:6px">\u201c${esc(g.motivation)}\u201d</div>`:''}
+      </div>
+    </div>`;
+  }).join('') : `<div class="empty"><div class="eicon">\u2728</div><div class="etit">No goals yet</div><div class="edesc">Add the things you are working toward. You will see them every day on your dashboard.</div></div>`;
+}
+function renderVisionMini() {
+  const vm = el_('visionmini'); if (!vm) return;
+  const gs = myGoals().slice(0, 3);
+  if (!gs.length) { vm.innerHTML = ''; return; }
+  vm.innerHTML = `<div class="vmini" onclick="go('vision')">
+    <div style="font-size:10.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--t3);font-weight:800;font-family:'Sora',sans-serif;flex-shrink:0">Your Bigger Vision</div>
+    ${gs.map(g => `<div style="display:flex;align-items:center;gap:10px">${ring(gpct(g), 46)}<div><div style="font-size:12px;font-weight:700">${esc(g.emoji||'')} ${esc(g.title)}</div><div style="font-size:10px;color:var(--t3)">${fmtINR(g.current_amount)} / ${fmtINR(g.target_amount)}</div></div></div>`).join('')}
+    <div style="margin-left:auto;font-size:11px;color:var(--gold);flex-shrink:0">View all \u2192</div>
+  </div>`;
+}
+async function addGoal() {
+  const title = el_('vt').value.trim();
+  if (!title) { showT('\u26a0\ufe0f Give your goal a name'); return; }
+  const { error } = await sb.from('goals').insert({
+    title, emoji: el_('ve').value.trim() || '\ud83c\udfaf',
+    target_amount: parseFloat(el_('vtar').value)||0, current_amount: parseFloat(el_('vcur').value)||0,
+    deadline: el_('vdl').value || null, motivation: el_('vmo').value.trim()
+  });
+  if (error) { showT('\u274c ' + error.message); return; }
+  ['vt','ve','vtar','vdl','vmo'].forEach(id => { const e = el_(id); if (e) e.value = ''; });
+  el_('vcur').value = 0;
+  showT('\u2728 Goal added \u2014 now go build it!');
+  loadGoals();
+}
+function openGoal(id) {
+  const g = GOALS.find(x => x.id === id); if (!g) return;
+  GID = id;
+  el_('gve').value = g.emoji||''; el_('gvt').value = g.title||'';
+  el_('gvtar').value = parseFloat(g.target_amount)||0; el_('gvcur').value = parseFloat(g.current_amount)||0;
+  el_('gvdl').value = g.deadline||''; el_('gvmo').value = g.motivation||'';
+  openM('goal');
+}
+async function saveGoal() {
+  const g = GOALS.find(x => x.id === GID); if (!g) return;
+  const title = el_('gvt').value.trim();
+  if (!title) { showT('\u26a0\ufe0f Name required'); return; }
+  const { error } = await sb.from('goals').update({
+    title, emoji: el_('gve').value.trim(), target_amount: parseFloat(el_('gvtar').value)||0,
+    current_amount: parseFloat(el_('gvcur').value)||0, deadline: el_('gvdl').value || null,
+    motivation: el_('gvmo').value.trim()
+  }).eq('id', GID);
+  if (error) { showT('\u274c ' + error.message); return; }
+  closeM('goal');
+  const pct = (parseFloat(el_('gvtar').value)||0) > 0 ? Math.round((parseFloat(el_('gvcur').value)||0)/(parseFloat(el_('gvtar').value)||1)*100) : 0;
+  showT(pct >= 100 ? '\ud83c\udfc6 Goal achieved \u2014 congratulations!' : '\u2705 Progress saved \u2014 ' + pct + '% there');
+  loadGoals();
+  if (typeof renderAdmin === 'function' && PROF.urole === 'super_admin' && el_('sc-admin') && el_('sc-admin').classList.contains('on')) renderAdmin();
+}
+async function delGoal() {
+  const g = GOALS.find(x => x.id === GID); if (!g) return;
+  if (!confirm('Remove goal "' + g.title + '"?')) return;
+  await sb.from('goals').delete().eq('id', GID);
+  closeM('goal'); showT('Removed'); loadGoals();
+}
+
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
@@ -2050,6 +2190,17 @@ async function renderAdmin() {
      ${u.role!=='super_admin' ? (u.status==='approved'
        ? `<button class="btn bd" style="padding:5px 11px;font-size:10.5px" onclick="setUserStatus('${u.id}','rejected','${esc(u.full_name||'')}')">Suspend</button>`
        : `<button class="btn bt" style="padding:5px 11px;font-size:10.5px" onclick="setUserStatus('${u.id}','approved','${esc(u.full_name||'')}')">Approve</button>`) : ''}`)).join('');
+  const ag = el_('adgoals');
+  if (ag) {
+    const { data: allGoals } = await sb.from('goals').select('*').order('created_at', { ascending: false });
+    const nameOf = id => { const u = (users||[]).find(x => x.id === id); return u ? (u.full_name || u.email || 'Advisor') : 'Advisor'; };
+    ag.innerHTML = (allGoals && allGoals.length) ? allGoals.map(g => `<div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--b)">
+      ${ring(gpct(g), 40)}
+      <div style="flex:1"><div style="font-size:12.5px;font-weight:700">${esc(g.emoji||'')} ${esc(g.title)}</div><div style="font-size:10.5px;color:var(--t3)">${esc(nameOf(g.advisor_id))} \u00b7 ${fmtINR(g.current_amount)} / ${fmtINR(g.target_amount)}</div></div>
+      <button class="btn bg" style="padding:5px 11px;font-size:10.5px" onclick="openGoal('${g.id}')">\u270f Edit</button>
+    </div>`).join('') : '<div style="font-size:12px;color:var(--t3)">No advisor goals yet.</div>';
+    GOALS = allGoals || GOALS;
+  }
   const { data: logs } = await sb.from('audit_log').select('*').order('created_at', { ascending: false }).limit(50);
   al.innerHTML = (logs&&logs.length) ? logs.map(l => `<div style="font-size:11px;padding:5px 0;border-bottom:1px solid var(--b);color:var(--t2)"><b style="color:var(--t1)">${esc(l.action)}</b> ${esc(l.detail||'')} <span style="color:var(--t3)">\u00b7 ${String(l.created_at||'').replace('T',' ').slice(0,16)}</span></div>`).join('') : '<div style="font-size:12px;color:var(--t3)">No activity yet.</div>';
 }
@@ -2096,13 +2247,14 @@ async function boot() {
     return showGate('pending');
   }
   if (prof.role !== 'super_admin' && prof.status !== 'approved') { BOOTED = false; return showGate(prof.status); }
+  UID = user.id;
   deriveProf(prof); applyProfile();
   if (prof.role === 'super_admin') {
     const na = el_('nav-admin'); if (na) na.style.display = 'flex';
     sb.from('profiles').select('id', { count: 'exact', head: true }).eq('status','pending').then(r => set('acount', r.count||0));
   }
   logAct('login', PROF.name);
-  loadTeam(); loadLeads();
+  loadTeam(); loadLeads(); loadGoals();
   await loadAll();
   if (!prof.full_name) { go('settings'); showT('\ud83d\udc4b Welcome! Set up your advisor profile first \u2014 it personalises everything.'); }
 }
