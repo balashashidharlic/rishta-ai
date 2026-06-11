@@ -253,7 +253,7 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
 /* ============ PREMIUM REFINEMENT LAYER ============ */
 /* HARD-LOCK SIDEBAR: position:fixed is immune to the overflow-x:hidden
    on body that silently breaks position:sticky */
-.sb{position:fixed!important;left:0;top:0;bottom:0;height:100vh;z-index:90}
+.sb{position:fixed!important;left:0;top:0;bottom:0;height:100vh;height:100dvh;z-index:90}
 .mn{margin-left:220px;min-width:0}
 @media(max-width:680px){.mn{margin-left:54px}}
 .sb::-webkit-scrollbar{width:3px}
@@ -2260,7 +2260,7 @@ function enableDemoProtection() {
   wm.textContent = 'RISHTA AI DEMO \u00b7 Authorized Access Only';
   wm.style.cssText = 'position:fixed;bottom:8px;right:12px;font-size:9px;letter-spacing:1.5px;color:rgba(240,180,41,0.35);z-index:9999;pointer-events:none;font-family:Sora,sans-serif;text-transform:uppercase';
   document.body.appendChild(wm);
-  document.addEventListener('contextmenu', e => { e.preventDefault(); });
+  document.addEventListener('contextmenu', e => { const t = e.target.tagName; if (t !== 'INPUT' && t !== 'TEXTAREA') e.preventDefault(); });
   document.addEventListener('keydown', e => {
     const k = e.key.toUpperCase();
     if (k === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(k)) || (e.ctrlKey && k === 'U')) {
