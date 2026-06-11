@@ -1155,11 +1155,11 @@ function updateMsgDrop() {
 let PROF = { name:'Advisor', first:'Advisor', role:'LIC Advisor', loc:'', phone:'', whats:'', agency:'', ini:'AD' };
 const SIGPH = () => PROF.whats || PROF.phone || '';
 const MT = {
-  birthday:{te:c=>`Namaste! 🙏\n\nప్రియమైన ${c.name} గారికి పుట్టినరోజు శుభాకాంక్షలు! 🎂🌸\n\nMee puttinroju samayamlo meeru, family andaru aanandinchali.\n\nMeeru naku ichina vishwaasaniki dhanyavaadaalu.\n\nMee ${PROF.name} 🙏\n${PROF.role}${PROF.loc?", "+PROF.loc:""}`,en:c=>`Dear ${c.name},\n\nWishing you a very Happy Birthday! 🎂\n\nMay this day bring you joy, health and happiness. Thank you for your trust.\n\nWarm regards,\n${PROF.name}, ${PROF.role}${SIGPH()?'\n📞 '+SIGPH():''}`},
-  festival:{te:c=>`🌸 Panduga Subhakankshalu! 🌸\n\nPriyamaina ${c.name} Garu,\n\nEe panduga mee jeevitamlo aanandam, samriddhi teestuundani korukuntunnaanu.\n\nMee family andhariki subhakamkshalu!\n\nMee ${PROF.name} 🙏`,en:c=>`Dear ${c.name},\n\nWishing you and your family a wonderful festival season!\n\nMay it bring joy and prosperity.\n\nWith warm wishes,\n${PROF.name}, ${PROF.role}`},
+  birthday:{te:c=>`Namaste! 🙏\n\nప్రియమైన ${c.name} గారికి పుట్టినరోజు శుభాకాంక్షలు! 🎂🌸\n\nMee puttinroju samayamlo meeru, family andaru aanandinchali.\n\nMeeru naku ichina vishwaasaniki dhanyavaadaalu.\n\nMee ${PROF.name} 🙏\n${PROF.role}${PROF.loc?", "+PROF.loc:""}${SIGPH()?'\n📞 '+SIGPH():''}`,en:c=>`Dear ${c.name},\n\nWishing you a very Happy Birthday! 🎂\n\nMay this day bring you joy, health and happiness. Thank you for your trust.\n\nWarm regards,\n${PROF.name}, ${PROF.role}${SIGPH()?'\n📞 '+SIGPH():''}`},
+  festival:{te:c=>`🌸 Panduga Subhakankshalu! 🌸\n\nPriyamaina ${c.name} Garu,\n\nEe panduga mee jeevitamlo aanandam, samriddhi teestuundani korukuntunnaanu.\n\nMee family andhariki subhakamkshalu!\n\nMee ${PROF.name} 🙏${SIGPH()?'\n📞 '+SIGPH():''}`,en:c=>`Dear ${c.name},\n\nWishing you and your family a wonderful festival season!\n\nMay it bring joy and prosperity.\n\nWith warm wishes,\n${PROF.name}, ${PROF.role}${SIGPH()?'\n📞 '+SIGPH():''}`},
   premium:{te:c=>`Namaste ${c.name} Garu 🙏\n\nMee LIC policy premium due avutundi.\n\nSamayaaniki payment chesthe mee family ki poorna protection continue avutundi.\n\nEmi help kaavaali ante call cheyyandi.\n\n${PROF.name}${SIGPH()?'\n📞 '+SIGPH():''}`,en:c=>`Dear ${c.name},\n\nFriendly reminder — your LIC policy premium is due soon.\n\nTimely payment keeps your family fully protected.\n\nCall me anytime.\n${PROF.name}, ${PROF.role}${SIGPH()?'\n📞 '+SIGPH():''}`},
   edu:{te:c=>`${c.name} Garu 🙏\n\n${c.children?'Mee pillalu '+c.children+' — vaallaki ':'Mee pillalaki '}education planning gurinchi share cheyyalani anipistundi.\n\nIppude start chesthe strong future veyyachu.\n\nOkasaari 15 minutes matladaam?\n\n${PROF.name}${SIGPH()?'\n📞 '+SIGPH():''}`,en:c=>`Dear ${c.name},\n\nWanted to discuss your children's education planning — costs are rising every year.\n\nStarting early makes a huge difference.\n\nCan we have a quick call?\n\nWarm regards,\n${PROF.name}, ${PROF.role}${SIGPH()?'\n📞 '+SIGPH():''}`},
-  followup:{te:c=>`Namaste ${c.name} Garu 🙏\n\nMeeru${c.spouse?', '+c.spouse+' Garu':''}, family ela unnaru ani telsukovadam ki call chesanu.\n\nEpudu convenient aithe okasaari call cheyyandi.\n\nMee ${PROF.name} 🙏`,en:c=>`Dear ${c.name},\n\nJust checking in to see how you and your family are doing.\n\nPlease call when convenient.\n\nAlways here for you,\n${PROF.name}, ${PROF.role}${SIGPH()?'\n📞 '+SIGPH():''}`},
+  followup:{te:c=>`Namaste ${c.name} Garu 🙏\n\nMeeru${c.spouse?', '+c.spouse+' Garu':''}, family ela unnaru ani telsukovadam ki call chesanu.\n\nEpudu convenient aithe okasaari call cheyyandi.\n\nMee ${PROF.name} 🙏${SIGPH()?'\n📞 '+SIGPH():''}`,en:c=>`Dear ${c.name},\n\nJust checking in to see how you and your family are doing.\n\nPlease call when convenient.\n\nAlways here for you,\n${PROF.name}, ${PROF.role}${SIGPH()?'\n📞 '+SIGPH():''}`},
   retirement:{te:c=>`${c.name} Garu 🙏\n\nRetirement tarvata comfortable life kosam oka mukhyamainam vishayam matladaali anipistundi.\n\nMee ki best suit ayye plan suggest cheyyagalanu.\n\nMatladaamaa?\n\n${PROF.name}${SIGPH()?'\n📞 '+SIGPH():''}`,en:c=>`Dear ${c.name},\n\nWanted to talk about securing a comfortable retirement for you.\n\nI can suggest a perfect plan. Let's connect soon.\n\n${PROF.name}, ${PROF.role}${SIGPH()?'\n📞 '+SIGPH():''}`},
   claim:{te:c=>`Priyamaina ${c.name} Family,\n\nEe kashtakaalamlo nenu poornagaa meeru vaipu unnanu.\n\nClaim process naaku vadalandi — nenu handle chestanu.\n\nDocuments: Death Certificate, Policy Bond, Nominee Aadhaar, Bank Passbook\n\n${SIGPH()} ki call cheyyandi.\n${PROF.name} 🙏`,en:c=>`Dear ${c.name} Family,\n\nI'm here for you completely. I will personally handle the entire claim process.\n\nDocuments: Death certificate, Policy bond, Nominee Aadhaar, Bank passbook.\n\nCall me: ${SIGPH()}\n${PROF.name}, ${PROF.role}`},
   referral:{te:c=>`Namaste ${c.name} Garu 🙏\n\nMeeru naku ichina vishwaasam ki dhanyavaadaalu.\n\nMee friends, relatives lo family future gurinchi chintisthunna vallu evarinayna unnaaraa? Vaallaki kuda help cheyyagalanu.\n\nEmi pressure ledu — just oka introduction.\n\n${PROF.name} 🙏${SIGPH()?'\n📞 '+SIGPH():''}`,en:c=>`Dear ${c.name},\n\nThank you so much for your trust.\n\nIf you know anyone thinking about securing their family's future, I'd love to help.\n\nJust a simple introduction is enough.\n\n${PROF.name}, ${PROF.role}${SIGPH()?'\n📞 '+SIGPH():''}`},
@@ -1383,9 +1383,9 @@ function empty(icon,txt){return`<div class="empty"><div class="eicon">${icon}</d
 // facts when the universe is empty.
 // ============================================================
 const FALLBACK_NEWS = [
-  '\U0001f4a1 Pay LIC premiums online anytime at licindia.in or through the LIC Digital app',
-  '\U0001f4cb Tax saving \u2014 life insurance premiums qualify under Section 80C up to \u20b91.5 lakh',
-  '\U0001f6e1\ufe0f Review policy nominee details every year for smooth claim settlement',
+  '💡 Pay LIC premiums online anytime at licindia.in or through the LIC Digital app',
+  '📋 Tax saving \u2014 life insurance premiums qualify under Section 80C up to \u20b91.5 lakh',
+  '🛡\ufe0f Review policy nominee details every year for smooth claim settlement',
   '\u23f0 Grace period \u2014 30 days for yearly/half-yearly/quarterly modes, 15 days for monthly'
 ];
 function tickerItems() {
@@ -1395,17 +1395,17 @@ function tickerItems() {
   DB.forEach((c, i) => {
     const t = parseInt(c.trust_score)||50;
     const dd = dTo(c.premium_due);
-    if (dd !== null && dd < 0) items.push({ i, p: 0, txt: '\U0001f6a8 ' + c.name + ' \u2014 premium ' + Math.abs(dd) + ' days OVERDUE, grace period running. Send reminder now' });
+    if (dd !== null && dd < 0) items.push({ i, p: 0, txt: '🚨 ' + c.name + ' \u2014 premium ' + Math.abs(dd) + ' days OVERDUE, grace period running. Send reminder now' });
     else if (dd !== null && dd <= 30) items.push({ i, p: 1, txt: '\u23f0 ' + c.name + ' \u2014 premium due in ' + dd + ' days. Send a gentle reminder' });
     const md = dTo(c.maturity_date);
-    if (md !== null && md >= -30 && md <= 120) items.push({ i, p: 2, txt: '\U0001f389 ' + c.name + ' \u2014 policy ' + (md < 0 ? 'matured! Congratulate & discuss reinvestment' : 'matures in ' + md + ' days. Plan the conversation') });
+    if (md !== null && md >= -30 && md <= 120) items.push({ i, p: 2, txt: '🎉 ' + c.name + ' \u2014 policy ' + (md < 0 ? 'matured! Congratulate & discuss reinvestment' : 'matures in ' + md + ' days. Plan the conversation') });
     const ds = daysSince(lastTouch(c));
-    if (ds >= 45 && t < 70) items.push({ i, p: 3, txt: '\U0001f4de ' + c.name + ' \u2014 quiet for ' + ds + ' days. A no-sales check-in call keeps the bond alive' });
-    if (c.dob) { const b = new Date(c.dob); if (!isNaN(b) && b.getMonth() === mNow) items.push({ i, p: 4, txt: '\U0001f382 ' + c.name + ' has a birthday this month \u2014 a wish builds more trust than ten meetings' }); }
+    if (ds >= 45 && t < 70) items.push({ i, p: 3, txt: '📞 ' + c.name + ' \u2014 quiet for ' + ds + ' days. A no-sales check-in call keeps the bond alive' });
+    if (c.dob) { const b = new Date(c.dob); if (!isNaN(b) && b.getMonth() === mNow) items.push({ i, p: 4, txt: '🎂 ' + c.name + ' has a birthday this month \u2014 a wish builds more trust than ten meetings' }); }
     if (!c.policy_no && !c.plan_name) {
-      if (/girl|daughter/i.test(c.children||'')) items.push({ i, p: 5, txt: '\U0001f380 ' + c.name + ' \u2014 daughter at home, no policy on record. Education + marriage corpus conversation' });
-      else if (c.children) items.push({ i, p: 5, txt: '\U0001f393 ' + c.name + ' \u2014 children but no policy on record. Child education plan suggestion' });
-      else if (t >= 55) items.push({ i, p: 6, txt: '\U0001f6e1\ufe0f ' + c.name + ' \u2014 good trust, no policy yet. Term plan is the natural first step' });
+      if (/girl|daughter/i.test(c.children||'')) items.push({ i, p: 5, txt: '🎀 ' + c.name + ' \u2014 daughter at home, no policy on record. Education + marriage corpus conversation' });
+      else if (c.children) items.push({ i, p: 5, txt: '🎓 ' + c.name + ' \u2014 children but no policy on record. Child education plan suggestion' });
+      else if (t >= 55) items.push({ i, p: 6, txt: '🛡\ufe0f ' + c.name + ' \u2014 good trust, no policy yet. Term plan is the natural first step' });
     }
     if (t >= 85) items.push({ i, p: 7, txt: '\u2b50 ' + c.name + ' \u2014 strong advocate. A soft referral ask works best now' });
   });
@@ -1595,7 +1595,7 @@ function smartRow(x, sub, col, rank) {
 let CMP_PHONE = '';
 function openCompose(title, phone, text) {
   CMP_PHONE = phone || '';
-  el_('cmptitle').textContent = '\U0001f4f2 ' + title;
+  el_('cmptitle').textContent = '📲 ' + title;
   el_('cmptxt').value = text;
   openM('compose');
 }
@@ -1605,10 +1605,10 @@ function sendCompose() {
   if (CMP_PHONE.length !== 10) { showT('\u26a0\ufe0f No valid phone number saved'); return; }
   window.open('https://wa.me/91' + CMP_PHONE + '?text=' + encodeURIComponent(txt), '_blank');
   closeM('compose');
-  showT('\U0001f4f2 Opening WhatsApp...');
+  showT('📲 Opening WhatsApp...');
 }
 function copyCompose() {
-  navigator.clipboard.writeText(el_('cmptxt').value).then(()=>showT('\U0001f4cb Copied!'));
+  navigator.clipboard.writeText(el_('cmptxt').value).then(()=>showT('📋 Copied!'));
 }
 function waRemind(i, kind) {
   const c = DB[i]; if (!c) return;
@@ -1643,7 +1643,7 @@ function renderSmart() {
       return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b)">
         <div style="width:30px;height:30px;border-radius:50%;background:${cc.bg};color:${cc.tc};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;cursor:pointer" onclick="openProf(${x.i})">${ini(x.c.name)}</div>
         <div style="flex:1;cursor:pointer" onclick="openProf(${x.i})"><div style="font-size:12.5px;font-weight:700">${esc(x.c.name)}</div><div style="font-size:10.5px;color:${x.col}">${x.sub}</div></div>
-        <button class="btn ${x.d<=7&&x.kind==='due'?'bp':'bg'}" style="padding:5px 11px;font-size:10.5px" onclick="waRemind(${x.i},'${x.kind}')">\U0001f4f2 ${x.kind==='mat'?'Congratulate':'Send Reminder'}</button>
+        <button class="btn ${x.d<=7&&x.kind==='due'?'bp':'bg'}" style="padding:5px 11px;font-size:10.5px" onclick="waRemind(${x.i},'${x.kind}')">📲 ${x.kind==='mat'?'Congratulate':'Send Reminder'}</button>
       </div>`;
     }).join('') : '<div style="font-size:12px;color:var(--t3);padding:6px 0">No premiums due in 30 days, no maturities in 6 months. Add policy dates when creating customers to activate this radar.</div>';
   }
@@ -1750,7 +1750,7 @@ function waLead(id) {
   const l = LEADS.find(x => x.id === id); if (!l) return;
   const ph = String(l.phone||'').replace(/\D/g,'').slice(-10);
   if (ph.length !== 10) { showT('\u26a0\ufe0f No valid phone for ' + l.name); return; }
-  const msg = `Namaste ${l.name} Garu \U0001f64f\n\nNenu ${PROF.name}, ${PROF.role}${PROF.loc?", "+PROF.loc:""}.\n\n${l.interest && l.interest!=='Not sure yet' ? l.interest + ' gurinchi meeru adigina vishayam meeda konni manchi options unnayi.' : 'Mee family financial security gurinchi oka chinna conversation ki time istaaraa?'}\n\nMee veelu unnappudu matladudaam \u2014 emi pressure ledu \U0001f64f\n\n${PROF.name}\n\U0001f4de ${SIGPH()}`;
+  const msg = `Namaste ${l.name} Garu 🙏\n\nNenu ${PROF.name}, ${PROF.role}${PROF.loc?", "+PROF.loc:""}.\n\n${l.interest && l.interest!=='Not sure yet' ? l.interest + ' gurinchi meeru adigina vishayam meeda konni manchi options unnayi.' : 'Mee family financial security gurinchi oka chinna conversation ki time istaaraa?'}\n\nMee veelu unnappudu matladudaam \u2014 emi pressure ledu 🙏\n\n${PROF.name}\n📞 ${SIGPH()}`;
   openCompose('Message ' + l.name, ph, msg);
 }
 function renderLeads() {
