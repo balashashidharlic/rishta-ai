@@ -2063,10 +2063,14 @@ const GOAL_IMAGES = [
   ['goals/office.jpg',    'Office'],
   ['goals/family.jpg',    'Family']
 ];
+let GMO_AUTO = '';
 function gPreset(title, emoji, why) {
   el_('vt').value = title;
   el_('ve').value = emoji;
-  if (!el_('vmo').value.trim()) el_('vmo').value = why;
+  const mo = el_('vmo');
+  // Replace the line if it's empty or still the previous preset's suggestion;
+  // never touch words the advisor typed themselves.
+  if (!mo.value.trim() || mo.value === GMO_AUTO) { mo.value = why; GMO_AUTO = why; }
   el_('vtar').focus();
   showT(emoji + ' ' + title + ' — now give it a number and a date');
 }
@@ -2129,6 +2133,7 @@ async function addGoal() {
   });
   if (error) { showT('\u274c ' + error.message); return; }
   ['vt','ve','vtar','vdl','vmo','vimg'].forEach(id => { const e = el_(id); if (e) e.value = ''; });
+  GMO_AUTO = '';
   const vp = el_('vpre'); if (vp) vp.querySelectorAll('img').forEach(i=>i.classList.remove('sel'));
   el_('vcur').value = 0;
   showT('\u2728 Goal added \u2014 now go build it!');
