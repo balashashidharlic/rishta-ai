@@ -274,6 +274,27 @@ html{overflow-x:hidden}
 .vpre img{width:52px;height:38px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .2s;opacity:0.75}
 .vpre img:hover{opacity:1;transform:scale(1.06)}
 .vpre img.sel{border-color:var(--gold);opacity:1}
+/* ============ MOBILE NAVIGATION (bottom tabs) ============ */
+.mnav,.msheet,.mscrim{display:none}
+.mtab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px;border:none;background:none;color:var(--t3);font-size:9.5px;font-family:inherit;position:relative;cursor:pointer}
+.mtab i{font-size:19px}
+.mtab.on{color:var(--gold)}
+.mbdg{position:absolute;top:1px;right:16%;background:var(--coral);color:#fff;font-size:8.5px;font-weight:800;min-width:15px;height:15px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.mbdg:empty,.mbdg[data-zero="1"]{display:none}
+.msitem{display:flex;align-items:center;gap:14px;padding:14px 12px;border-radius:12px;font-size:13.5px;color:var(--t1);cursor:pointer}
+.msitem:active{background:var(--card2)}
+.msitem i{font-size:17px;width:22px;text-align:center;color:var(--t2)}
+@media(max-width:680px){
+  .sb{display:none!important}
+  .mn{margin-left:0!important}
+  .con{padding-bottom:96px}
+  .mnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:120;background:rgba(8,15,26,0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--b);padding:5px 4px calc(5px + env(safe-area-inset-bottom));justify-content:space-around}
+  .mscrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:125;opacity:0;pointer-events:none;transition:opacity .25s}
+  .mscrim.open{opacity:1;pointer-events:auto}
+  .msheet{display:block;position:fixed;left:0;right:0;bottom:0;z-index:130;background:var(--card);border-top:1px solid var(--b);border-radius:18px 18px 0 0;padding:10px 12px calc(16px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .28s ease;box-shadow:0 -20px 50px rgba(0,0,0,0.5)}
+  .msheet.open{transform:none}
+  #demowm{bottom:80px!important}
+}
 /* Editorial panel headers: quiet, spaced, confident */
 .pt{font-size:10.5px!important;letter-spacing:1.8px;text-transform:uppercase;color:var(--t3);font-weight:800;font-family:'Sora','Noto Sans Telugu',sans-serif}
 /* Breathing room */
@@ -401,20 +422,20 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
       <div style="margin-bottom:26px" id="missionp"></div>
       <div id="visionmini" style="margin-bottom:26px"></div>
       <div class="p" style="margin-bottom:16px;border-color:rgba(167,139,250,0.2)">
-        <div class="ph"><div class="pt">🌤️ Today's Relationship Climate</div><div class="pa" onclick="go('customers')">View all →</div></div>
+        <div class="ph"><div class="pt">Today's Relationship Climate</div><div class="pa" onclick="go('customers')">View all →</div></div>
         <div class="pb">
           <div class="wg">
             <div class="wi"><div class="we">🟢</div><div class="wn" id="w1" style="color:var(--teal)">0</div><div class="wl">Warming Up</div></div>
             <div class="wi"><div class="we">🟡</div><div class="wn" id="w2" style="color:var(--gold)">0</div><div class="wl">Neutral Zone</div></div>
             <div class="wi"><div class="we">🔴</div><div class="wn" id="w3" style="color:var(--coral)">0</div><div class="wl">Needs Warmth</div></div>
-            <div class="wi"><div class="we">🟣</div><div class="wn" id="w4" style="color:var(--purple)">0</div><div class="wl">Champions</div></div>
+            <div class="wi"><div class="we">⭐</div><div class="wn" id="w4" style="color:var(--gold)">0</div><div class="wl">Champions</div></div>
           </div>
         </div>
       </div>
       <div class="g4">
         <div class="sc2 sg" onclick="go('customers')"><div class="sl">Total Families</div><div class="sv" id="s1" style="color:var(--gold)">0</div><div class="sd">In your universe</div></div>
         <div class="sc2 st"><div class="sl">Avg Trust Score</div><div class="sv" id="s2" style="color:var(--teal)">0</div><div class="sd">Relationship strength</div></div>
-        <div class="sc2" style="border-color:rgba(167,139,250,0.15)"><div class="sl">Champions</div><div class="sv" id="s3" style="color:var(--purple)">0</div><div class="sd">Trust score 75+</div></div>
+        <div class="sc2"><div class="sl">Champions</div><div class="sv" id="s3" style="color:var(--gold)">0</div><div class="sd">Trust score 75+</div></div>
         <div class="sc2 sr" onclick="go('ai')"><div class="sl">Needs Attention</div><div class="sv" id="s4" style="color:var(--coral)">0</div><div class="sd">Need attention</div></div>
       </div>
       <div class="g2">
@@ -740,6 +761,25 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
   </div>
 </div>
 
+<div class="mscrim" id="MSCRIM" onclick="mSheet(false)"></div>
+<div class="msheet" id="MSHEET">
+  <div style="width:38px;height:4px;border-radius:3px;background:var(--b);margin:2px auto 10px"></div>
+  <div class="msitem" onclick="mGo('vision')"><i class="ti ti-sparkles"></i> Vision Board</div>
+  <div class="msitem" onclick="mGo('messages')"><i class="ti ti-message-circle"></i> Messages</div>
+  <div class="msitem" onclick="mGo('ai')"><i class="ti ti-bulb"></i> Briefing</div>
+  <div class="msitem" onclick="mGo('objections')"><i class="ti ti-shield"></i> Objections</div>
+  <div class="msitem" onclick="mGo('universe')"><i class="ti ti-planet"></i> Universe Map</div>
+  <div class="msitem" onclick="mGo('settings')"><i class="ti ti-user-cog"></i> My Profile</div>
+  <div class="msitem" id="msheet-admin" style="display:none" onclick="mGo('admin')"><i class="ti ti-shield-check"></i> Admin</div>
+  <div class="msitem" style="color:var(--coral)" onclick="doLogout()"><i class="ti ti-logout" style="color:var(--coral)"></i> Sign Out</div>
+</div>
+<div class="mnav">
+  <button class="mtab on" data-s="dashboard" onclick="mGo('dashboard')"><i class="ti ti-home"></i>Home</button>
+  <button class="mtab" data-s="customers" onclick="mGo('customers')"><i class="ti ti-users"></i>Customers<span class="mbdg" id="m_ccount"></span></button>
+  <button class="mtab" data-s="leads" onclick="mGo('leads')"><i class="ti ti-target-arrow"></i>Leads<span class="mbdg" id="m_lcount"></span></button>
+  <button class="mtab" data-s="team" onclick="mGo('team')"><i class="ti ti-sitemap"></i>Team<span class="mbdg" id="m_tcount"></span></button>
+  <button class="mtab" data-s="more" onclick="mSheet(true)"><i class="ti ti-menu-2"></i>More<span class="mbdg" id="m_acount"></span></button>
+</div>
 <div class="toast" id="TOAST"></div>
 
 <script>
@@ -1467,6 +1507,10 @@ function go(name) {
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
   const sc = el_('sc-'+name); if (sc) sc.classList.add('on');
   const ni = el_('nav-'+name); if (ni) ni.classList.add('on');
+  document.querySelectorAll('.mtab').forEach(t => t.classList.toggle('on', t.dataset.s === name));
+  if (!['dashboard','customers','leads','team'].includes(name)) {
+    const mo = document.querySelector('.mtab[data-s="more"]'); if (mo) mo.classList.add('on');
+  }
   el_('TT').textContent = TITLES[name]||name;
   if (name==='messages') setTimeout(genMsg,100);
   if (name==='universe') setTimeout(renderU,100);
@@ -1495,7 +1539,7 @@ function showT(txt){const t=el_('TOAST');t.textContent=txt;t.classList.add('on')
 // HELPERS
 // ============================================================
 function el_(id){return document.getElementById(id);}
-function set(id,v){const e=el_(id);if(e)e.textContent=v;}
+function set(id,v){const e=el_(id);if(e)e.textContent=v;const m=el_('m_'+id);if(m){m.textContent=v;m.dataset.zero=(parseInt(v)||0)===0?'1':'0';}}
 function empty(icon,txt){return`<div class="empty"><div class="eicon">${icon}</div><div class="etit">${txt}</div></div>`;}
 
 // ============================================================
@@ -1545,7 +1589,8 @@ function renderTicker() {
   const h = items.length
     ? items.map(x => `<span class="tki" style="cursor:pointer" onclick="openProf(${x.i})">${x.txt}</span>`).join('<span class="tks">\u2726</span>')
     : FALLBACK_NEWS.map(n => `<span class="tki">${n}</span>`).join('<span class="tks">\u2726</span>');
-  t.innerHTML = h + '<span class="tks">\u2726</span>' + h + '<span class="tks">\u2726</span>';
+  const sep = '<span class="tks">✦</span>';
+  t.innerHTML = h + sep + h + sep + h + sep + h + sep;
 }
 
 // ============================================================
@@ -2101,6 +2146,8 @@ async function delGoal() {
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
+function mSheet(open) { el_('MSHEET').classList.toggle('open', open); el_('MSCRIM').classList.toggle('open', open); }
+function mGo(n) { mSheet(false); go(n); }
 function showLogin() { el_('LOGIN').style.display = 'flex'; el_('GATE').style.display = 'none'; }
 function hideLogin() { el_('LOGIN').style.display = 'none'; }
 function showGate(status) {
@@ -2259,6 +2306,7 @@ async function setUserStatus(id, st, nm) {
 function enableDemoProtection() {
   const wm = document.createElement('div');
   wm.textContent = 'RISHTA AI DEMO \u00b7 Authorized Access Only';
+  wm.id = 'demowm';
   wm.style.cssText = 'position:fixed;bottom:8px;right:12px;font-size:9px;letter-spacing:1.5px;color:rgba(240,180,41,0.35);z-index:9999;pointer-events:none;font-family:Sora,sans-serif;text-transform:uppercase';
   document.body.appendChild(wm);
   document.addEventListener('contextmenu', e => { const t = e.target.tagName; if (t !== 'INPUT' && t !== 'TEXTAREA') e.preventDefault(); });
@@ -2294,6 +2342,7 @@ async function boot() {
   deriveProf(prof); applyProfile();
   if (prof.role === 'super_admin') {
     const na = el_('nav-admin'); if (na) na.style.display = 'flex';
+    const ma = el_('msheet-admin'); if (ma) ma.style.display = 'flex';
     sb.from('profiles').select('id', { count: 'exact', head: true }).eq('status','pending').then(r => set('acount', r.count||0));
   }
   logAct('login', PROF.name);
