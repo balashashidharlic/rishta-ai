@@ -299,6 +299,7 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
   <div class="nl">Mission Control</div>
   <div class="ni on" id="nav-dashboard" onclick="go('dashboard')"><i class="ti ti-planet" style="font-size:15px;width:18px;text-align:center"></i><span>Universe</span></div>
   <div class="ni" id="nav-customers" onclick="go('customers')"><i class="ti ti-users" style="font-size:15px;width:18px;text-align:center"></i><span>Customers</span><div class="nbadge" id="ccount">0</div></div>
+  <div class="ni" id="nav-leads" onclick="go('leads')"><i class="ti ti-target-arrow" style="font-size:15px;width:18px;text-align:center"></i><span>Leads</span><div class="nbadge" id="lcount" style="background:var(--purple)">0</div></div>
   <div class="ni" id="nav-team" onclick="go('team')"><i class="ti ti-sitemap" style="font-size:15px;width:18px;text-align:center"></i><span>My Team</span><div class="nbadge" id="tcount" style="background:var(--teal)">0</div></div>
   <div class="ni" id="nav-messages" onclick="go('messages')"><i class="ti ti-message-circle" style="font-size:15px;width:18px;text-align:center"></i><span>Messages</span></div>
   <div class="nl">Intelligence</div>
@@ -306,8 +307,7 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
   <div class="ni" id="nav-objections" onclick="go('objections')"><i class="ti ti-shield" style="font-size:15px;width:18px;text-align:center"></i><span>Objections</span></div>
   <div class="ni" id="nav-universe" onclick="go('universe')"><i class="ti ti-circle-dot" style="font-size:15px;width:18px;text-align:center"></i><span>Galaxy Map</span></div>
   <div class="sbbot">
-    <div class="acard"><div class="aav">BS</div><div style="flex:1"><div class="an">Bala Shashidhar</div><div class="ar">LIC Advisor · Anantapur</div></div><i class="ti ti-logout" onclick="doLogout()" title="Logout" style="cursor:pointer;color:var(--t3);font-size:15px"></i></div>
-    <div class="ni" onclick="doLogout()" style="margin-top:6px"><i class="ti ti-logout" style="font-size:15px;width:18px;text-align:center"></i><span>Sign Out</span></div>
+    <div class="acard"><div class="aav">BS</div><div style="flex:1"><div class="an">Bala Shashidhar</div><div class="ar">LIC Advisor · Anantapur</div></div><i class="ti ti-logout" onclick="doLogout()" title="Sign Out" style="cursor:pointer;color:var(--coral);font-size:16px;padding:4px"></i></div>
   </div>
 </div>
 
@@ -321,7 +321,7 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
   </div>
 
   <div class="tk">
-    <div class="tkl"><div class="tkdot"></div><span>LIC Updates</span></div>
+    <div class="tkl"><div class="tkdot"></div><span>Jarvis Radar</span></div>
     <div class="tkv"><div class="tkt" id="tktrack"></div></div>
   </div>
 
@@ -329,6 +329,9 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
 
     <!-- DASHBOARD -->
     <div class="sc on" id="sc-dashboard">
+      <div class="p" style="border-color:rgba(240,180,41,0.35);background:linear-gradient(135deg,rgba(240,180,41,0.07),rgba(18,196,153,0.04))">
+        <div class="pb" id="missionp"></div>
+      </div>
       <div class="p" style="margin-bottom:16px;border-color:rgba(167,139,250,0.2)">
         <div class="ph"><div class="pt">🌤️ Today's Relationship Climate</div><div class="pa" onclick="go('customers')">View all →</div></div>
         <div class="pb">
@@ -351,6 +354,7 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
         <div class="p" style="border-color:rgba(240,180,41,0.25)"><div class="ph"><div class="pt">🎯 This Week's Focus — top 12</div></div><div class="pb" id="focuslist"></div></div>
       </div>
       <div class="p" style="border-color:rgba(18,196,153,0.25)"><div class="ph"><div class="pt">📜 Policy Radar — premiums due & maturities</div></div><div class="pb" id="polradar"></div></div>
+      <div class="p" style="border-color:rgba(167,139,250,0.25)"><div class="ph"><div class="pt">⭐ Referral Champions — who builds your business</div></div><div class="pb" id="refchamps"></div></div>
       <div class="p" style="margin-bottom:16px;border-color:rgba(167,139,250,0.2)">
         <div class="ph"><div class="pt">⚡ Jarvis Autonomous Insights</div><div class="pa" onclick="go('ai')">Ask Jarvis →</div></div>
         <div class="pb" id="jinsd"><div class="empty"><div class="eicon">⚡</div><div class="etit">Loading intelligence...</div></div></div>
@@ -471,6 +475,29 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
     </div>
 
     <!-- MY TEAM -->
+    <!-- LEADS PIPELINE -->
+    <div class="sc" id="sc-leads">
+      <div class="tgrid">
+        <div class="p">
+          <div class="ph"><div class="pt">➕ New Lead</div></div>
+          <div class="pb">
+            <div class="fg"><label class="fl">Name *</label><input class="fi" id="lname" placeholder="e.g. Ramesh Goud"/></div>
+            <div class="fr"><div class="fg"><label class="fl">Phone</label><input class="fi" id="lphone" maxlength="10" type="tel"/></div><div class="fg"><label class="fl">Age</label><input class="fi" id="lage" type="number" min="18" max="80"/></div></div>
+            <div class="fr"><div class="fg"><label class="fl">Occupation</label><input class="fi" id="locc"/></div><div class="fg"><label class="fl">City/Area</label><input class="fi" id="lcity" placeholder="e.g. Anantapur"/></div></div>
+            <div class="fr"><div class="fg"><label class="fl">Income Range</label><select class="fi" id="linc"><option value=""></option><option>Below 20K</option><option>20K-40K</option><option>40K-70K</option><option>70K-1L</option><option>Above 1L</option></select></div><div class="fg"><label class="fl">Lead Source</label><select class="fi" id="lsrc"><option>Referral</option><option>Friend/Family</option><option>Walk-in</option><option>Phone Enquiry</option><option>Social Media</option><option>Other</option></select></div></div>
+            <div class="fg"><label class="fl">Interested In</label><select class="fi" id="lint"><option>Not sure yet</option><option>Term / Protection</option><option>Child Education</option><option>Marriage Corpus</option><option>Retirement / Pension</option><option>Savings / Money Back</option><option>Health-linked</option></select></div>
+            <div class="fg"><label class="fl">Next Follow-Up Date</label><input class="fi" id="lfol" type="date"/></div>
+            <div class="fg"><label class="fl">Notes</label><textarea class="fi" id="lnotes" rows="2" placeholder="What did they ask? Family details?"></textarea></div>
+            <button class="btn bp" onclick="addLead()" style="width:100%;justify-content:center"><i class="ti ti-target-arrow"></i> Add to Pipeline</button>
+          </div>
+        </div>
+        <div class="p">
+          <div class="ph"><div class="pt">🎯 Lead Pipeline</div></div>
+          <div class="pb" id="leadlist"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="sc" id="sc-team">
       <div class="g4">
         <div class="sc2 sg"><div class="sl">Team Members</div><div class="sv" style="color:var(--gold)" id="tm1">0</div><div class="sd">Across all levels</div></div>
@@ -493,6 +520,8 @@ body{background:radial-gradient(1100px 700px at 85% -10%,rgba(240,180,41,0.06),t
         <div class="p">
           <div class="ph"><div class="pt">🌿 Downline Network — tap a member to edit</div></div>
           <div class="pb" id="ttree"></div>
+          <div class="ph" style="border-top:1px solid var(--b)"><div class="pt">🏆 Leaderboard</div></div>
+          <div class="pb" id="tleader"></div>
         </div>
       </div>
     </div>
@@ -589,6 +618,9 @@ async function loadAll() {
   hideL();
   updateStats();
   renderSmart();
+  renderTicker();
+  renderMission();
+  renderRefChamps();
   renderDash();
   renderCGrid(DB);
   updateMsgDrop();
@@ -627,10 +659,10 @@ function getInsights() {
   const ins = [];
   DB.forEach(c => {
     const t = parseInt(c.trust_score||50);
-    if (t < 40) ins.push({ name:c.name||'Customer', level:'h', txt:`Trust score critically low at ${t}/100. Customer may be drifting. Immediate personal outreach needed. ${c.goals?'Goal: '+c.goals.substring(0,50):''}`, prob:88 });
-    if (t >= 80) ins.push({ name:c.name||'Customer', level:'l', txt:`Trust score ${t}/100 — Referral champion! Best time to say: "Mee friends lo financial security gurinchi chintisthunna vallu evarinayna unnaaraa?"`, prob:79 });
-    if (c.children) ins.push({ name:c.name||'Customer', level:'m', txt:`Children: ${c.children}. Education planning opportunity. Engineering costs rising 12% yearly. ₹1,500/month today builds ₹10L+ in 8 years.`, prob:72 });
-    if (!c.phone) ins.push({ name:c.name||'Customer', level:'h', txt:'No phone number saved. Cannot send WhatsApp messages. Please update phone number.', prob:100 });
+    if (t < 40) ins.push({ name:c.name||'Customer', level:'h', txt:`Trust score critically low at ${t}/100. Customer may be drifting. Immediate personal outreach needed. ${c.goals?'Goal: '+c.goals.substring(0,50):''}`, tag:'Needs Attention' });
+    if (t >= 80) ins.push({ name:c.name||'Customer', level:'l', txt:`Trust score ${t}/100 — Referral champion! Best time to say: "Mee friends lo financial security gurinchi chintisthunna vallu evarinayna unnaaraa?"`, tag:'Likely Referral' });
+    if (c.children) ins.push({ name:c.name||'Customer', level:'m', txt:`Children: ${c.children}. Education planning conversation fits naturally here.`, tag:'Strong Opportunity' });
+    if (!c.phone) ins.push({ name:c.name||'Customer', level:'h', txt:'No phone number saved. Cannot send WhatsApp messages. Please update phone number.', tag:'Fix Today' });
   });
   return ins.sort((a,b) => ['h','m','l'].indexOf(a.level) - ['h','m','l'].indexOf(b.level));
 }
@@ -644,7 +676,7 @@ function renderJarvisInsights() {
       <div class="ju ${i.level==='h'?'jh':i.level==='m'?'jm':'jl'}">${i.level==='h'?'🔴 Urgent':i.level==='m'?'🟡 Important':'🟢 Opportunity'}</div>
       <div class="jn">${i.name}</div>
       <div class="ji">${i.txt}</div>
-      <div class="jp">${i.prob}% probability score</div>
+      <div class="jp">${i.tag}</div>
     </div>`).join('');
 }
 
@@ -933,9 +965,29 @@ function openProf(idx) {
         </div>
       </div>
     </div>`;
-  el_('profcont').insertAdjacentHTML('beforeend', polHtml + oppHtml + eduHtml);
+  const CLAIM_STAGES = ['', 'Claim Initiated', 'Documents Pending', 'Verification', 'Approved', 'Payment Completed'];
+  const claimHtml = `<div class="p" style="border-color:rgba(224,92,58,0.25)"><div class="ph"><div class="pt">🤝 Claim Tracker</div></div><div class="pb">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <select class="fi" id="clstage" style="width:auto;min-width:180px">${CLAIM_STAGES.map(st=>`<option value="${st}" ${c.claim_stage===st?'selected':''}>${st||'— No active claim —'}</option>`).join('')}</select>
+      <input class="fi" id="clnote" style="flex:1;min-width:160px" placeholder="e.g. waiting for nominee Aadhaar copy" value="${esc(c.claim_note||'')}"/>
+      <button class="btn bp" style="padding:8px 14px" onclick="saveClaim(${idx})">Save</button>
+    </div>
+    ${c.claim_stage && c.claim_stage!=='Payment Completed' ? `<div style="font-size:11px;color:var(--coral);margin-top:8px;font-weight:700">⏳ Claim in progress — every update call during a claim builds lifelong trust.</div>` : ''}
+    ${c.claim_stage==='Payment Completed' ? `<div style="font-size:11px;color:var(--teal);margin-top:8px;font-weight:700">✅ Claim settled — this family will remember your support forever. Perfect time for the goodwill message.</div>` : ''}
+  </div></div>`;
+  el_('profcont').insertAdjacentHTML('beforeend', polHtml + claimHtml + oppHtml + eduHtml);
 
   go('profile');
+}
+
+async function saveClaim(i) {
+  const c = DB[i]; if (!c) return;
+  const stage = el_('clstage').value, note = el_('clnote').value.trim();
+  const { error } = await sb.from('customers').update({ claim_stage: stage, claim_note: note }).eq('id', c.id);
+  if (error) { showT('❌ ' + error.message); return; }
+  c.claim_stage = stage; c.claim_note = note;
+  showT(stage ? '✅ Claim stage: ' + stage : '✅ Claim cleared');
+  renderMission();
 }
 
 async function setPersona(v) {
@@ -1128,7 +1180,7 @@ function renderJarvisFull() {
   if (!DB.length) { el.innerHTML = empty('⚡','Add customers to activate Jarvis'); return; }
   const ins = getInsights();
   el.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">' +
-    ins.slice(0,6).map(i=>`<div class="jc"><div class="ju ${i.level==='h'?'jh':i.level==='m'?'jm':'jl'}">${i.level==='h'?'🔴 Urgent':i.level==='m'?'🟡 Important':'🟢 Opportunity'}</div><div class="jn">${i.name}</div><div class="ji" style="font-size:11px">${i.txt}</div><div class="jp">${i.prob}% probability</div></div>`).join('') + '</div>';
+    ins.slice(0,6).map(i=>`<div class="jc"><div class="ju ${i.level==='h'?'jh':i.level==='m'?'jm':'jl'}">${i.level==='h'?'🔴 Urgent':i.level==='m'?'🟡 Important':'🟢 Opportunity'}</div><div class="jn">${i.name}</div><div class="ji" style="font-size:11px">${i.txt}</div><div class="jp">${i.tag}</div></div>`).join('') + '</div>';
 }
 
 // ============================================================
@@ -1243,6 +1295,7 @@ const TITLES = {
   ai:'Jarvis — Autonomous Intelligence ⚡',
   objections:'Objection Intelligence Scripts 🛡️',
   team:'My Team — Downline Network 🌿',
+  leads:'Lead Pipeline — Future Customers 🎯',
   universe:'Relationship Galaxy Map 🌌'
 };
 function go(name) {
@@ -1254,6 +1307,7 @@ function go(name) {
   if (name==='messages') setTimeout(genMsg,100);
   if (name==='universe') setTimeout(renderU,100);
   if (name==='team') renderTeam();
+  if (name==='leads') renderLeads();
 }
 
 // ============================================================
@@ -1283,20 +1337,49 @@ function empty(icon,txt){return`<div class="empty"><div class="eicon">${icon}</d
 // EDIT THIS LIST anytime — add the latest LIC announcements,
 // new plan launches, bonus declarations etc. They scroll in the news bar.
 // ============================================================
-const LIC_NEWS = [
-  '💡 Pay LIC premiums online anytime at licindia.in or through the LIC Digital app',
-  '📋 Tax saving — life insurance premiums qualify under Section 80C up to ₹1.5 lakh',
-  '🛡️ Review policy nominee details every year for smooth claim settlement',
-  '⏰ Grace period — 30 days for yearly/half-yearly/quarterly modes, 15 days for monthly',
-  '🔁 Lapsed policy? LIC revival schemes can restore old policies — ask your advisor',
-  '🎓 Children\'s education plans — starting early sharply reduces the monthly premium',
-  '📱 Policy status, loan eligibility and bonus details available on the LIC customer portal',
-  '🤝 Need help with a claim or service request? Call Bala Shashidhar — LIC Advisor, Anantapur'
+// ============================================================
+// JARVIS RADAR TICKER — live suggestions from your own data:
+// premium reminders, drifting customers, maturities, birthdays,
+// and policy-type recommendations. Falls back to LIC service
+// facts when the universe is empty.
+// ============================================================
+const FALLBACK_NEWS = [
+  '\U0001f4a1 Pay LIC premiums online anytime at licindia.in or through the LIC Digital app',
+  '\U0001f4cb Tax saving \u2014 life insurance premiums qualify under Section 80C up to \u20b91.5 lakh',
+  '\U0001f6e1\ufe0f Review policy nominee details every year for smooth claim settlement',
+  '\u23f0 Grace period \u2014 30 days for yearly/half-yearly/quarterly modes, 15 days for monthly'
 ];
+function tickerItems() {
+  const items = [];
+  const dTo = ds => { if (!ds) return null; const d = new Date(ds); return isNaN(d) ? null : Math.ceil((d - Date.now())/86400000); };
+  const mNow = new Date().getMonth();
+  DB.forEach((c, i) => {
+    const t = parseInt(c.trust_score)||50;
+    const dd = dTo(c.premium_due);
+    if (dd !== null && dd < 0) items.push({ i, p: 0, txt: '\U0001f6a8 ' + c.name + ' \u2014 premium ' + Math.abs(dd) + ' days OVERDUE, grace period running. Send reminder now' });
+    else if (dd !== null && dd <= 30) items.push({ i, p: 1, txt: '\u23f0 ' + c.name + ' \u2014 premium due in ' + dd + ' days. Send a gentle reminder' });
+    const md = dTo(c.maturity_date);
+    if (md !== null && md >= -30 && md <= 120) items.push({ i, p: 2, txt: '\U0001f389 ' + c.name + ' \u2014 policy ' + (md < 0 ? 'matured! Congratulate & discuss reinvestment' : 'matures in ' + md + ' days. Plan the conversation') });
+    const ds = daysSince(lastTouch(c));
+    if (ds >= 45 && t < 70) items.push({ i, p: 3, txt: '\U0001f4de ' + c.name + ' \u2014 quiet for ' + ds + ' days. A no-sales check-in call keeps the bond alive' });
+    if (c.dob) { const b = new Date(c.dob); if (!isNaN(b) && b.getMonth() === mNow) items.push({ i, p: 4, txt: '\U0001f382 ' + c.name + ' has a birthday this month \u2014 a wish builds more trust than ten meetings' }); }
+    if (!c.policy_no && !c.plan_name) {
+      if (/girl|daughter/i.test(c.children||'')) items.push({ i, p: 5, txt: '\U0001f380 ' + c.name + ' \u2014 daughter at home, no policy on record. Education + marriage corpus conversation' });
+      else if (c.children) items.push({ i, p: 5, txt: '\U0001f393 ' + c.name + ' \u2014 children but no policy on record. Child education plan suggestion' });
+      else if (t >= 55) items.push({ i, p: 6, txt: '\U0001f6e1\ufe0f ' + c.name + ' \u2014 good trust, no policy yet. Term plan is the natural first step' });
+    }
+    if (t >= 85) items.push({ i, p: 7, txt: '\u2b50 ' + c.name + ' \u2014 strong advocate. A soft referral ask works best now' });
+  });
+  items.sort((a,b) => a.p - b.p);
+  return items.slice(0, 14);
+}
 function renderTicker() {
   const t = el_('tktrack'); if (!t) return;
-  const h = LIC_NEWS.map(n=>`<span class="tki">${n}</span>`).join('<span class="tks">✦</span>');
-  t.innerHTML = h + '<span class="tks">✦</span>' + h + '<span class="tks">✦</span>';
+  const items = tickerItems();
+  const h = items.length
+    ? items.map(x => `<span class="tki" style="cursor:pointer" onclick="openProf(${x.i})">${x.txt}</span>`).join('<span class="tks">\u2726</span>')
+    : FALLBACK_NEWS.map(n => `<span class="tki">${n}</span>`).join('<span class="tks">\u2726</span>');
+  t.innerHTML = h + '<span class="tks">\u2726</span>' + h + '<span class="tks">\u2726</span>';
 }
 
 // ============================================================
@@ -1369,6 +1452,20 @@ function renderTeam() {
       <div class="tchips"><span class="tchip">👥 Network <b>${tot}</b></span><span class="tchip">🛡 Policies <b>${pol}</b></span><span class="tchip">💰 <b>${fmtINR(prem)}</b></span></div>
     </div>${rk.length?`<div class="tkids">${rk.map(nodeHTML).join('')}</div>`:''}</div>` +
     (tot ? '' : `<div class="empty"><div class="eicon">🌿</div><div class="etit">No team members yet</div><div class="edesc">Add your first agent on the left. Build their downline using "+ Add under" on any member.</div></div>`);
+  const tl = el_('tleader');
+  if (tl) {
+    if (!TEAM.length) { tl.innerHTML = '<div style="font-size:11.5px;color:var(--t3)">Leaderboard appears once you add team members.</div>'; }
+    else {
+      const byPrem = [...TEAM].sort((a,b)=>(parseFloat(b.prem)||0)-(parseFloat(a.prem)||0))[0];
+      const byPol = [...TEAM].sort((a,b)=>(parseInt(b.pol)||0)-(parseInt(a.pol)||0))[0];
+      const newest = [...TEAM].sort((a,b)=>String(b.joined).localeCompare(String(a.joined)))[0];
+      tl.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px">
+        <div style="background:var(--card2);border:1px solid rgba(240,180,41,0.3);border-radius:12px;padding:12px"><div style="font-size:9.5px;color:var(--gold);font-weight:800;letter-spacing:1px">🏆 TOP PREMIUM</div><div style="font-size:13px;font-weight:800;margin-top:4px">${esc(byPrem.name)}</div><div style="font-size:11px;color:var(--t2)">${fmtINR(byPrem.prem)}/yr</div></div>
+        <div style="background:var(--card2);border:1px solid rgba(18,196,153,0.3);border-radius:12px;padding:12px"><div style="font-size:9.5px;color:var(--teal);font-weight:800;letter-spacing:1px">🛡 MOST POLICIES</div><div style="font-size:13px;font-weight:800;margin-top:4px">${esc(byPol.name)}</div><div style="font-size:11px;color:var(--t2)">${parseInt(byPol.pol)||0} lives insured</div></div>
+        <div style="background:var(--card2);border:1px solid rgba(167,139,250,0.3);border-radius:12px;padding:12px"><div style="font-size:9.5px;color:var(--purple);font-weight:800;letter-spacing:1px">🌱 NEWEST MEMBER</div><div style="font-size:13px;font-weight:800;margin-top:4px">${esc(newest.name)}</div><div style="font-size:11px;color:var(--t2)">joined ${esc(newest.joined||'—')}</div></div>
+      </div>`;
+    }
+  }
 }
 
 async function addMem() {
@@ -1456,6 +1553,17 @@ function smartRow(x, sub, col, rank) {
   const cc = getCol(x.c.name||'');
   return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b);cursor:pointer" onclick="openProf(${x.i})">${rank?`<div style="width:18px;font-size:11px;color:var(--t3);font-weight:700">${rank}</div>`:''}<div style="width:30px;height:30px;border-radius:50%;background:${cc.bg};color:${cc.tc};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">${ini(x.c.name)}</div><div style="flex:1"><div style="font-size:12.5px;font-weight:700">${esc(x.c.name)}</div><div style="font-size:10.5px;color:${col}">${sub}</div></div><i class="ti ti-chevron-right" style="color:var(--t3)"></i></div>`;
 }
+function waRemind(i, kind) {
+  const c = DB[i]; if (!c) return;
+  const ph = String(c.phone||'').replace(/\D/g,'').slice(-10);
+  if (ph.length !== 10) { showT('\u26a0\ufe0f No valid phone number for ' + c.name); return; }
+  const lang = /english/i.test(c.language||'') && !/telugu/i.test(c.language||'') ? 'en' : 'te';
+  const tpl = kind === 'mat' ? MSGS.maturity : MSGS.premium;
+  const msg = tpl[lang](c);
+  window.open('https://wa.me/91' + ph + '?text=' + encodeURIComponent(msg), '_blank');
+  showT('\U0001f4f2 WhatsApp opened for ' + c.name);
+}
+
 function renderSmart() {
   const dr = el_('driftlist'), fo = el_('focuslist');
   if (!dr || !fo) return;
@@ -1475,7 +1583,14 @@ function renderSmart() {
       if (md !== null && md >= -30 && md <= 180) items.push({ c, i, d: md, kind: 'mat', sub: md < 0 ? '🎉 Matured! Congratulate & plan reinvestment' : '🎉 Matures in ' + md + ' days', col: 'var(--purple)' });
     });
     items.sort((a,b) => a.d - b.d);
-    pr.innerHTML = items.length ? items.slice(0,10).map(x => smartRow(x, x.sub, x.col)).join('') : '<div style="font-size:12px;color:var(--t3);padding:6px 0">No premiums due in 30 days, no maturities in 6 months. Add policy dates when creating customers to activate this radar.</div>';
+    pr.innerHTML = items.length ? items.slice(0,10).map(x => {
+      const cc = getCol(x.c.name||'');
+      return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b)">
+        <div style="width:30px;height:30px;border-radius:50%;background:${cc.bg};color:${cc.tc};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;cursor:pointer" onclick="openProf(${x.i})">${ini(x.c.name)}</div>
+        <div style="flex:1;cursor:pointer" onclick="openProf(${x.i})"><div style="font-size:12.5px;font-weight:700">${esc(x.c.name)}</div><div style="font-size:10.5px;color:${x.col}">${x.sub}</div></div>
+        <button class="btn ${x.d<=7&&x.kind==='due'?'bp':'bg'}" style="padding:5px 11px;font-size:10.5px" onclick="waRemind(${x.i},'${x.kind}')">\U0001f4f2 ${x.kind==='mat'?'Congratulate':'Send Reminder'}</button>
+      </div>`;
+    }).join('') : '<div style="font-size:12px;color:var(--t3);padding:6px 0">No premiums due in 30 days, no maturities in 6 months. Add policy dates when creating customers to activate this radar.</div>';
   }
 }
 
@@ -1525,6 +1640,153 @@ async function importCSV(file) {
   await loadAll();
 }
 
+// =============== LEAD PIPELINE ===============
+const LEAD_STAGES = ['New Lead','Contacted','Need Analysis','Proposal Shared','Follow Up','Negotiation','Converted','Lost'];
+let LEADS = [];
+async function loadLeads() {
+  const { data, error } = await sb.from('leads').select('*').order('created_at', { ascending: false });
+  if (error) { if (!/does not exist/.test(error.message)) showT('⚠️ Leads: ' + error.message); return; }
+  LEADS = data || [];
+  set('lcount', LEADS.filter(l => l.status !== 'Converted' && l.status !== 'Lost').length);
+  renderLeads();
+  renderMission();
+}
+async function addLead() {
+  const name = el_('lname').value.trim();
+  if (!name) { showT('⚠️ Enter lead name'); return; }
+  const { error } = await sb.from('leads').insert({
+    name, phone: el_('lphone').value.trim(), age: parseInt(el_('lage').value)||0,
+    occupation: el_('locc').value.trim(), city: el_('lcity').value.trim(),
+    income: el_('linc').value, source: el_('lsrc').value, interest: el_('lint').value,
+    next_follow: el_('lfol').value || null, notes: el_('lnotes').value.trim(), status: 'New Lead'
+  });
+  if (error) { showT('❌ ' + error.message); return; }
+  ['lname','lphone','lage','locc','lcity','lnotes','lfol'].forEach(id => { const e = el_(id); if (e) e.value=''; });
+  showT('✅ ' + name + ' added to pipeline!');
+  loadLeads();
+}
+async function setLeadStatus(id, status) {
+  const { error } = await sb.from('leads').update({ status, last_contact: new Date().toISOString().slice(0,10) }).eq('id', id);
+  showT(error ? '❌ ' + error.message : '✅ Moved to ' + status);
+  loadLeads();
+}
+async function delLead(id) {
+  const l = LEADS.find(x => x.id === id); if (!l) return;
+  if (!confirm('Delete lead ' + l.name + '?')) return;
+  await sb.from('leads').delete().eq('id', id);
+  showT('🗑️ Lead removed');
+  loadLeads();
+}
+async function convertLead(id) {
+  const l = LEADS.find(x => x.id === id); if (!l) return;
+  if (!confirm('Convert ' + l.name + ' into a customer?')) return;
+  const stamp = '[' + new Date().toLocaleDateString('en-IN') + '] ';
+  const { error } = await sb.from('customers').insert({
+    name: l.name, phone: l.phone||'', occupation: l.occupation||'', income: l.income||'',
+    language: 'Telugu', goals: l.interest||'', referred_by: l.source==='Referral' ? 'Lead referral' : '',
+    notes: stamp + 'Converted from lead pipeline. ' + (l.notes||''), trust_score: 55, active: 'active'
+  });
+  if (error) { showT('❌ ' + error.message); return; }
+  await sb.from('leads').update({ status: 'Converted' }).eq('id', id);
+  showT('🎉 ' + l.name + ' is now a customer!');
+  loadLeads(); loadAll();
+}
+function waLead(id) {
+  const l = LEADS.find(x => x.id === id); if (!l) return;
+  const ph = String(l.phone||'').replace(/\D/g,'').slice(-10);
+  if (ph.length !== 10) { showT('⚠️ No valid phone for ' + l.name); return; }
+  const msg = `Namaste ${l.name} Garu 🙏\n\nNenu Bala Shashidhar, LIC Advisor, Anantapur.\n\n${l.interest && l.interest!=='Not sure yet' ? l.interest + ' gurinchi meeru adigina vishayam meeda konni manchi options unnayi.' : 'Mee family financial security gurinchi oka chinna conversation ki time istaaraa?'}\n\nMee veelu unnappudu matladudaam — emi pressure ledu 🙏\n\nBala Shashidhar\n📞 98765 43210`;
+  window.open('https://wa.me/91' + ph + '?text=' + encodeURIComponent(msg), '_blank');
+}
+function renderLeads() {
+  const ll = el_('leadlist'); if (!ll) return;
+  const active = LEADS.filter(l => l.status !== 'Converted' && l.status !== 'Lost');
+  const closed = LEADS.filter(l => l.status === 'Converted' || l.status === 'Lost');
+  const dTo = ds => { if (!ds) return null; const d = new Date(ds); return isNaN(d) ? null : Math.ceil((d - Date.now())/86400000); };
+  const card = l => {
+    const fd = dTo(l.next_follow);
+    const idle = l.last_contact ? Math.floor((Date.now() - new Date(l.last_contact)) / 86400000) : Math.floor((Date.now() - new Date(l.created_at)) / 86400000);
+    let intel = '';
+    if (fd !== null && fd < 0) intel = `<div style="font-size:10.5px;color:var(--coral);font-weight:700;margin-top:4px">⚠️ Follow-up overdue by ${Math.abs(fd)} days</div>`;
+    else if (fd !== null && fd <= 2) intel = `<div style="font-size:10.5px;color:var(--gold);font-weight:700;margin-top:4px">⏰ Follow-up ${fd===0?'TODAY':'in '+fd+' day'+(fd>1?'s':'')}</div>`;
+    else if (idle >= 12) intel = `<div style="font-size:10.5px;color:var(--gold);margin-top:4px">💡 Quiet ${idle} days — a light value message (tax saving / family protection) keeps it warm</div>`;
+    const cc = getCol(l.name||'');
+    return `<div style="background:var(--card2);border:1px solid var(--b);border-radius:12px;padding:12px 14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="width:32px;height:32px;border-radius:50%;background:${cc.bg};color:${cc.tc};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">${ini(l.name)}</div>
+        <div style="flex:1;min-width:120px"><div style="font-size:13px;font-weight:700">${esc(l.name)}</div><div style="font-size:10.5px;color:var(--t3)">${esc(l.interest||'')}${l.city?' · '+esc(l.city):''}${l.phone?' · 📞 '+esc(l.phone):''} · via ${esc(l.source||'—')}</div></div>
+        <select class="fi" style="width:auto;padding:5px 10px;font-size:11px" onchange="setLeadStatus('${l.id}', this.value)">${LEAD_STAGES.map(st=>`<option ${l.status===st?'selected':''}>${st}</option>`).join('')}</select>
+      </div>
+      ${l.notes?`<div style="font-size:11px;color:var(--t2);margin-top:6px">📝 ${esc(l.notes)}</div>`:''}
+      ${intel}
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+        <button class="btn bg" style="padding:5px 11px;font-size:10.5px" onclick="waLead('${l.id}')">📲 WhatsApp</button>
+        <button class="btn bt" style="padding:5px 11px;font-size:10.5px" onclick="convertLead('${l.id}')">🎉 Convert to Customer</button>
+        <button class="btn bd" style="padding:5px 11px;font-size:10.5px;margin-left:auto" onclick="delLead('${l.id}')">🗑</button>
+      </div>
+    </div>`;
+  };
+  let html = '';
+  LEAD_STAGES.filter(st => st !== 'Converted' && st !== 'Lost').forEach(st => {
+    const group = active.filter(l => l.status === st);
+    if (group.length) html += `<div style="font-size:10px;font-weight:800;letter-spacing:1.2px;color:var(--gold);text-transform:uppercase;margin:14px 0 8px;font-family:'Sora',sans-serif">${st} (${group.length})</div>` + group.map(card).join('');
+  });
+  if (closed.length) html += `<div style="font-size:10px;font-weight:800;letter-spacing:1.2px;color:var(--t3);text-transform:uppercase;margin:14px 0 8px;font-family:'Sora',sans-serif">Closed (${closed.length})</div>` + closed.map(l => `<div style="font-size:11.5px;color:var(--t3);padding:6px 0;border-bottom:1px solid var(--b)">${l.status==='Converted'?'🎉':'❌'} ${esc(l.name)} — ${l.status}</div>`).join('');
+  ll.innerHTML = html || '<div class="empty"><div class="eicon">🎯</div><div class="etit">No leads yet</div><div class="edesc">Every future customer starts here. Add your first lead on the left.</div></div>';
+}
+
+// =============== DAILY MISSION CENTER + REFERRAL CHAMPIONS ===============
+function renderMission() {
+  const mp = el_('missionp'); if (!mp) return;
+  const dTo = ds => { if (!ds) return null; const d = new Date(ds); return isNaN(d) ? null : Math.ceil((d - Date.now())/86400000); };
+  const h = new Date().getHours();
+  const greet = h < 12 ? 'Good Morning' : h < 17 ? 'Good Afternoon' : 'Good Evening';
+  let due = 0, dueAmt = 0, drift = 0, bdays = 0, claims = 0, oppFam = 0;
+  const mNow = new Date().getMonth();
+  DB.forEach(c => {
+    const dd = dTo(c.premium_due);
+    if (dd !== null && dd <= 30) { due++; dueAmt += parseFloat(c.premium_amount)||0; }
+    const t = parseInt(c.trust_score)||50;
+    if (daysSince(lastTouch(c)) >= 45 && t < 70) drift++;
+    if (c.dob) { const b = new Date(c.dob); if (!isNaN(b) && b.getMonth() === mNow) bdays++; }
+    if (c.claim_stage && c.claim_stage !== 'Payment Completed') claims++;
+    if (c.children && !c.policy_no && !c.plan_name) oppFam++;
+  });
+  const folOver = LEADS.filter(l => l.status !== 'Converted' && l.status !== 'Lost' && l.next_follow && dTo(l.next_follow) < 0).length;
+  const chip = (n, label, col, target) => `<div onclick="${target}" style="cursor:pointer;background:var(--card2);border:1px solid var(--b);border-radius:12px;padding:10px 14px;min-width:118px"><div style="font-size:20px;font-weight:800;color:${col};font-family:'Sora',sans-serif">${n}</div><div style="font-size:10px;color:var(--t3);margin-top:2px">${label}</div></div>`;
+  mp.innerHTML = `
+    <div style="font-family:'Sora',sans-serif;font-size:17px;font-weight:800;letter-spacing:-0.01em">${greet}, Bala Garu 🙏</div>
+    <div style="font-size:11.5px;color:var(--t2);margin:4px 0 14px">Today's mission — ${due+drift+bdays+claims+folOver === 0 ? 'all clear, your universe is calm 💛' : 'here is where your attention matters most:'}</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      ${chip(due, 'Premiums due (30d)', due?'var(--coral)':'var(--teal)', "go('dashboard');setTimeout(()=>el_('polradar')?.scrollIntoView({behavior:'smooth'}),100)")}
+      ${chip(drift, 'Drifting customers', drift?'var(--gold)':'var(--teal)', "go('dashboard');setTimeout(()=>el_('driftlist')?.scrollIntoView({behavior:'smooth'}),100)")}
+      ${chip(bdays, 'Birthdays this month', 'var(--purple)', "go('customers')")}
+      ${chip(claims, 'Claims in progress', claims?'var(--coral)':'var(--teal)', "go('customers')")}
+      ${chip(folOver, 'Lead follow-ups overdue', folOver?'var(--coral)':'var(--teal)', "go('leads')")}
+      ${chip(oppFam, 'Families, no policy yet', 'var(--gold)', "go('customers')")}
+    </div>
+    ${dueAmt > 0 ? `<div style="font-size:11.5px;color:var(--gold);margin-top:12px;font-weight:700">💰 Premium to collect in next 30 days: ${fmtINR(dueAmt)}</div>` : ''}`;
+}
+function renderRefChamps() {
+  const rc = el_('refchamps'); if (!rc) return;
+  const counts = {};
+  DB.forEach(c => {
+    const ref = String(c.referred_by||'').trim();
+    if (!ref) return;
+    const key = ref.toLowerCase().replace(/\s*garu\s*$/,'').trim();
+    if (!counts[key]) counts[key] = { name: ref, n: 0 };
+    counts[key].n++;
+  });
+  const top = Object.values(counts).sort((a,b) => b.n - a.n).slice(0,5);
+  rc.innerHTML = top.length ? top.map((r,i) => {
+    const di = DB.findIndex(c => String(c.name||'').toLowerCase().replace(/\s*garu\s*$/,'').trim() === String(r.name||'').toLowerCase().replace(/\s*garu\s*$/,'').trim());
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b);${di>=0?'cursor:pointer':''}" ${di>=0?`onclick="openProf(${di})"`:''}>
+      <div style="width:22px;font-size:14px">${['🥇','🥈','🥉','⭐','⭐'][i]}</div>
+      <div style="flex:1"><div style="font-size:12.5px;font-weight:700">${esc(r.name)}</div><div style="font-size:10.5px;color:var(--purple)">${r.n} customer${r.n>1?'s':''} referred · nurture this relationship like gold</div></div>
+    </div>`;
+  }).join('') : '<div style="font-size:12px;color:var(--t3);padding:6px 0">Fill the "Referred By" field on customers to discover who builds your business.</div>';
+}
+
 // =============== AUTH + INIT ===============
 function showLogin() { el_('LOGIN').style.display = 'flex'; }
 function hideLogin() { el_('LOGIN').style.display = 'none'; }
@@ -1545,6 +1807,7 @@ async function boot() {
   renderChat();
   renderTicker();
   loadTeam();
+  loadLeads();
   await loadAll();
 }
 document.addEventListener('DOMContentLoaded', async () => {
