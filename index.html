@@ -286,6 +286,7 @@ input[type="date"]{text-transform:uppercase}
 .p.clpsd .chev{transform:rotate(-90deg)}
 .p.clpsd .pb{display:none}
 .p.clpsd{opacity:0.82}
+.mb{z-index:200}
 /* CUSTOMER PROFILE AS OVERLAY POPUP */
 #sc-profile.on{position:fixed;inset:0;z-index:150;background:rgba(3,7,14,0.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);overflow-y:auto;padding:4vh 14px calc(4vh + 80px);animation:scfade .25s ease}
 #sc-profile.on>*{max-width:1020px;margin-left:auto;margin-right:auto}
@@ -1463,12 +1464,13 @@ function sendWA() {
 }
 
 function qmsg(idx, type) {
-  go('messages');
-  setTimeout(()=>{
-    const s = el_('msgcust'); if(s) s.value = String(idx);
-    const t = el_('msgtype'); if(t) t.value = type;
-    genMsg();
-  }, 200);
+  const c = DB[idx]; if (!c) return;
+  const ph = String(c.phone||'').replace(/\D/g,'').slice(-10);
+  if (ph.length !== 10) { showT('\u26a0\ufe0f Save a valid 10-digit phone for ' + c.name + ' first'); return; }
+  const lang = /english/i.test(c.language||'') && !/telugu/i.test(c.language||'') ? 'en' : 'te';
+  const tpl = MT[type];
+  if (!tpl) { showT('\u26a0\ufe0f Unknown message type'); return; }
+  openCompose(c.name + ' \u2014 ' + type, ph, tpl[lang](c));
 }
 
 // ============================================================
@@ -2293,7 +2295,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 11-Jun-M';
+const APP_VERSION = 'v1.0 · build 11-Jun-N';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
