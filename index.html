@@ -2353,6 +2353,8 @@ async function boot() {
   logAct('login', PROF.name);
   loadTeam(); loadLeads(); loadGoals();
   await loadAll();
+  // Greeting and date stay current even if the tab is open all day
+  setInterval(() => { try { renderMission(); } catch(e) {} }, 60000);
   if (!prof.full_name) { go('settings'); showT('\ud83d\udc4b Welcome! Set up your advisor profile first \u2014 it personalises everything.'); }
 }
 document.addEventListener('DOMContentLoaded', async () => {
