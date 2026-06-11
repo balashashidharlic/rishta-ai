@@ -365,6 +365,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
       <span id="lswap" onclick="toggleAuth()" style="color:var(--gold);cursor:pointer;font-weight:700">New advisor? Create free account</span>
       <span onclick="forgotPass()" style="cursor:pointer;text-decoration:underline">Forgot password?</span>
     </div>
+    <div id="lver" style="font-size:9px;color:var(--t3);margin-top:14px;letter-spacing:1px;text-align:center"></div>
   </div>
 </div>
 <div class="lgw" id="GATE" style="display:none">
@@ -633,6 +634,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
           <div class="fg"><label class="fl">Agency / Branch (optional)</label><input class="fi" id="sagency" placeholder="e.g. Anantapur Branch 612"/></div>
           <button class="btn bp" onclick="saveProfile()" style="width:100%;justify-content:center"><i class="ti ti-device-floppy"></i> Save Profile</button>
           <div style="font-size:10.5px;color:var(--t3);margin-top:10px">Your name, designation and phone number are automatically stamped into every WhatsApp message template.</div>
+          <div id="sver" style="font-size:9.5px;color:var(--t3);margin-top:14px;letter-spacing:1px"></div>
         </div>
       </div>
     </div>
@@ -2173,6 +2175,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
+const APP_VERSION = 'v1.0 · build 11-Jun-A';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
@@ -2384,6 +2387,7 @@ async function boot() {
 }
 document.addEventListener('DOMContentLoaded', async () => {
   hideL();
+  set('lver', 'Rishta AI ' + APP_VERSION); set('sver', 'Rishta AI ' + APP_VERSION);
   if (DEMO_MODE) enableDemoProtection();
   if (!sb || SUPABASE_URL.indexOf('PASTE') >= 0) {
     showLogin();
