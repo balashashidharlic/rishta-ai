@@ -452,7 +452,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;bac
   <div class="tk">
     <div class="tkl"><div class="tkdot"></div><span>Today</span></div>
     <div class="tkv"><div class="tkt" id="tktrack"></div>
-      <div class="tknav"><button onclick="tkStep(-1)" title="Previous">‹</button><button onclick="tkStep(1)" title="Next">›</button></div>
+      <div class="tknav"><button onclick="tkStep(-1)" title="Previous">‹</button><button onclick="tkPP()" id="tkpp" title="Pause"><i class="ti ti-player-pause" style="font-size:11px"></i></button><button onclick="tkStep(1)" title="Next">›</button></div>
     </div>
   </div>
 
@@ -1699,7 +1699,20 @@ const FALLBACK_NEWS = [
   '🛡\ufe0f Review policy nominee details every year for smooth claim settlement',
   '\u23f0 Grace period \u2014 30 days for yearly/half-yearly/quarterly modes, 15 days for monthly'
 ];
-let TKIDX = -1, TKTIMER = null;
+let TKIDX = -1, TKTIMER = null, TKPAUSED = false;
+function tkPP() {
+  const t = el_('tktrack'), b = el_('tkpp'); if (!t || !b) return;
+  TKPAUSED = !TKPAUSED;
+  b.innerHTML = '<i class="ti ti-player-' + (TKPAUSED ? 'play' : 'pause') + '" style="font-size:11px"></i>';
+  b.title = TKPAUSED ? 'Resume' : 'Pause';
+  if (TKPAUSED) {
+    clearTimeout(TKTIMER);
+    if (!t.style.transform) t.style.animationPlayState = 'paused';
+  } else {
+    TKIDX = -1;
+    t.style.animation = ''; t.style.transition = ''; t.style.transform = ''; t.style.animationPlayState = '';
+  }
+}
 function tkStep(dir) {
   const t = el_('tktrack'); if (!t) return;
   const items = [...t.querySelectorAll('.tki')]; if (!items.length) return;
@@ -1709,7 +1722,7 @@ function tkStep(dir) {
   t.style.transition = 'transform .35s ease';
   t.style.transform = 'translateX(' + (-x) + 'px)';
   clearTimeout(TKTIMER);
-  TKTIMER = setTimeout(() => { t.style.animation = ''; t.style.transition = ''; t.style.transform = ''; TKIDX = -1; }, 15000);
+  if (!TKPAUSED) TKTIMER = setTimeout(() => { t.style.animation = ''; t.style.transition = ''; t.style.transform = ''; TKIDX = -1; }, 15000);
 }
 function tickerItems() {
   const items = [];
@@ -2375,7 +2388,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 11-Jun-W';
+const APP_VERSION = 'v1.0 · build 11-Jun-X';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
