@@ -247,6 +247,10 @@ html,body{height:100%;overflow:hidden}
 .tkv{flex:1;overflow:hidden;white-space:nowrap;display:flex;align-items:center}
 .tkt{display:inline-flex;align-items:center;gap:36px;padding-left:24px;animation:tkm 55s linear infinite;will-change:transform}
 .tkv:hover .tkt{animation-play-state:paused}
+.tkv{position:relative}
+.tknav{position:absolute;right:0;top:0;bottom:0;display:flex;align-items:center;gap:4px;padding:0 8px 0 26px;background:linear-gradient(90deg,transparent,var(--bg) 40%)}
+.tknav button{width:24px;height:24px;border-radius:7px;border:1px solid var(--b);background:var(--card);color:var(--t2);font-size:15px;line-height:1;cursor:pointer;transition:all .2s}
+.tknav button:hover{color:var(--gold);border-color:rgba(183,160,106,0.4)}
 @keyframes tkm{to{transform:translateX(-50%)}}
 .tki{font-size:11.5px;color:var(--t2);flex-shrink:0}
 .tks{color:var(--gold);font-size:9px;flex-shrink:0}
@@ -447,7 +451,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;bac
 
   <div class="tk">
     <div class="tkl"><div class="tkdot"></div><span>Today</span></div>
-    <div class="tkv"><div class="tkt" id="tktrack"></div></div>
+    <div class="tkv"><div class="tkt" id="tktrack"></div>
+      <div class="tknav"><button onclick="tkStep(-1)" title="Previous">‹</button><button onclick="tkStep(1)" title="Next">›</button></div>
+    </div>
   </div>
 
   <div class="con">
@@ -1693,6 +1699,18 @@ const FALLBACK_NEWS = [
   '🛡\ufe0f Review policy nominee details every year for smooth claim settlement',
   '\u23f0 Grace period \u2014 30 days for yearly/half-yearly/quarterly modes, 15 days for monthly'
 ];
+let TKIDX = -1, TKTIMER = null;
+function tkStep(dir) {
+  const t = el_('tktrack'); if (!t) return;
+  const items = [...t.querySelectorAll('.tki')]; if (!items.length) return;
+  t.style.animation = 'none';
+  TKIDX = TKIDX < 0 ? (dir > 0 ? 0 : items.length - 1) : (TKIDX + dir + items.length) % items.length;
+  const x = Math.max(0, items[TKIDX].offsetLeft - 24);
+  t.style.transition = 'transform .35s ease';
+  t.style.transform = 'translateX(' + (-x) + 'px)';
+  clearTimeout(TKTIMER);
+  TKTIMER = setTimeout(() => { t.style.animation = ''; t.style.transition = ''; t.style.transform = ''; TKIDX = -1; }, 15000);
+}
 function tickerItems() {
   const items = [];
   const dTo = ds => { if (!ds) return null; const d = new Date(ds); return isNaN(d) ? null : Math.ceil((d - Date.now())/86400000); };
@@ -1736,7 +1754,7 @@ function renderTicker() {
   // Calm, reading-pace scroll: ~32px per second regardless of content length
   requestAnimationFrame(() => {
     const w = t.scrollWidth / 2;
-    if (w > 0) t.style.animationDuration = Math.max(40, Math.round(w / 32)) + 's';
+    if (w > 0) t.style.animationDuration = Math.max(26, Math.round(w / 48)) + 's';
   });
 }
 
@@ -2357,7 +2375,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 11-Jun-V';
+const APP_VERSION = 'v1.0 · build 11-Jun-W';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
