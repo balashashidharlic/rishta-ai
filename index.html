@@ -1699,7 +1699,7 @@ const FALLBACK_NEWS = [
   '🛡\ufe0f Review policy nominee details every year for smooth claim settlement',
   '\u23f0 Grace period \u2014 30 days for yearly/half-yearly/quarterly modes, 15 days for monthly'
 ];
-let TKIDX = -1, TKTIMER = null, TKPAUSED = false;
+let TKIDX = -1, TKTIMER = null, TKPAUSED = false, TKDUR = 0;
 function tkPP() {
   const t = el_('tktrack'), b = el_('tkpp'); if (!t || !b) return;
   TKPAUSED = !TKPAUSED;
@@ -1711,6 +1711,7 @@ function tkPP() {
   } else {
     TKIDX = -1;
     t.style.animation = ''; t.style.transition = ''; t.style.transform = ''; t.style.animationPlayState = '';
+    if (TKDUR) t.style.animationDuration = TKDUR + 's';
   }
 }
 function tkStep(dir) {
@@ -1722,7 +1723,7 @@ function tkStep(dir) {
   t.style.transition = 'transform .35s ease';
   t.style.transform = 'translateX(' + (-x) + 'px)';
   clearTimeout(TKTIMER);
-  if (!TKPAUSED) TKTIMER = setTimeout(() => { t.style.animation = ''; t.style.transition = ''; t.style.transform = ''; TKIDX = -1; }, 15000);
+  if (!TKPAUSED) TKTIMER = setTimeout(() => { t.style.animation = ''; t.style.transition = ''; t.style.transform = ''; if (TKDUR) t.style.animationDuration = TKDUR + 's'; TKIDX = -1; }, 15000);
 }
 function tickerItems() {
   const items = [];
@@ -1767,7 +1768,7 @@ function renderTicker() {
   // Calm, reading-pace scroll: ~32px per second regardless of content length
   requestAnimationFrame(() => {
     const w = t.scrollWidth / 2;
-    if (w > 0) t.style.animationDuration = Math.max(26, Math.round(w / 48)) + 's';
+    if (w > 0) { TKDUR = Math.max(31, Math.round(w / 40)); t.style.animationDuration = TKDUR + 's'; }
   });
 }
 
@@ -2388,7 +2389,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 11-Jun-X';
+const APP_VERSION = 'v1.0 · build 11-Jun-Y';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
