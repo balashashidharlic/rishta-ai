@@ -539,6 +539,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;bac
           <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;margin:16px 0 10px;font-family:'Sora',sans-serif">📜 Policy Details (optional)</div>
           <div class="fr"><div class="fg"><label class="fl">Policy Number</label><input class="fi" id="fpno" placeholder="e.g. 678912345"/></div><div class="fg"><label class="fl">Plan Name</label><input class="fi" id="fplan" placeholder="e.g. Jeevan Anand"/></div></div>
           <div class="fr"><div class="fg"><label class="fl">Sum Assured (₹)</label><input class="fi" id="fsa" type="number" min="0" placeholder="e.g. 1000000"/></div><div class="fg"><label class="fl">Premium Amount (₹)</label><input class="fi" id="fpa" type="number" min="0" placeholder="e.g. 24000"/></div></div>
+          <div class="fr"><div class="fg"><label class="fl">Your Commission (₹ / year)</label><input class="fi" id="fcm" type="number" min="0" placeholder="e.g. 6000"/><div style="font-size:11px;color:var(--t3);margin-top:4px">Your reward for protecting this family</div></div><div class="fg"></div></div>
           <div class="fr"><div class="fg"><label class="fl">Premium Mode</label><select class="fi" id="fpm"><option>Yearly</option><option>Half-Yearly</option><option>Quarterly</option><option>Monthly</option></select></div><div class="fg"><label class="fl">Policy Start (DOC)</label><input class="fi" id="fdoc" type="date"/></div></div>
           <div class="fr"><div class="fg"><label class="fl">Next Premium Due</label><input class="fi" id="fdue" type="date"/></div><div class="fg"><label class="fl">Maturity Date</label><input class="fi" id="fmat" type="date"/></div></div>
           <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
@@ -1126,6 +1127,7 @@ function openProf(idx) {
       ${c.plan_name?'<div class="pbadge">📋 '+c.plan_name+'</div>':''}
       ${parseFloat(c.sum_assured)>0?'<div class="pbadge" style="color:var(--teal)">🛡 SA ₹'+Number(c.sum_assured).toLocaleString('en-IN')+'</div>':''}
       ${parseFloat(c.premium_amount)>0?'<div class="pbadge" style="color:var(--gold)">💰 ₹'+Number(c.premium_amount).toLocaleString('en-IN')+' '+(c.premium_mode||'')+'</div>':''}
+      ${parseFloat(c.commission)>0?'<div class="pbadge" style="color:var(--teal)">🎁 Commission ₹'+Number(c.commission).toLocaleString('en-IN')+'/yr</div>':''}
       ${c.doc_date?'<div class="pbadge">📅 Started '+c.doc_date+'</div>':''}
     </div>
     ${dueDays!==null?`<div style="font-size:12px;padding:8px 12px;border-radius:10px;margin-bottom:6px;background:${dueDays<=15?'rgba(224,92,58,0.12)':'rgba(183,160,106,0.1)'};color:${dueDays<=15?'var(--coral)':'var(--gold)'};font-weight:700">⏰ Premium due ${dueDays<0?Math.abs(dueDays)+' days AGO — grace period running!':dueDays===0?'TODAY':'in '+dueDays+' days'} (${c.premium_due})</div>`:''}
@@ -1312,7 +1314,7 @@ function editC() {
   const f = { fn:c.name, fp:c.phone, fd:c.dob, fo:c.occupation, fi2:c.income, fl2:c.language,
     fsp:c.spouse, fch:c.children, fgo:c.goals, fre:c.referred_by, ftr:c.trust_score,
     fpe:c.persona, fpno:c.policy_no, fplan:c.plan_name, fsa:c.sum_assured, fpa:c.premium_amount,
-    fpm:c.premium_mode, fdoc:c.doc_date, fdue:c.premium_due, fmat:c.maturity_date };
+    fpm:c.premium_mode, fdoc:c.doc_date, fdue:c.premium_due, fmat:c.maturity_date, fcm:c.commission };
   for (const id in f) { const e = el_(id); if (e) e.value = f[id] == null ? '' : f[id]; }
   const no = el_('fno'); if (no) no.value = '';
   closeProf();
@@ -1338,7 +1340,7 @@ async function saveC() {
     persona:el_('fpe') ? el_('fpe').value : '',
     policy_no:el_('fpno').value.trim(), plan_name:el_('fplan').value.trim(),
     sum_assured:parseFloat(el_('fsa').value)||0, premium_amount:parseFloat(el_('fpa').value)||0,
-    premium_mode:el_('fpm').value, doc_date:el_('fdoc').value||null,
+    premium_mode:el_('fpm').value, commission:parseFloat(el_('fcm').value)||0, doc_date:el_('fdoc').value||null,
     premium_due:el_('fdue').value||null, maturity_date:el_('fmat').value||null
   };
   let error;
@@ -2062,7 +2064,7 @@ async function importCSV(file) {
     trust_score: parseInt(g(r,'trust_score')) || 50, active: 'active',
     policy_no: g(r,'policy_no'), plan_name: g(r,'plan_name'),
     sum_assured: parseFloat(g(r,'sum_assured')) || 0, premium_amount: parseFloat(g(r,'premium_amount')) || 0,
-    premium_mode: g(r,'premium_mode') || 'Yearly',
+    premium_mode: g(r,'premium_mode') || 'Yearly', commission: parseFloat(g(r,'commission')) || 0,
     doc_date: g(r,'doc_date') || null, premium_due: g(r,'premium_due') || null, maturity_date: g(r,'maturity_date') || null
   })).filter(x => x.name);
   if (!recs.length) { hideL(); showT('⚠️ No valid rows found (need a name column)'); return; }
@@ -2175,11 +2177,12 @@ function renderMission() {
   const dTo = ds => { if (!ds) return null; const d = new Date(ds); return isNaN(d) ? null : Math.ceil((d - Date.now())/86400000); };
   const h = new Date().getHours();
   const greet = h < 12 ? 'Good Morning' : h < 17 ? 'Good Afternoon' : 'Good Evening';
-  let due = 0, dueAmt = 0, drift = 0, bdays = 0, claims = 0, oppFam = 0;
+  let due = 0, dueAmt = 0, drift = 0, bdays = 0, claims = 0, oppFam = 0, commYear = 0, commDue = 0;
   const mNow = new Date().getMonth();
   DB.forEach(c => {
     const dd = dTo(c.premium_due);
-    if (dd !== null && dd <= 30) { due++; dueAmt += parseFloat(c.premium_amount)||0; }
+    if (dd !== null && dd <= 30) { due++; dueAmt += parseFloat(c.premium_amount)||0; commDue += parseFloat(c.commission)||0; }
+    commYear += parseFloat(c.commission)||0;
     const t = parseInt(c.trust_score)||50;
     if (daysSince(lastTouch(c)) >= 45 && t < 70) drift++;
     const bdd = bdayIn(c.dob); if (bdd !== null && bdd <= 3) bdays++;
@@ -2192,6 +2195,7 @@ function renderMission() {
   const lines = [];
   if (families > 0) lines.push(`<b>${families}</b> ${families===1?'family needs':'families need'} your attention today.`);
   if (dueAmt > 0) lines.push(`<b>${fmtINR(dueAmt)}</b> premium opportunity this month.`);
+  if (commDue > 0) lines.push(`<b>${fmtINR(commDue)}</b> of your commission rides on this month\u2019s renewals.`);
   if (drift > 0) lines.push(`<b>${drift}</b> ${drift===1?'relationship needs':'relationships need'} reconnection.`);
   if (bdays > 0) lines.push(`<b>${bdays}</b> birthday${bdays>1?'s':''} in the next 3 days \u2014 a call means more than a gift.`);
   if (folOver > 0) lines.push(`<b>${folOver}</b> lead follow-up${folOver>1?'s':''} waiting.`);
@@ -2403,7 +2407,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 11-Jun-Z';
+const APP_VERSION = 'v1.0 · build 13-Jun-B';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
