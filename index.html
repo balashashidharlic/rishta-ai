@@ -1282,7 +1282,7 @@ function openProf(idx) {
     ${c.claim_stage && c.claim_stage!=='Payment Completed' ? `<div style="font-size:11px;color:var(--coral);margin-top:8px;font-weight:700">⏳ Claim in progress — every update call during a claim builds lifelong trust.</div>` : ''}
     ${c.claim_stage==='Payment Completed' ? `<div style="font-size:11px;color:var(--teal);margin-top:8px;font-weight:700">✅ Claim settled — this family will remember your support forever. Perfect time for the goodwill message.</div>` : ''}
   </div></div>`;
-  el_('profcont').insertAdjacentHTML('beforeend', protectionGapHtml(c) + polHtml + claimHtml + oppHtml + eduHtml);
+  el_('profcont').insertAdjacentHTML('beforeend', relHealthHtml(c) + referralIntelHtml(c) + protectionGapHtml(c) + lifeTimelineHtml(c) + polHtml + claimHtml + oppHtml + eduHtml);
 
   showProfOverlay();
 }
@@ -1467,6 +1467,103 @@ function protectionGapHtml(c) {
     + '<div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:4px">Coverage Gaps</div>'
     + gapList
     + (gaps.length ? '<div style="font-size:10.5px;color:var(--t3);margin-top:10px">These are conversation starters built from the data you entered. Confirm each in conversation before suggesting any plan.</div>' : '')
+    + '</div></div>';
+}
+// =============== RELATIONSHIP INTELLIGENCE CORE ===============
+function relScore(c) {
+  const t = parseInt(c.trust_score) || 50;
+  const ds = daysSince(lastTouch(c));
+  const refs = DB.filter(x => (x.referred_by||'').toLowerCase().trim() && (x.referred_by||'').toLowerCase().trim() === (c.name||'').toLowerCase().trim()).length;
+  const claimGood = c.claim_stage === 'Payment Completed';
+  const claimActive = c.claim_stage && c.claim_stage !== 'Payment Completed';
+  const strengths = [], weak = [];
+  let score = Math.round(t * 0.35);
+  if (t >= 70) strengths.push('Strong trust (' + t + ')'); else if (t < 45) weak.push('Trust is low (' + t + ')');
+  if (ds <= 30) { score += 30; strengths.push('Contacted within ' + ds + ' days'); }
+  else if (ds <= 60) { score += 20; }
+  else if (ds <= 90) { score += 10; weak.push('No contact in ' + ds + ' days'); }
+  else { weak.push('Silent for ' + ds + ' days, relationship cooling'); }
+  if (refs > 0) { score += 15; strengths.push(refs + ' referral' + (refs>1?'s':'') + ' given'); } else weak.push('No referral yet');
+  if (claimGood) { score += 10; strengths.push('Supported through a claim'); } else if (claimActive) { score += 6; }
+  const depth = [(c.spouse||''), (c.children||''), (c.goals||'')].filter(x => String(x).trim()).length;
+  score += depth >= 2 ? 10 : depth === 1 ? 5 : 0;
+  if (depth < 2) weak.push('Family details incomplete');
+  if (score > 100) score = 100;
+  const months = Math.floor(daysSince(new Date(c.created || c.created_at || Date.now())) / 30);
+  return { score, strengths, weak, t, ds, refs, claimGood, months };
+}
+function relHealthHtml(c) {
+  const r = relScore(c);
+  const band = r.score >= 75 ? ['Healthy','var(--teal)','rgba(43,161,137,0.12)','rgba(43,161,137,0.3)']
+    : r.score >= 50 ? ['Needs warmth','var(--gold)','rgba(183,160,106,0.12)','rgba(183,160,106,0.3)']
+    : ['At risk','var(--coral)','rgba(224,121,92,0.12)','rgba(224,121,92,0.3)'];
+  const row = ' style="display:flex;gap:8px;padding:6px 0;font-size:12.5px"';
+  const sList = r.strengths.map(x => '<div'+row+'><span style="color:var(--teal)">✓</span><span style="color:var(--t2)">'+x+'</span></div>').join('');
+  const wList = r.weak.map(x => '<div'+row+'><span style="color:var(--coral)">✕</span><span style="color:var(--t2)">'+x+'</span></div>').join('');
+  return '<div class="p" style="border-color:'+band[3]+'"><div class="ph"><div class="pt">❤ Relationship Health</div></div><div class="pb">'
+    + '<div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;flex-wrap:wrap">'
+    + '<div style="width:72px;height:72px;border-radius:50%;background:'+band[2]+';border:2px solid '+band[1]+';display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">'
+    + '<div style="font-size:22px;font-weight:800;color:'+band[1]+';font-family:Sora,sans-serif;line-height:1">'+r.score+'</div>'
+    + '<div style="font-size:8px;color:var(--t3);text-transform:uppercase">of 100</div></div>'
+    + '<div style="flex:1;min-width:150px"><div style="font-size:14px;font-weight:700;color:'+band[1]+'">'+band[0]+'</div>'
+    + '<div style="font-size:11.5px;color:var(--t3);margin-top:3px">From trust, recency, referrals, claim support, and how well you know the family.</div></div></div>'
+    + (sList ? '<div style="font-size:10px;color:var(--teal);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin:6px 0 2px">Strengths</div>'+sList : '')
+    + (wList ? '<div style="font-size:10px;color:var(--coral);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin:10px 0 2px">To improve</div>'+wList : '')
+    + '</div></div>';
+}
+function referralIntelHtml(c) {
+  const r = relScore(c);
+  let p = Math.min(40, r.t * 0.4);
+  if (r.claimGood) p += 20;
+  if (r.ds <= 45) p += 15; else if (r.ds <= 90) p += 7;
+  if (r.refs > 0) p += 15;
+  if (r.months >= 12) p += 10;
+  p = Math.min(99, Math.round(p));
+  const reasons = [];
+  if (r.t >= 70) reasons.push('High trust (' + r.t + ')');
+  if (r.claimGood) reasons.push('You supported them through a claim');
+  if (r.refs > 0) reasons.push('Already a proven referrer');
+  if (r.ds <= 45) reasons.push('Recently engaged');
+  if (r.months >= 12) reasons.push('Long relationship');
+  const band = p >= 70 ? ['Ready to ask','var(--teal)'] : p >= 45 ? ['Warm, nurture first','var(--gold)'] : ['Not yet','var(--t3)'];
+  const guidance = p >= 70
+    ? 'Ask this week. After a warm moment, say: “if any friend or family ever needs guidance, I would be honoured if you think of me.”'
+    : p >= 45 ? 'Build one more positive touch first, a birthday wish or helpful message, then ask.'
+    : 'Too early. Strengthen trust and stay present before asking for referrals.';
+  return '<div class="p" style="border-color:rgba(183,160,106,0.25)"><div class="ph"><div class="pt">⭐ Referral Intelligence</div></div><div class="pb">'
+    + '<div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap">'
+    + '<div style="font-size:30px;font-weight:800;color:'+band[1]+';font-family:Sora,sans-serif">'+p+'%</div>'
+    + '<div style="flex:1;min-width:140px"><div style="font-size:13px;font-weight:700;color:'+band[1]+'">'+band[0]+'</div>'
+    + '<div style="font-size:11px;color:var(--t3)">Readiness from trust, claim experience, and engagement.</div></div></div>'
+    + (reasons.length ? '<div style="font-size:12px;color:var(--t2);margin-bottom:8px">'+reasons.map(x=>'• '+x).join('<br>')+'</div>' : '')
+    + '<div style="font-size:12px;color:var(--t1);background:rgba(183,160,106,0.08);border-left:3px solid var(--gold);padding:9px 12px;border-radius:8px;line-height:1.55">'+guidance+'</div>'
+    + '</div></div>';
+}
+function lifeTimelineHtml(c) {
+  const ev = [];
+  const yr = d => { const x = new Date(d); return isNaN(x) ? null : x.getFullYear(); };
+  if (c.doc_date && yr(c.doc_date)) ev.push([yr(c.doc_date), (c.plan_name || 'First policy') + ' begins', '📜']);
+  if (c.maturity_date && yr(c.maturity_date)) ev.push([yr(c.maturity_date), 'Policy matures', '🎁']);
+  (c.children||'').split(',').forEach(ch => {
+    const am = ch.match(/(\d{1,2})/);
+    if (am) { const age = parseInt(am[1]); const nowY = new Date().getFullYear(); const collegeY = nowY + (18 - age);
+      if (age < 18 && collegeY > nowY) ev.push([collegeY, 'A child may start college', '🎓']); }
+  });
+  String(c.notes||'').split('\n').forEach(n => {
+    const m = n.match(/\[(.+?)\]\s*(.+)/);
+    if (m) { const d = parseDateLoose(m[1]); if (d) { const txt = m[2].trim().slice(0,60); if (txt) ev.push([d.getFullYear(), txt, '•']); } }
+  });
+  if (!ev.length) return '';
+  ev.sort((a,b) => a[0] - b[0]);
+  const rows = ev.map(e =>
+    '<div style="display:flex;gap:12px;align-items:flex-start;padding:8px 0">'
+    + '<div style="font-family:Sora,sans-serif;font-weight:800;font-size:13px;color:var(--gold);width:46px;flex-shrink:0">'+e[0]+'</div>'
+    + '<div style="width:10px;height:10px;border-radius:50%;background:var(--gold);margin-top:4px;flex-shrink:0;box-shadow:0 0 0 3px rgba(183,160,106,0.15)"></div>'
+    + '<div style="font-size:12.5px;color:var(--t2)">'+e[2]+' '+esc(e[1])+'</div></div>').join('');
+  return '<div class="p"><div class="ph"><div class="pt">📖 Life Timeline</div></div><div class="pb" style="position:relative">'
+    + '<div style="position:absolute;left:51px;top:14px;bottom:14px;width:1px;background:var(--b)"></div>'
+    + rows
+    + '<div style="font-size:10px;color:var(--t3);margin-top:8px">From policy dates, family details, and your dated notes. Add notes like [12/06/2026] to grow the story.</div>'
     + '</div></div>';
 }
 function showBrief() {
@@ -2289,6 +2386,7 @@ function renderMission() {
       <div style="font-family:'Sora',sans-serif;font-size:clamp(22px,4vw,30px);font-weight:800;letter-spacing:-0.02em;line-height:1.15">${greet}, ${PROF.first} Garu</div>
       <div style="font-size:14px;color:var(--t2);margin:16px 0 22px;line-height:1.9;max-width:560px">${lines.join('<br/>')}</div>
       <button class="btn bp" onclick="startDay()" style="padding:12px 26px;font-size:13px">Start My Day →</button>
+      ${nextBestAction()}
       ${todayNarrative()}
       <div style="display:flex;gap:26px;flex-wrap:wrap;margin-top:22px;border-top:1px solid var(--b);padding-top:8px">
         ${chip(due,'premiums due',true,"filterSeg('due')")}
@@ -2299,6 +2397,40 @@ function renderMission() {
         ${chip(oppFam,'families to protect',false,"filterSeg('protect')")}
       </div>
     </div>`;
+}
+function nextBestAction() {
+  if (!DB.length) return '';
+  const dTo = ds => { if (!ds) return null; const d = new Date(ds); return isNaN(d) ? null : Math.ceil((d - Date.now())/86400000); };
+  // Score every customer for "act now" priority and build the single best recommendation.
+  let best = null;
+  DB.forEach((c, i) => {
+    const r = relScore(c);
+    const dd = dTo(c.premium_due);
+    const bdd = bdayIn(c.dob);
+    let urgency = 0, why = [], action = null, premium = parseFloat(c.premium_amount) || 0;
+    // overdue / due premium on a trusted relationship
+    if (dd !== null && dd <= 15) { urgency += (dd < 0 ? 60 : 45) + (r.t/5); why.push(dd<0? 'Premium '+Math.abs(dd)+' days overdue' : 'Premium due in '+dd+' days'); action = { label:'Send Reminder', fn:"waRemind("+i+",'due')" }; }
+    // birthday today/soon
+    if (bdd !== null && bdd <= 3) { urgency += 40; why.push(bdd===0?'Birthday TODAY':'Birthday in '+bdd+' days'); if(!action) action = { label:'Send Wish', fn:"waBday("+i+")" }; }
+    // claim in progress
+    if (c.claim_stage && c.claim_stage !== 'Payment Completed') { urgency += 50; why.push('Claim in progress, needs an update call'); if(!action) action = { label:'Open', fn:"openProf("+i+")" }; }
+    // drifting but valuable
+    if (r.ds >= 60 && r.t >= 55) { urgency += 30 + r.t/5; why.push('Quiet '+r.ds+' days despite strong trust'); if(!action) action = { label:'Open', fn:"openProf("+i+")" }; }
+    // strong referral candidate
+    if (r.claimGood && r.t >= 70 && r.refs === 0) { urgency += 25; why.push('Prime referral moment'); if(!action) action = { label:'Open', fn:"openProf("+i+")" }; }
+    if (urgency > 0 && (!best || urgency > best.urgency)) best = { c, i, urgency, why, action, premium, trust: r.t };
+  });
+  if (!best || !best.action) return '';
+  const conv = Math.min(92, 40 + best.trust/2 + (best.why.length*4));
+  const premiumLine = best.premium > 0 ? ' · potential ₹' + Number(best.premium).toLocaleString('en-IN') : '';
+  return '<div style="margin-top:22px;max-width:680px;background:linear-gradient(135deg,rgba(183,160,106,0.14),rgba(183,160,106,0.04));border:1px solid rgba(183,160,106,0.3);border-radius:16px;padding:16px 18px">'
+    + '<div style="font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:800;font-family:Sora,sans-serif;margin-bottom:8px">✨ Your next best action</div>'
+    + '<div style="font-size:15px;font-weight:700;margin-bottom:4px">' + esc(best.action.label) + ' — ' + esc(best.c.name) + '</div>'
+    + '<div style="font-size:12.5px;color:var(--t2);margin-bottom:10px">' + best.why.map(w=>esc(w)).join(' · ') + '</div>'
+    + '<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
+    + '<button class="btn bp" style="padding:8px 18px;font-size:12px" onclick="' + best.action.fn + '">' + esc(best.action.label) + '</button>'
+    + '<span style="font-size:11.5px;color:var(--t3)">~' + Math.round(conv) + '% likely to land well' + premiumLine + '</span>'
+    + '</div></div>';
 }
 function todayNarrative() {
   if (!DB.length) return '';
@@ -2485,7 +2617,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 13-Jun-F';
+const APP_VERSION = 'v1.0 · build 13-Jun-I';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
