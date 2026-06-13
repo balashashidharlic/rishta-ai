@@ -540,6 +540,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;bac
           <div class="fr"><div class="fg"><label class="fl">Policy Number</label><input class="fi" id="fpno" placeholder="e.g. 678912345"/></div><div class="fg"><label class="fl">Plan Name</label><input class="fi" id="fplan" placeholder="e.g. Jeevan Anand"/></div></div>
           <div class="fr"><div class="fg"><label class="fl">Sum Assured (₹)</label><input class="fi" id="fsa" type="number" min="0" placeholder="e.g. 1000000"/></div><div class="fg"><label class="fl">Premium Amount (₹)</label><input class="fi" id="fpa" type="number" min="0" placeholder="e.g. 24000"/></div></div>
           <div class="fr"><div class="fg"><label class="fl">Your Commission (₹ / year)</label><input class="fi" id="fcm" type="number" min="0" placeholder="e.g. 6000"/><div style="font-size:11px;color:var(--t3);margin-top:4px">Your reward for protecting this family</div></div><div class="fg"></div></div>
+          <div><label class="fl">🧠 Memory Vault — things to never forget</label><textarea class="fi" id="fmem" rows="3" placeholder="One per line. e.g.
+Likes cricket, supports CSK
+Daughter preparing for NEET
+Mother is diabetic
+Dreams of a house in 3 years"></textarea><div style="font-size:11px;color:var(--t3);margin-top:4px">Personal facts, dreams, health, preferences. The details that turn a salesman into family.</div></div>
           <div class="fr"><div class="fg"><label class="fl">Premium Mode</label><select class="fi" id="fpm"><option>Yearly</option><option>Half-Yearly</option><option>Quarterly</option><option>Monthly</option></select></div><div class="fg"><label class="fl">Policy Start (DOC)</label><input class="fi" id="fdoc" type="date"/></div></div>
           <div class="fr"><div class="fg"><label class="fl">Next Premium Due</label><input class="fi" id="fdue" type="date"/></div><div class="fg"><label class="fl">Maturity Date</label><input class="fi" id="fmat" type="date"/></div></div>
           <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
@@ -1167,6 +1172,7 @@ function openProf(idx) {
         <div style="flex:1">
           <div class="pn">${c.name||'Unknown'}</div>
           <div class="pd">${[c.occupation,c.language,c.income].filter(Boolean).join(' · ')}</div>
+          ${(()=>{const tm=relTemp(c);return '<div style="display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:4px 12px;border-radius:20px;background:rgba(255,255,255,0.04);border:1px solid var(--b);font-size:12px;font-weight:700;color:'+tm.col+'">'+tm.e+' '+tm.label+'</div>';})()}
           <div class="pbadges">
             ${c.phone?'<div class="pbadge">📞 '+c.phone+'</div>':''}
             ${c.dob?'<div class="pbadge">🎂 '+c.dob+'</div>':''}
@@ -1281,7 +1287,7 @@ function openProf(idx) {
     ${c.claim_stage && c.claim_stage!=='Payment Completed' ? `<div style="font-size:11px;color:var(--coral);margin-top:8px;font-weight:700">⏳ Claim in progress — every update call during a claim builds lifelong trust.</div>` : ''}
     ${c.claim_stage==='Payment Completed' ? `<div style="font-size:11px;color:var(--teal);margin-top:8px;font-weight:700">✅ Claim settled — this family will remember your support forever. Perfect time for the goodwill message.</div>` : ''}
   </div></div>`;
-  el_('profcont').insertAdjacentHTML('beforeend', relHealthHtml(c) + referralIntelHtml(c) + protectionGapHtml(c) + lifeTimelineHtml(c) + polHtml + claimHtml + oppHtml + eduHtml);
+  el_('profcont').insertAdjacentHTML('beforeend', memoryVaultHtml(c) + relHealthHtml(c) + opportunityEngineHtml(c) + referralIntelHtml(c) + protectionGapHtml(c) + lifeTimelineHtml(c) + polHtml + claimHtml + oppHtml + eduHtml);
 
   showProfOverlay();
 }
@@ -1330,7 +1336,7 @@ function editC() {
   const f = { fn:c.name, fp:c.phone, fd:c.dob, fo:c.occupation, fi2:c.income, fl2:c.language,
     fsp:c.spouse, fch:c.children, fgo:c.goals, fre:c.referred_by, ftr:c.trust_score,
     fpe:c.persona, fpno:c.policy_no, fplan:c.plan_name, fsa:c.sum_assured, fpa:c.premium_amount,
-    fpm:c.premium_mode, fdoc:c.doc_date, fdue:c.premium_due, fmat:c.maturity_date, fcm:c.commission };
+    fpm:c.premium_mode, fdoc:c.doc_date, fdue:c.premium_due, fmat:c.maturity_date, fcm:c.commission, fmem:c.memory };
   for (const id in f) { const e = el_(id); if (e) e.value = f[id] == null ? '' : f[id]; }
   const no = el_('fno'); if (no) no.value = '';
   closeProf();
@@ -1356,7 +1362,7 @@ async function saveC() {
     persona:el_('fpe') ? el_('fpe').value : '',
     policy_no:el_('fpno').value.trim(), plan_name:el_('fplan').value.trim(),
     sum_assured:parseFloat(el_('fsa').value)||0, premium_amount:parseFloat(el_('fpa').value)||0,
-    premium_mode:el_('fpm').value, commission:parseFloat(el_('fcm').value)||0, doc_date:el_('fdoc').value||null,
+    premium_mode:el_('fpm').value, commission:parseFloat(el_('fcm').value)||0, memory:(el_('fmem')?el_('fmem').value.trim():''), doc_date:el_('fdoc').value||null,
     premium_due:el_('fdue').value||null, maturity_date:el_('fmat').value||null
   };
   let error;
@@ -1468,6 +1474,83 @@ function protectionGapHtml(c) {
     + (gaps.length ? '<div style="font-size:10.5px;color:var(--t3);margin-top:10px">These are conversation starters built from the data you entered. Confirm each in conversation before suggesting any plan.</div>' : '')
     + '</div></div>';
 }
+// =============== RELATIONSHIP TEMPERATURE ===============
+function relTemp(c) {
+  const t = parseInt(c.trust_score) || 50;
+  const ds = daysSince(lastTouch(c));
+  if (ds > 90 || t < 40) return { e: '❄️', label: 'Cold', col: '#8FA3C0' };
+  if (ds > 60) return { e: '⚠️', label: 'At risk', col: 'var(--coral)' };
+  if (t >= 75 && ds <= 30) return { e: '🔥', label: 'Hot', col: 'var(--coral)' };
+  if (t >= 60) return { e: '😊', label: 'Warm', col: 'var(--gold)' };
+  return { e: '😐', label: 'Neutral', col: 'var(--t2)' };
+}
+// =============== OPPORTUNITY ENGINE ===============
+function opportunityEngineHtml(c) {
+  const txt = ((c.goals||'') + ' ' + (c.notes||'') + ' ' + (c.plan_name||'') + ' ' + (c.memory||'')).toLowerCase();
+  const sa = parseFloat(c.sum_assured) || 0;
+  const incomeBand = (c.income || '').toLowerCase();
+  const incomeMid = incomeBand.indexOf('above 1l')>=0||incomeBand.indexOf('1l')>=0?1500000:incomeBand.indexOf('70k')>=0?1000000:incomeBand.indexOf('40k')>=0?700000:incomeBand.indexOf('20k')>=0?400000:incomeBand.indexOf('below')>=0?200000:0;
+  const hasLife = !!(c.policy_no || c.plan_name || sa > 0);
+  const hasHealth = /health|mediclaim|hospital|medical/.test(txt);
+  const hasRetire = /pension|retire|annuity|shanti|akshay/.test(txt);
+  const hasEdu = /child plan|education|tarun|children money|amritbaal|edu/.test(txt);
+  const kids = splitKids(c.children);
+  const ops = [];
+  if (!hasLife) ops.push(['Term / life cover', 'No life cover on record', 18000]);
+  else if (incomeMid > 0 && sa < incomeMid * 6) ops.push(['Term top-up', 'Cover low for the income', 12000]);
+  if (!hasHealth) ops.push(['Health insurance', 'No health cover noted', 15000]);
+  if (kids.length && !hasEdu) ops.push(['Child education plan', kids.length + ' child' + (kids.length>1?'ren':'') + ', no plan noted', 20000 * kids.length]);
+  if (incomeMid >= 700000 && !hasRetire) ops.push(['Pension / retirement', 'No retirement plan noted', 25000]);
+  if (!ops.length) return '';
+  const total = ops.reduce((a,o) => a + o[2], 0);
+  const rows = ops.map(o => '<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--b)">'
+    + '<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--t1)">' + esc(o[0]) + '</div><div style="font-size:11px;color:var(--t3)">' + esc(o[1]) + '</div></div>'
+    + '<div style="font-size:13px;font-weight:700;color:var(--gold);font-family:Sora,sans-serif">~₹' + o[2].toLocaleString('en-IN') + '</div></div>').join('');
+  return '<div class="p" style="border-color:rgba(183,160,106,0.3)"><div class="ph"><div class="pt">💰 Opportunity Engine</div></div><div class="pb">'
+    + rows
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:2px solid rgba(183,160,106,0.25)">'
+    + '<span style="font-size:12px;color:var(--t2);text-transform:uppercase;letter-spacing:1px;font-weight:700">Total potential</span>'
+    + '<span style="font-size:20px;font-weight:800;color:var(--gold);font-family:Sora,sans-serif">~₹' + total.toLocaleString('en-IN') + '</span></div>'
+    + '<div style="font-size:10px;color:var(--t3);margin-top:8px">Estimated annual premium opportunity from coverage gaps. Indicative — confirm needs in conversation.</div>'
+    + '</div></div>';
+}
+// =============== AI MEMORY VAULT ===============
+function memFacts(c) {
+  return String(c.memory || '').split('\n').map(x => x.trim()).filter(Boolean);
+}
+function memoryVaultHtml(c) {
+  const facts = memFacts(c);
+  const list = facts.length
+    ? facts.map((f, i) => '<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)">'
+        + '<span style="color:var(--gold);flex-shrink:0;margin-top:1px">•</span>'
+        + '<span style="flex:1;font-size:13px;color:var(--t1)">' + esc(f) + '</span>'
+        + '<span onclick="delMemFact(' + CUR + ',' + i + ')" style="cursor:pointer;color:var(--t3);font-size:12px;flex-shrink:0" title="Remove">✕</span></div>').join('')
+    : '<div style="font-size:12.5px;color:var(--t3);padding:6px 0">No memories yet. The details you remember are what make a customer feel like family.</div>';
+  return '<div class="p" style="border-color:rgba(183,160,106,0.4);background:linear-gradient(180deg,rgba(183,160,106,0.06),transparent)"><div class="ph"><div class="pt">🧠 Memory Vault</div></div><div class="pb">'
+    + list
+    + '<div style="display:flex;gap:8px;margin-top:12px">'
+    + '<input id="memadd" class="fi" style="flex:1;font-size:13px" placeholder="Add a memory: ‘Son joined IIT Madras’" onkeydown="if(event.key===\'Enter\')addMemFact(' + CUR + ')"/>'
+    + '<button class="btn bp" style="padding:8px 16px;font-size:12px" onclick="addMemFact(' + CUR + ')">Remember</button>'
+    + '</div></div></div>';
+}
+async function addMemFact(i) {
+  const c = DB[i]; if (!c) return;
+  const inp = el_('memadd'); const v = inp ? inp.value.trim() : '';
+  if (!v) return;
+  const facts = memFacts(c); facts.push(v);
+  const mem = facts.join('\n');
+  const { error } = await sb.from('customers').update({ memory: mem }).eq('id', c.id);
+  if (error) { showT('❌ ' + error.message); return; }
+  c.memory = mem; showT('🧠 Remembered'); openProf(i);
+}
+async function delMemFact(i, idx) {
+  const c = DB[i]; if (!c) return;
+  const facts = memFacts(c); facts.splice(idx, 1);
+  const mem = facts.join('\n');
+  const { error } = await sb.from('customers').update({ memory: mem }).eq('id', c.id);
+  if (error) { showT('❌ ' + error.message); return; }
+  c.memory = mem; openProf(i);
+}
 // =============== RELATIONSHIP INTELLIGENCE CORE ===============
 function relScore(c) {
   const t = parseInt(c.trust_score) || 50;
@@ -1575,6 +1658,7 @@ function showBrief() {
       <div style="font-size:14px;font-weight:700">${c.name} — Trust: <span style="color:var(--gold)">${t}/100</span></div>
       ${c.phone?'<div style="font-size:12px;color:var(--blue);margin-top:4px">📞 '+c.phone+'</div>':''}
     </div>
+    ${memFacts(c).length ? '<div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--b)"><div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:700">🧠 REMEMBER ABOUT THIS FAMILY</div>' + memFacts(c).map(f=>'<div style="font-size:12px;color:var(--t1);margin-bottom:5px;padding-left:10px;border-left:2px solid var(--gold)">'+esc(f)+'</div>').join('') + '</div>' : ''}
     <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--b)">
       <div style="font-size:10px;color:var(--teal);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:700">✅ HOW TO OPEN</div>
       <div style="font-size:12px;color:var(--t2);line-height:1.6">${t>=70?'Ask about family first — "Meeru, family ela unnaru?" — before any business talk.':t>=50?'Start with a genuine personal question about their life, not insurance.':'Their wellbeing first. Ask how things are at home and work. NO products today.'}</div>
@@ -2645,7 +2729,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 13-Jun-L';
+const APP_VERSION = 'v1.0 · build 13-Jun-O';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
