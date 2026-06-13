@@ -1089,7 +1089,7 @@ function openProf(idx) {
   // Life Timeline
   const yr = new Date().getFullYear();
   let lev = [];
-  if (c.children) splitKids(c.children).forEach(ch => { const m=ch.match(/\d+/); if(m){const a=parseInt(m[0]); if(yr+(18-a)>yr) lev.push({y:yr+(18-a),t:ch.trim().replace(/\d+/,'').replace(/[()]/g,'').trim()+' — Higher Education',d:'Engineering/Medical ₹8–15L needed',r:'HIGH RISK',rc:'var(--coral)',dc:'#E05C3A'});} });
+  if (c.children) splitKids(c.children).forEach(ch => { const k=parseKid(ch); if(k.age!=null && k.age<18){ const gy=yr+(18-k.age); if(gy>yr) lev.push({y:gy,t:k.name+(k.gender?' ('+k.gender+')':'')+' — Higher Education',d:'Engineering/Medical ₹8–15L needed',r:'HIGH RISK',rc:'var(--coral)',dc:'#E05C3A'}); } });
   if (c.goals&&c.goals.toLowerCase().includes('retire')) lev.push({y:yr+15,t:'Retirement Target',d:'Monthly pension ₹30-50K. Corpus ₹60L+ needed.',r:'CRITICAL',rc:'var(--purple)',dc:'#9AA3B8'});
   lev.push({y:yr+1,t:'Tax Planning',d:'80C deadline March. ₹1.5L deduction available.',r:'OPPORTUNITY',rc:'var(--teal)',dc:'#2BA189'});
   lev.sort((a,b)=>a.y-b.y);
@@ -1110,11 +1110,10 @@ function openProf(idx) {
   const opps = OPP.filter(o=>o[0].test(optxt)).map(o=>o[1]);
   // Family-based plan suggestions
   if (c.children) splitKids(c.children).forEach(ch => {
-    const low = ch.toLowerCase();
-    const cnm = ch.replace(/\d+/,'').replace(/girl|boy|daughter|son/ig,'').replace(/[(),]/g,'').trim() || 'Child';
-    if (/girl|daughter/.test(low)) opps.push('🎀 ' + cnm + ' — education fund + marriage corpus + higher studies. Three big milestones; starting early keeps the premium small.');
-    else if (/boy|son/.test(low)) opps.push('🎓 ' + cnm + ' — education fund + higher education planning.');
-    else opps.push('🎓 ' + cnm + ' — child education plan. Tip: write (girl) or (boy) next to the name in the Children field for tailored ideas.');
+    const k = parseKid(ch);
+    if (k.gender === 'Daughter') opps.push('🎀 ' + k.name + ' — education fund + marriage corpus + higher studies. Three big milestones; starting early keeps the premium small.');
+    else if (k.gender === 'Son') opps.push('🎓 ' + k.name + ' — education fund + higher education planning.');
+    else opps.push('🎓 ' + k.name + ' — child education plan. Tip: add (girl) or (boy) next to the name for tailored ideas.');
   });
   opps.push('🛡️ Family head — term plan first: income protection before any investment plan. Small premium, big cover.');
   if (c.spouse) opps.push('👫 ' + c.spouse + ' — spouse life cover. Even a small policy strengthens the family safety net.');
@@ -1137,9 +1136,9 @@ function openProf(idx) {
   const oppHtml = opps.length ? `<div class="p" style="border-color:rgba(183,160,106,0.25)"><div class="ph"><div class="pt">Hidden Opportunities — from their own words</div></div><div class="pb">${opps.map(o=>`<div style="font-size:12.5px;padding:7px 0;border-bottom:1px solid var(--b)">${o}</div>`).join('')}<div style="font-size:10px;color:var(--t3);margin-top:8px">Detected from goals & notes. Verify in conversation before suggesting anything.</div></div></div>` : '';
   let eduRows = '';
   if (c.children) splitKids(c.children).forEach(ch => {
-    const m = ch.match(/\d+/); if (!m) return;
-    const age = parseInt(m[0]); if (age >= 18 || age < 0) return;
-    const nm = ch.replace(/\d+/,'').replace(/[()]/g,'').trim() || 'Child';
+    const k = parseKid(ch); if (k.age == null || k.age >= 18 || k.age < 0) return;
+    const age = k.age;
+    const nm = k.name + (k.gender ? ' (' + k.gender + ')' : '');
     const yrsUG = 18 - age, ugYear = new Date().getFullYear() + yrsUG;
     const corpus = 1200000 * Math.pow(1.08, yrsUG);
     const lakh = Math.round(corpus/100000);
@@ -2646,7 +2645,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 13-Jun-K';
+const APP_VERSION = 'v1.0 · build 13-Jun-L';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
