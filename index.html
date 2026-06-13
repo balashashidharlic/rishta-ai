@@ -1282,7 +1282,7 @@ function openProf(idx) {
     ${c.claim_stage && c.claim_stage!=='Payment Completed' ? `<div style="font-size:11px;color:var(--coral);margin-top:8px;font-weight:700">⏳ Claim in progress — every update call during a claim builds lifelong trust.</div>` : ''}
     ${c.claim_stage==='Payment Completed' ? `<div style="font-size:11px;color:var(--teal);margin-top:8px;font-weight:700">✅ Claim settled — this family will remember your support forever. Perfect time for the goodwill message.</div>` : ''}
   </div></div>`;
-  el_('profcont').insertAdjacentHTML('beforeend', polHtml + claimHtml + oppHtml + eduHtml);
+  el_('profcont').insertAdjacentHTML('beforeend', protectionGapHtml(c) + polHtml + claimHtml + oppHtml + eduHtml);
 
   showProfOverlay();
 }
@@ -1427,6 +1427,48 @@ async function saveNote() {
 // ============================================================
 // MEETING BRIEF
 // ============================================================
+function protectionGapHtml(c) {
+  const hasLife = !!(c.policy_no || c.plan_name || parseFloat(c.sum_assured) > 0);
+  const sa = parseFloat(c.sum_assured) || 0;
+  const incomeBand = (c.income || '').toLowerCase();
+  const incomeMid = incomeBand.indexOf('above 1l')>=0 || incomeBand.indexOf('1l')>=0 ? 1500000
+    : incomeBand.indexOf('70k')>=0 ? 1000000 : incomeBand.indexOf('40k')>=0 ? 700000
+    : incomeBand.indexOf('20k')>=0 ? 400000 : incomeBand.indexOf('below')>=0 ? 200000 : 0;
+  const idealCover = incomeMid * 10;
+  const kids = (c.children || '').trim();
+  const hasKids = kids.length > 0;
+  const txt = ((c.goals||'') + ' ' + (c.notes||'') + ' ' + (c.plan_name||'')).toLowerCase();
+  const hasHealth = /health|mediclaim|hospital|medical/.test(txt);
+  const hasRetire = /pension|retire|annuity|jeevan shanti|jeevan akshay/.test(txt);
+  const hasEdu = /child plan|education|tarun|children money|amritbaal|edu/.test(txt);
+  const gaps = [];
+  let score = 100;
+  if (!hasLife) { gaps.push(['No life cover on record', 'The foundation of every plan. Start here.']); score -= 30; }
+  else if (idealCover > 0 && sa > 0 && sa < idealCover * 0.6) {
+    gaps.push(['Life cover looks low for the income', 'Around ' + fmtINR(idealCover) + ' (10x income) is the rule of thumb; on record: ' + fmtINR(sa) + '.']); score -= 18;
+  }
+  if (!hasHealth) { gaps.push(['No health insurance noted', 'One hospital bill can undo years of savings. Health cover protects the whole plan.']); score -= 22; }
+  if (hasKids && !hasEdu) { gaps.push(['Children, but no education plan noted', 'For ' + esc(kids) + '. Education costs rise ~8% a year; starting early changes everything.']); score -= 18; }
+  if (incomeMid >= 700000 && !hasRetire) { gaps.push(['No retirement plan noted', 'A salary that never stops after working years. Worth a conversation.']); score -= 14; }
+  if (score < 0) score = 0;
+  const band = score >= 75 ? ['Well protected','var(--teal)','rgba(43,161,137,0.12)']
+    : score >= 45 ? ['Some gaps to close','var(--gold)','rgba(183,160,106,0.12)']
+    : ['Significant gaps','var(--coral)','rgba(224,121,92,0.12)'];
+  const gapList = gaps.length
+    ? gaps.map(g => '<div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--b)"><div style="color:var(--coral);flex-shrink:0;font-weight:700">✕</div><div><div style="font-size:13px;font-weight:600;color:var(--t1)">' + esc(g[0]) + '</div><div style="font-size:11.5px;color:var(--t3);margin-top:2px">' + g[1] + '</div></div></div>').join('')
+    : '<div style="font-size:12.5px;color:var(--teal);padding:8px 0">✓ No obvious gaps from the data on record. Keep the relationship warm and review yearly.</div>';
+  return '<div class="p" style="border-color:rgba(183,160,106,0.3)"><div class="ph"><div class="pt">🛡 Family Protection Cockpit</div></div><div class="pb">'
+    + '<div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;flex-wrap:wrap">'
+    + '<div style="width:72px;height:72px;border-radius:50%;background:' + band[2] + ';border:2px solid ' + band[1] + ';display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">'
+    + '<div style="font-size:22px;font-weight:800;color:' + band[1] + ';font-family:\'Sora\',sans-serif;line-height:1">' + score + '</div>'
+    + '<div style="font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:0.5px">of 100</div></div>'
+    + '<div style="flex:1;min-width:160px"><div style="font-size:14px;font-weight:700;color:' + band[1] + '">' + band[0] + '</div>'
+    + '<div style="font-size:11.5px;color:var(--t3);margin-top:3px">Protection score from family, income, and policies on record. A planning guide, not a quote.</div></div></div>'
+    + '<div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:4px">Coverage Gaps</div>'
+    + gapList
+    + (gaps.length ? '<div style="font-size:10.5px;color:var(--t3);margin-top:10px">These are conversation starters built from the data you entered. Confirm each in conversation before suggesting any plan.</div>' : '')
+    + '</div></div>';
+}
 function showBrief() {
   if (CUR < 0) return;
   const c = DB[CUR];
@@ -2443,7 +2485,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 13-Jun-E';
+const APP_VERSION = 'v1.0 · build 13-Jun-F';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
