@@ -498,8 +498,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;bac
     </div>
 
     <!-- CUSTOMERS -->
-    <div class="sc" id="sc-customers">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--b);border-radius:12px;padding:11px 16px;margin-bottom:16px;position:sticky;top:0;z-index:30;box-shadow:0 6px 18px rgba(0,0,0,0.25)">
+    <div class="sc" id="sc-customers" style="padding-top:2px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#0C1422;border:1px solid var(--b);border-radius:12px;padding:11px 16px;margin-bottom:16px;position:sticky;top:8px;z-index:20;box-shadow:0 10px 24px rgba(3,7,14,0.65)">
         <i class="ti ti-search" style="color:var(--t3)"></i>
         <input type="text" placeholder="Search name, phone, city..." id="csearch" oninput="filterC(this.value)" style="background:none;border:none;outline:none;flex:1;font-size:13px;color:var(--t1);font-family:inherit;min-width:140px"/>
         <span class="tag" style="cursor:pointer" onclick="renderCGrid(DB)">All</span>
@@ -2959,7 +2959,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 13-Jun-V';
+const APP_VERSION = 'v1.0 · build 13-Jun-W';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
