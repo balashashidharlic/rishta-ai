@@ -357,7 +357,7 @@ input[type="date"]{text-transform:uppercase}
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(70% 55% at 75% 15%,rgba(183,160,106,0.045),transparent 70%);background-size:130% 130%;animation:haze 36s ease-in-out infinite alternate}
 @keyframes haze{from{background-position:0% 0%}to{background-position:100% 60%}}
 .mn{position:relative}
-@media(max-width:680px){.con{padding:18px 14px}.pb{padding:16px 16px}.ph{padding:14px 16px 4px}#csearchwrap{margin:-18px -14px 0!important;padding:18px 14px 12px!important}}
+@media(max-width:680px){.con{padding:18px 14px}.pb{padding:16px 16px}.ph{padding:14px 16px 4px}}
 
 /* LOGIN */
 .lgw{position:fixed;inset:0;background:radial-gradient(900px 600px at 75% 20%,rgba(183,160,106,0.08),transparent 60%),var(--bg);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -499,7 +499,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;bac
 
     <!-- CUSTOMERS -->
     <div class="sc" id="sc-customers">
-      <div id="csearchwrap" style="position:sticky;top:0;z-index:25;background:var(--bg);margin:-30px -34px 0;padding:30px 34px 16px;transition:transform .35s ease,opacity .35s ease"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--b);border-radius:12px;padding:11px 16px;box-shadow:0 8px 24px rgba(0,0,0,0.45)">
+      <div id="csearchwrap" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:transparent;border:1px solid var(--b);border-radius:12px;padding:11px 16px;position:sticky;top:8px;z-index:25;margin-bottom:22px;transition:transform .35s ease,opacity .35s ease">
         <i class="ti ti-search" style="color:var(--t3)"></i>
         <input type="text" placeholder="Search name, phone, city..." id="csearch" oninput="filterC(this.value);toggleClearBtn()" style="background:none;border:none;outline:none;flex:1;font-size:13px;color:var(--t1);font-family:inherit;min-width:140px"/><span id="csearchclear" onclick="clearSearch()" style="display:none;cursor:pointer;color:var(--t3);font-size:14px;width:22px;height:22px;border-radius:50%;background:var(--card2);align-items:center;justify-content:center;flex-shrink:0" title="Clear search">✕</span>
         <span class="tag" style="cursor:pointer" onclick="renderCGrid(DB)">All</span>
@@ -507,7 +507,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;bac
         <span class="tag" style="cursor:pointer;color:var(--teal)" onclick="filterSeg('bonds')">⭐ Champions</span>
         <span class="tag" style="cursor:pointer;color:var(--gold)" onclick="el_('csvfile').click()">📥 Import CSV</span>
         <input type="file" id="csvfile" accept=".csv" style="display:none" onchange="importCSV(this.files[0])"/>
-      </div></div>
+      </div>
       <div id="segbar"></div>
       <div id="cgrid" class="cgrid"></div>
     </div>
@@ -2969,7 +2969,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 14-Jun-H';
+const APP_VERSION = 'v1.0 · build 14-Jun-I';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
