@@ -50,6 +50,13 @@ html,body{height:100%;overflow:hidden}
 .ts{font-size:11px;color:var(--t3);margin-top:1px}
 .ta{display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap}
 .con{flex:1;overflow-y:auto;padding:22px}
+/* Search bar pinned to the very top of the scroll area, fully opaque so
+   cards scroll cleanly behind it and are occluded - no painted fade patch.
+   A soft shadow under the bar gives depth as content passes beneath. */
+.csearchbar{position:sticky;top:-22px;z-index:30;background:var(--bg);
+  padding-top:22px!important;margin:-22px -22px 18px -22px;padding-left:22px!important;padding-right:22px!important;
+  box-shadow:0 10px 20px -10px rgba(0,0,0,0.6)}
+@media(min-width:681px){.csearchbar{margin:-30px -34px 18px -34px;padding-left:34px!important;padding-right:34px!important;padding-top:18px!important;top:-30px}}
 .sc{display:none}
 .sc.on{display:block}
 
@@ -499,7 +506,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;bac
 
     <!-- CUSTOMERS -->
     <div class="sc" id="sc-customers">
-      <div id="csearchwrap" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:transparent;border:1px solid var(--b);border-radius:12px;padding:11px 16px;position:sticky;top:8px;z-index:25;margin-bottom:22px;transition:transform .35s ease,opacity .35s ease">
+      <div id="csearchwrap" class="csearchbar" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--bg);border-bottom:1px solid var(--b);padding:11px 16px;margin-bottom:22px">
         <i class="ti ti-search" style="color:var(--t3)"></i>
         <input type="text" placeholder="Search name, phone, city..." id="csearch" oninput="filterC(this.value);toggleClearBtn()" style="background:none;border:none;outline:none;flex:1;font-size:13px;color:var(--t1);font-family:inherit;min-width:140px"/><span id="csearchclear" onclick="clearSearch()" style="display:none;cursor:pointer;color:var(--t3);font-size:14px;width:22px;height:22px;border-radius:50%;background:var(--card2);align-items:center;justify-content:center;flex-shrink:0" title="Clear search">✕</span>
         <span class="tag" style="cursor:pointer" onclick="renderCGrid(DB)">All</span>
@@ -1360,24 +1367,29 @@ async function saveClaim(i) {
 }
 
 async function markRenewed(i) {
-  const c = DB[i]; if (!c || !c.premium_due) return;
-  const mode = (c.premium_mode || 'Yearly').toLowerCase();
-  const add = mode.includes('month') ? 1 : mode.includes('quarter') ? 3 : mode.includes('half') ? 6 : 12;
-  const d = new Date(c.premium_due);
-  if (isNaN(d)) { showT('\u26a0\ufe0f No valid due date to advance'); return; }
-  d.setMonth(d.getMonth() + add);
-  const next = d.toISOString().slice(0,10);
-  const stamp = '[' + fmtDMY(new Date().toISOString()) + '] Renewal paid, next due ' + fmtDMY(next) + '. ';
-  const newNotes = stamp + (c.notes || '');
-  const { error } = await sb.from('customers').update({ premium_due: next, notes: newNotes }).eq('id', c.id);
-  if (error) { showT('\u274c ' + error.message); return; }
-  c.premium_due = next; c.notes = newNotes;
-  showT('\u2705 Renewal recorded! ' + c.name + '\u2019s next premium is now due ' + fmtDMY(next));
-  await loadAll();
-  // stay on the profile and refresh it so the new due date is visible
-  const idx = DB.findIndex(x => x.id === c.id);
-  if (idx >= 0) openProf(idx); else closeProf();
-  renderMission();
+  try {
+    const c = DB[i]; if (!c) { showT('\u26a0\ufe0f Customer not found'); return; }
+    if (!c.premium_due) { showT('\u26a0\ufe0f No premium due date set'); return; }
+    const mode = (c.premium_mode || 'Yearly').toLowerCase();
+    const add = mode.includes('month') ? 1 : mode.includes('quarter') ? 3 : mode.includes('half') ? 6 : 12;
+    const d = new Date(c.premium_due);
+    if (isNaN(d.getTime())) { showT('\u26a0\ufe0f Invalid due date: ' + c.premium_due); return; }
+    d.setMonth(d.getMonth() + add);
+    const next = d.toISOString().slice(0,10);
+    const stamp = '[' + fmtDMY(new Date().toISOString()) + '] Renewal paid, next due ' + fmtDMY(next) + '. ';
+    const newNotes = stamp + (c.notes || '');
+    const { error } = await sb.from('customers').update({ premium_due: next, notes: newNotes }).eq('id', c.id);
+    if (error) { showT('\u274c Save failed: ' + error.message); return; }
+    c.premium_due = next; c.notes = newNotes;
+    showT('\u2705 Renewal recorded! ' + c.name + '\u2019s next premium is now due ' + fmtDMY(next));
+    await loadAll();
+    const idx = DB.findIndex(x => x.id === c.id);
+    if (idx >= 0) openProf(idx); else closeProf();
+    renderMission();
+  } catch (e) {
+    showT('\u274c ' + (e && e.message ? e.message : 'Renewal failed'));
+    console.error('markRenewed error:', e);
+  }
 }
 async function setPersona(v) {
   const c = DB[CUR]; if (!c) return;
@@ -1571,14 +1583,25 @@ function lifeEventHtml(c) {
     + '<div style="font-size:10px;color:var(--t3);margin-top:8px">Predicted from age and family stage. Not certainties — gentle conversation cues for the right moment.</div>'
     + '</div></div>';
 }
+function tempIcon(k){
+  const s='width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"';
+  const I={
+    cold:`<svg ${s}><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>`,
+    risk:`<svg ${s}><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+    hot:`<svg ${s}><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`,
+    warm:`<svg ${s}><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>`,
+    neutral:`<svg ${s}><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>`
+  };
+  return I[k]||'';
+}
 function relTemp(c) {
   const t = parseInt(c.trust_score) || 50;
   const ds = daysSince(lastTouch(c));
-  if (ds > 90 || t < 40) return { e: '❄️', label: 'Cold', col: '#8FA3C0' };
-  if (ds > 60) return { e: '⚠️', label: 'At risk', col: 'var(--coral)' };
-  if (t >= 75 && ds <= 30) return { e: '🔥', label: 'Hot', col: 'var(--coral)' };
-  if (t >= 60) return { e: '😊', label: 'Warm', col: 'var(--gold)' };
-  return { e: '😐', label: 'Neutral', col: 'var(--t2)' };
+  if (ds > 90 || t < 40) return { e: tempIcon('cold'), label: 'Cold', col: '#8FA3C0' };
+  if (ds > 60) return { e: tempIcon('risk'), label: 'At risk', col: 'var(--coral)' };
+  if (t >= 75 && ds <= 30) return { e: tempIcon('hot'), label: 'Hot', col: 'var(--coral)' };
+  if (t >= 60) return { e: tempIcon('warm'), label: 'Warm', col: 'var(--gold)' };
+  return { e: tempIcon('neutral'), label: 'Neutral', col: 'var(--t2)' };
 }
 // =============== OPPORTUNITY ENGINE ===============
 function opportunityEngineHtml(c) {
@@ -2097,7 +2120,7 @@ function showT(txt){const t=el_('TOAST');t.textContent=txt;t.classList.add('on')
 // HELPERS
 // ============================================================
 function el_(id){return document.getElementById(id);}
-function fmtDMY(d){d=d||new Date();const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear();}
+function fmtDMY(d){d=d?(d instanceof Date?d:new Date(d)):new Date();if(isNaN(d.getTime()))return '';const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear();}
 function fmt12(d){d=d||new Date();let h=d.getHours();const m=String(d.getMinutes()).padStart(2,'0');const ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+m+' '+ap;}
 const WDAYS=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
 function bdayIn(ds){if(!ds)return null;const b=new Date(ds);if(isNaN(b))return null;const t=new Date();t.setHours(0,0,0,0);let n=new Date(t.getFullYear(),b.getMonth(),b.getDate());if(n<t)n=new Date(t.getFullYear()+1,b.getMonth(),b.getDate());return Math.round((n-t)/86400000);}
@@ -2969,7 +2992,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 14-Jun-I';
+const APP_VERSION = 'v1.0 · build 14-Jun-Y';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
@@ -3194,34 +3217,10 @@ async function boot() {
   if (!prof.full_name) { go('settings'); showT('\ud83d\udc4b Welcome! Set up your advisor profile first \u2014 it personalises everything.'); }
 }
 function initSearchAutoHide() {
-  const scroller = document.querySelector('.con');
-  const bar = document.getElementById('csearchwrap');
-  if (!scroller || !bar) return;
-  if (scroller._ahBound) return; scroller._ahBound = true;
-  let ticking = false;
-  // Show the search bar only when the user is at (or very near) the top.
-  // Anywhere else - whether scrolling up or down - keep it hidden so it
-  // never overlaps the customer cards mid-scroll.
-  const TOP_THRESHOLD = 10;
-  scroller.addEventListener('scroll', () => {
-    if (ticking) return; ticking = true;
-    requestAnimationFrame(() => {
-      const y = scroller.scrollTop;
-      const b = document.getElementById('csearchwrap');
-      if (b) {
-        if (y <= TOP_THRESHOLD) {
-          b.style.transform = 'translateY(0)';
-          b.style.opacity = '1';
-          b.style.pointerEvents = 'auto';
-        } else {
-          b.style.transform = 'translateY(-130%)';
-          b.style.opacity = '0';
-          b.style.pointerEvents = 'none';
-        }
-      }
-      ticking = false;
-    });
-  }, { passive: true });
+  // Search panel is now permanently pinned at the top via position:sticky.
+  // Customer cards scroll behind it (the bar has an opaque background and a
+  // higher z-index), so no JS show/hide logic is needed anymore.
+  return;
 }
 document.addEventListener('DOMContentLoaded', async () => {
   hideL();
