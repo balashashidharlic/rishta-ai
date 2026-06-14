@@ -3198,24 +3198,30 @@ function initSearchAutoHide() {
   const bar = document.getElementById('csearchwrap');
   if (!scroller || !bar) return;
   if (scroller._ahBound) return; scroller._ahBound = true;
-  let lastY = 0, ticking = false;
+  let ticking = false;
+  // Show the search bar only when the user is at (or very near) the top.
+  // Anywhere else - whether scrolling up or down - keep it hidden so it
+  // never overlaps the customer cards mid-scroll.
+  const TOP_THRESHOLD = 10;
   scroller.addEventListener('scroll', () => {
     if (ticking) return; ticking = true;
     requestAnimationFrame(() => {
       const y = scroller.scrollTop;
       const b = document.getElementById('csearchwrap');
       if (b) {
-        if (y > lastY && y > 80) { // scrolling down past a threshold -> hide
-          b.style.transform = 'translateY(-130%)';
-          b.style.opacity = '0';
-        } else { // scrolling up -> show
+        if (y <= TOP_THRESHOLD) {
           b.style.transform = 'translateY(0)';
           b.style.opacity = '1';
+          b.style.pointerEvents = 'auto';
+        } else {
+          b.style.transform = 'translateY(-130%)';
+          b.style.opacity = '0';
+          b.style.pointerEvents = 'none';
         }
       }
-      lastY = y; ticking = false;
+      ticking = false;
     });
-  });
+  }, { passive: true });
 }
 document.addEventListener('DOMContentLoaded', async () => {
   hideL();
