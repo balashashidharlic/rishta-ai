@@ -499,7 +499,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;bac
 
     <!-- CUSTOMERS -->
     <div class="sc" id="sc-customers">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--b);border-radius:12px;padding:11px 16px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--b);border-radius:12px;padding:11px 16px;margin-bottom:16px;position:sticky;top:0;z-index:30;box-shadow:0 6px 18px rgba(0,0,0,0.25)">
         <i class="ti ti-search" style="color:var(--t3)"></i>
         <input type="text" placeholder="Search name, phone, city..." id="csearch" oninput="filterC(this.value)" style="background:none;border:none;outline:none;flex:1;font-size:13px;color:var(--t1);font-family:inherit;min-width:140px"/>
         <span class="tag" style="cursor:pointer" onclick="renderCGrid(DB)">All</span>
@@ -737,7 +737,7 @@ Dreams of a house in 3 years"></textarea><div style="font-size:11px;color:var(--
       <div class="pb">
         <div class="umap" id="umap"></div>
         <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:var(--t3)">
-          <span>🟢 High Trust</span><span>🟡 Growing</span><span>🔴 Need Attention</span><span>🟣 Champion</span>
+          <span>Size = premium value</span><span>Colour = trust</span><span>Glow = recent contact</span><span>Dots = family</span>
         </div>
       </div></div>
     </div>
@@ -1279,7 +1279,7 @@ function openProf(idx) {
     </div>`;
   const CLAIM_STAGES = ['', 'Claim Initiated', 'Documents Pending', 'Verification', 'Approved', 'Payment Completed'];
   const claimHtml = claimHeroHtml(c, idx, CLAIM_STAGES);
-  el_('profcont').insertAdjacentHTML('beforeend', memoryVaultHtml(c) + relHealthHtml(c) + opportunityEngineHtml(c) + referralIntelHtml(c) + protectionGapHtml(c) + lifeTimelineHtml(c) + polHtml + claimHtml + oppHtml + eduHtml);
+  el_('profcont').insertAdjacentHTML('beforeend', memoryVaultHtml(c) + relHealthHtml(c) + opportunityEngineHtml(c) + lifeEventHtml(c) + referralIntelHtml(c) + protectionGapHtml(c) + lifeTimelineHtml(c) + polHtml + claimHtml + oppHtml + eduHtml);
 
   showProfOverlay();
 }
@@ -1363,8 +1363,12 @@ async function markRenewed(i) {
   const { error } = await sb.from('customers').update({ premium_due: next, notes: newNotes }).eq('id', c.id);
   if (error) { showT('\u274c ' + error.message); return; }
   c.premium_due = next; c.notes = newNotes;
-  showT('\u2705 ' + c.name + ' renewed \u2014 next due ' + fmtDMY(next));
-  closeProf(); await loadAll(); renderMission();
+  showT('\u2705 Renewal recorded! ' + c.name + '\u2019s next premium is now due ' + fmtDMY(next));
+  await loadAll();
+  // stay on the profile and refresh it so the new due date is visible
+  const idx = DB.findIndex(x => x.id === c.id);
+  if (idx >= 0) openProf(idx); else closeProf();
+  renderMission();
 }
 async function setPersona(v) {
   const c = DB[CUR]; if (!c) return;
@@ -1523,6 +1527,41 @@ function protectionGapHtml(c) {
     + '</div></div>';
 }
 // =============== RELATIONSHIP TEMPERATURE ===============
+function customerAge(c) {
+  if (!c.dob) return null;
+  const b = new Date(c.dob); if (isNaN(b)) return null;
+  return Math.floor((Date.now() - b.getTime()) / (365.25*86400000));
+}
+function lifeEventHtml(c) {
+  const age = customerAge(c);
+  if (age == null) return '';
+  const kids = splitKids(c.children);
+  const married = !!(c.spouse && String(c.spouse).trim());
+  const txt = ((c.goals||'') + ' ' + (c.notes||'') + ' ' + (c.memory||'')).toLowerCase();
+  const ev = [];
+  // age + family-stage rules -> likely next life events
+  if (!married && age >= 25 && age <= 35) ev.push(['Marriage', age<=30?72:55, 'Term cover + savings before responsibilities grow', '💍']);
+  if (married && kids.length === 0 && age >= 26 && age <= 38) ev.push(['First child', 65, 'Child plan + raise life cover for the growing family', '👶']);
+  if (age >= 28 && age <= 45 && !/house|home|own house/.test(txt)) ev.push(['Home purchase', age<=38?58:42, 'Loan protection / term cover to secure the EMI', '🏠']);
+  kids.forEach(k => { const kp = parseKid(k); if (kp.age != null && kp.age >= 14 && kp.age <= 18) ev.push([kp.name + ' enters college', 80, 'Education corpus needed within ' + Math.max(0,18-kp.age) + '-' + (18-kp.age+2) + ' years', '🎓']); });
+  kids.forEach(k => { const kp = parseKid(k); if (kp.gender === 'Daughter' && kp.age != null && kp.age >= 16 && kp.age <= 24) ev.push([kp.name + '\u2019s marriage', 60, 'Marriage corpus planning is a natural, caring conversation', '💐']); });
+  if (age >= 48 && age <= 58 && !/pension|retire|annuity/.test(txt)) ev.push(['Retirement approaching', age>=53?75:55, 'Pension / annuity for a salary that never stops', '🏖️']);
+  if (!ev.length) return '';
+  ev.sort((a,b) => b[1] - a[1]);
+  const rows = ev.slice(0,4).map(e => {
+    const col = e[1] >= 70 ? 'var(--teal)' : e[1] >= 50 ? 'var(--gold)' : 'var(--t3)';
+    return '<div style="padding:10px 0;border-bottom:1px solid var(--b)">'
+      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">'
+      + '<span style="font-size:15px">' + e[3] + '</span>'
+      + '<span style="font-size:13px;font-weight:600;color:var(--t1);flex:1">' + esc(e[0]) + '</span>'
+      + '<span style="font-size:13px;font-weight:800;color:' + col + ';font-family:Sora,sans-serif">' + e[1] + '%</span></div>'
+      + '<div style="font-size:11.5px;color:var(--t3);padding-left:23px">' + e[2] + '</div></div>';
+  }).join('');
+  return '<div class="p" style="border-color:rgba(143,163,192,0.25)"><div class="ph"><div class="pt">🔮 Life Ahead — likely milestones</div></div><div class="pb">'
+    + rows
+    + '<div style="font-size:10px;color:var(--t3);margin-top:8px">Predicted from age and family stage. Not certainties — gentle conversation cues for the right moment.</div>'
+    + '</div></div>';
+}
 function relTemp(c) {
   const t = parseInt(c.trust_score) || 50;
   const ds = daysSince(lastTouch(c));
@@ -1577,9 +1616,35 @@ function memoryVaultHtml(c) {
   return '<div class="p" style="border-color:rgba(183,160,106,0.4);background:linear-gradient(180deg,rgba(183,160,106,0.06),transparent)"><div class="ph"><div class="pt">🧠 Memory Vault</div></div><div class="pb">'
     + list
     + '<div style="display:flex;gap:8px;margin-top:12px">'
-    + '<input id="memadd" class="fi" style="flex:1;font-size:13px" placeholder="Add a memory: ‘Son joined IIT Madras’" onkeydown="if(event.key===\'Enter\')addMemFact(' + CUR + ')"/>'
+    + '<input id="memadd" class="fi" style="flex:1;font-size:13px" placeholder="Add a memory, or tap the mic to speak" onkeydown="if(event.key===\'Enter\')addMemFact(' + CUR + ')"/>'
+    + '<button id="micbtn" class="btn bg" style="padding:8px 12px;font-size:14px" onclick="startVoiceMemo(' + CUR + ')" title="Speak a memory">🎤</button>'
     + '<button class="btn bp" style="padding:8px 16px;font-size:12px" onclick="addMemFact(' + CUR + ')">Remember</button>'
     + '</div></div></div>';
+}
+let VOICE_REC = null;
+function startVoiceMemo(i) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const inp = el_('memadd'), btn = el_('micbtn');
+  if (!SR) { showT('⚠️ Voice input is not supported on this browser. Please type, or try Chrome.'); return; }
+  if (VOICE_REC) { try { VOICE_REC.stop(); } catch(e){} VOICE_REC = null; if(btn){btn.textContent='🎤';btn.classList.remove('bp');btn.classList.add('bg');} return; }
+  const rec = new SR();
+  rec.lang = (DB[i] && /english/i.test(DB[i].language||'') && !/telugu/i.test(DB[i].language||'')) ? 'en-IN' : 'te-IN';
+  rec.continuous = false; rec.interimResults = true;
+  if(btn){btn.textContent='⏹';btn.classList.remove('bg');btn.classList.add('bp');}
+  showT('🎤 Listening... speak now');
+  let finalTxt = '';
+  rec.onresult = (e) => {
+    let interim = '';
+    for (let k = e.resultIndex; k < e.results.length; k++) {
+      if (e.results[k].isFinal) finalTxt += e.results[k][0].transcript;
+      else interim += e.results[k][0].transcript;
+    }
+    if (inp) inp.value = (finalTxt + ' ' + interim).trim();
+  };
+  rec.onerror = (ev) => { showT('⚠️ Voice error: ' + (ev.error||'try again') + '. You can type instead.'); if(btn){btn.textContent='🎤';btn.classList.remove('bp');btn.classList.add('bg');} VOICE_REC=null; };
+  rec.onend = () => { if(btn){btn.textContent='🎤';btn.classList.remove('bp');btn.classList.add('bg');} VOICE_REC=null; if (inp && inp.value.trim()) showT('✓ Heard it. Check the text, then tap Remember.'); };
+  VOICE_REC = rec;
+  try { rec.start(); } catch(e) { showT('⚠️ Could not start mic. Check microphone permission.'); }
 }
 async function addMemFact(i) {
   const c = DB[i]; if (!c) return;
@@ -1696,6 +1761,36 @@ function lifeTimelineHtml(c) {
     + '<div style="font-size:10px;color:var(--t3);margin-top:8px">From policy dates, family details, and your dated notes. Add notes like [12/06/2026] to grow the story.</div>'
     + '</div></div>';
 }
+function aiCoachBlock(c, t) {
+  const r = relScore(c);
+  const facts = (typeof memFacts==='function') ? memFacts(c) : [];
+  const kids = splitKids(c.children);
+  const age = (typeof customerAge==='function') ? customerAge(c) : null;
+  // suggested opening line referencing something real about them
+  let opener = '';
+  if (facts.length) opener = '“Last time you mentioned ' + facts[0].toLowerCase().replace(/\.$/,'') + ' — how is that going?”';
+  else if (kids.length) { const k = parseKid(kids[0]); opener = '“How is ' + k.name + ' doing these days?”'; }
+  else if (c.goals) opener = '“Last we spoke, you were thinking about ' + String(c.goals).split(',')[0].toLowerCase().trim() + '. Shall we pick that up?”';
+  else opener = '“Tell me what has been keeping you busy lately.”';
+  // do / avoid tuned to trust + recency
+  let doLine, avoidLine;
+  if (t < 50) { doLine = 'Listen more than you speak. Ask about family, not policies. Rebuild warmth first.'; avoidLine = 'Any product pitch. This is a relationship-repair meeting, nothing else.'; }
+  else if (r.ds > 90) { doLine = 'Acknowledge the gap warmly. Reconnect as a person before anything else.'; avoidLine = 'Pretending no time has passed. Do not open with business.'; }
+  else if (t >= 75) { doLine = 'Be consultative and genuine. A real family story lands best. This is the moment a referral ask is welcome.'; avoidLine = 'Over-selling. One focused suggestion; trust is already high.'; }
+  else { doLine = 'Use a real, relatable example. Give them room to think. Be patient.'; avoidLine = 'Pressure or multiple products at once. Keep it to one clear idea.'; }
+  // landing probability
+  const conv = Math.min(92, 35 + r.t/2 + (r.ds<=30?15:r.ds<=60?6:0) + (r.claimGood?8:0));
+  return '<div style="background:linear-gradient(135deg,rgba(183,160,106,0.12),rgba(183,160,106,0.03));border:1px solid rgba(183,160,106,0.3);border-radius:12px;padding:14px;margin-bottom:14px">'
+    + '<div style="font-size:10px;color:var(--gold);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;font-family:Sora,sans-serif">✨ AI Coach · before you walk in</div>'
+    + '<div style="font-size:10px;color:var(--teal);font-weight:700;margin-bottom:3px">✓ DO</div>'
+    + '<div style="font-size:12.5px;color:var(--t1);line-height:1.55;margin-bottom:10px">' + doLine + '</div>'
+    + '<div style="font-size:10px;color:var(--coral);font-weight:700;margin-bottom:3px">✕ AVOID</div>'
+    + '<div style="font-size:12.5px;color:var(--t1);line-height:1.55;margin-bottom:10px">' + avoidLine + '</div>'
+    + '<div style="font-size:10px;color:var(--gold);font-weight:700;margin-bottom:3px">💬 OPEN WITH</div>'
+    + '<div style="font-size:12.5px;color:var(--t1);line-height:1.55;font-style:italic;background:rgba(0,0,0,0.15);padding:8px 10px;border-radius:8px">' + esc(opener) + '</div>'
+    + '<div style="font-size:11px;color:var(--t3);margin-top:10px">~' + Math.round(conv) + '% chance this conversation lands well today</div>'
+    + '</div>';
+}
 function showBrief() {
   if (CUR < 0) return;
   const c = DB[CUR];
@@ -1721,8 +1816,9 @@ function showBrief() {
       <div style="font-size:10px;color:var(--coral);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:700">🚫 AVOID</div>
       <div style="font-size:12px;color:var(--t2);line-height:1.6">${t<50?'Any product discussion. This is a relationship repair meeting.':'Multiple product suggestions. One focused conversation only.'}</div>
     </div>
-    <div style="background:rgba(154,163,184,0.08);border-radius:10px;padding:12px;border-left:3px solid var(--purple)">
-      <div style="font-size:10px;color:var(--purple);font-weight:700;margin-bottom:6px">🧠 DIGITAL SOUL REMINDER</div>
+    ${aiCoachBlock(c, t)}
+    <div style="background:rgba(154,163,184,0.08);border-radius:10px;padding:12px;border-left:3px solid var(--slate)">
+      <div style="font-size:10px;color:var(--slate);font-weight:700;margin-bottom:6px">🧠 DIGITAL SOUL REMINDER</div>
       <div style="font-size:12px;color:var(--t2);line-height:1.6">${t>=70?'Customer deeply trusts you. Be genuine and consultative. Family stories work best.':t>=50?'Customer is cautious. Use real examples. Give them time. Never pressure.':'Emotionally distant. Be warm and genuine. Relationship repair is the only goal today.'}</div>
     </div>`;
   openM('brief');
@@ -1815,33 +1911,60 @@ function renderU() {
   const el = el_('umap'); if (!el) return;
   if (!DB.length) { el.innerHTML = '<div class="empty" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><div class="eicon">🌌</div><div class="etit">Add customers to see your universe</div></div>'; return; }
   el.innerHTML = '';
-  const W = el.clientWidth || 600, H = 380, cx = W/2, cy = H/2;
-  // Center star
+  const W = el.clientWidth || 600, H = 420, cx = W/2, cy = H/2;
+  // premium range -> planet size
+  const prem = DB.map(c => parseFloat(c.premium_amount) || 0);
+  const maxPrem = Math.max(1, ...prem);
+  // Center star = the advisor
   const ctr = document.createElement('div');
   ctr.className = 'ustar float';
-  ctr.style.cssText = `width:54px;height:54px;left:${cx-27}px;top:${cy-27}px;background:linear-gradient(135deg,rgba(183,160,106,0.4),rgba(43,161,137,0.2));border:2px solid var(--gold);color:var(--gold);font-size:11px;flex-direction:column;gap:1px`;
+  ctr.style.cssText = `width:58px;height:58px;left:${cx-29}px;top:${cy-29}px;background:radial-gradient(circle at 35% 30%,rgba(183,160,106,0.6),rgba(43,161,137,0.25));border:2px solid var(--gold);color:var(--gold);font-size:12px;flex-direction:column;gap:1px;z-index:5;box-shadow:0 0 30px rgba(183,160,106,0.4)`;
   ctr.innerHTML = '<div>'+PROF.ini+'</div><div style="font-size:7px;opacity:.7">You</div>';
   el.appendChild(ctr);
-  DB.slice(0,14).forEach((c,i) => {
-    const angle = (i/Math.min(DB.length,14))*2*Math.PI - Math.PI/2;
-    const r = 90 + (i%3)*40;
+  const shown = DB.slice(0,16);
+  shown.forEach((c,i) => {
+    const angle = (i/shown.length)*2*Math.PI - Math.PI/2;
+    const ring = i % 3;
+    const r = 95 + ring*48;
     const x = cx + r*Math.cos(angle), y = cy + r*Math.sin(angle);
     const t = parseInt(c.trust_score||50);
-    const sz = 20 + Math.round(t/8);
-    const col = t>=75?'#2BA189':t>=65?'#B7A06A':t>=45?'#FF8C00':'#E05C3A';
+    const ds = daysSince(lastTouch(c));
+    // SIZE = revenue (premium), COLOR = trust, GLOW = engagement (recency)
+    const pv = parseFloat(c.premium_amount) || 0;
+    const sz = 24 + Math.round((pv/maxPrem) * 26); // 24..50
+    const col = t>=75?'#2BA189':t>=60?'#B7A06A':t>=45?'#C99A5A':'#E0795C';
+    const glow = ds <= 30 ? 18 : ds <= 60 ? 10 : ds <= 90 ? 4 : 0;
+    const kids = splitKids(c.children).length + (c.spouse?1:0);
     const star = document.createElement('div');
     star.className = 'ustar';
-    star.style.cssText = `width:${sz}px;height:${sz}px;left:${x-sz/2}px;top:${y-sz/2}px;background:${col}20;border:2px solid ${col};color:${col}`;
+    star.style.cssText = `width:${sz}px;height:${sz}px;left:${x-sz/2}px;top:${y-sz/2}px;background:radial-gradient(circle at 35% 30%,${col}55,${col}18);border:2px solid ${col};color:${col};font-size:${Math.max(9,sz/4)}px;box-shadow:0 0 ${glow}px ${col};transition:transform .2s`;
     star.textContent = ini(c.name);
-    star.title = c.name+' · Trust: '+t;
+    star.title = `${c.name} · Trust ${t} · ₹${pv.toLocaleString('en-IN')} premium · last contact ${ds}d ago`;
     star.onclick = () => openProf(i);
+    star.onmouseenter = () => star.style.transform = 'scale(1.18)';
+    star.onmouseleave = () => star.style.transform = 'scale(1)';
     el.appendChild(star);
+    // family orbit dots
+    for (let k = 0; k < Math.min(kids, 4); k++) {
+      const fa = (k / Math.min(kids,4)) * 2 * Math.PI;
+      const fr = sz/2 + 7;
+      const fd = document.createElement('div');
+      fd.style.cssText = `position:absolute;width:5px;height:5px;border-radius:50%;background:${col};opacity:.55;left:${x + fr*Math.cos(fa) - 2.5}px;top:${y + fr*Math.sin(fa) - 2.5}px`;
+      el.appendChild(fd);
+    }
     const lbl = document.createElement('div');
     lbl.className = 'ulbl';
-    lbl.style.cssText = `left:${x}px;top:${y+sz/2+3}px`;
+    lbl.style.cssText = `left:${x}px;top:${y+sz/2+5}px`;
     lbl.textContent = (c.name||'').split(' ')[0];
     el.appendChild(lbl);
   });
+  if (DB.length > 16) {
+    const more = document.createElement('div');
+    more.className = 'ulbl';
+    more.style.cssText = 'left:50%;bottom:8px;transform:translateX(-50%);color:var(--t3)';
+    more.textContent = '+ ' + (DB.length - 16) + ' more families';
+    el.appendChild(more);
+  }
 }
 
 // ============================================================
@@ -2506,6 +2629,34 @@ function renderLeads() {
   ll.innerHTML = html || '<div class="empty"><div class="eicon">🎯</div><div class="etit">No leads yet</div><div class="edesc">Every future customer starts here. Add your first lead on the left.</div></div>';
 }
 
+// =============== DAILY MOTIVATIONAL QUOTE ===============
+const QUOTES = [
+  "Sell the relationship, not the policy. The policy follows the trust.",
+  "Every family you protect is a story that continues because of you.",
+  "The advisor who never forgets a family becomes the advisor every family remembers.",
+  "A birthday wish builds more trust than ten sales calls.",
+  "You are not selling insurance. You are selling peace of mind for the people they love.",
+  "The best time to call a customer is before they need you, not when you need them.",
+  "Trust is earned in drops and lost in buckets. Protect every drop.",
+  "One honest conversation is worth more than ten clever pitches.",
+  "Behind every premium is a promise. You are the keeper of that promise.",
+  "Be present when nothing is happening, so you are trusted when everything is.",
+  "The claim you settle today is the referral you earn tomorrow.",
+  "People forget what you sold them. They never forget how you made them feel protected.",
+  "A relationship nurtured for years pays for a lifetime.",
+  "Listen twice as much as you speak. The need will reveal itself.",
+  "Your memory of a customer\u2019s family is the deepest form of respect.",
+  "Slow is smooth, smooth is fast. Great advisory is never rushed.",
+  "The strongest sale is the one where the customer feels you cared first.",
+  "Protect the relationship, and the business protects itself.",
+  "Today, be the reason one family sleeps a little easier.",
+  "Consistency, not intensity, builds a practice that lasts decades."
+];
+function dailyQuote() {
+  // same quote all day, rotates daily
+  const day = Math.floor(Date.now() / 86400000);
+  return '\u201c' + QUOTES[day % QUOTES.length] + '\u201d';
+}
 // =============== DAILY MISSION CENTER + REFERRAL CHAMPIONS ===============
 function renderMission() {
   const mp = el_('missionp'); if (!mp) return;
@@ -2544,6 +2695,7 @@ function renderMission() {
     <div style="padding:14px 6px 10px">
       <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:10px">${WDAYS[new Date().getDay()]} · ${fmtDMY()}</div>
       <div style="font-family:'Sora',sans-serif;font-size:clamp(22px,4vw,30px);font-weight:800;letter-spacing:-0.02em;line-height:1.15">${greet}, ${PROF.first} Garu</div>
+      <div style="font-size:13px;color:var(--gold);font-style:italic;margin-top:10px;max-width:560px;line-height:1.6;border-left:2px solid var(--gold);padding-left:12px">${dailyQuote()}</div>
       <div style="font-size:14px;color:var(--t2);margin:16px 0 22px;line-height:1.9;max-width:560px">${lines.join('<br/>')}</div>
       <button class="btn bp" onclick="startDay()" style="padding:12px 26px;font-size:13px">Start My Day →</button>
       ${advisorGPS(commYear)}
@@ -2807,7 +2959,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 13-Jun-Q';
+const APP_VERSION = 'v1.0 · build 13-Jun-V';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
