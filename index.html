@@ -499,7 +499,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;bac
 
     <!-- CUSTOMERS -->
     <div class="sc" id="sc-customers">
-      <div id="csearchwrap" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:transparent;border:1px solid var(--b);border-radius:12px;padding:11px 16px;position:sticky;top:8px;z-index:25;margin-bottom:22px;transition:transform .35s ease,opacity .35s ease">
+      <div id="csearchwrap" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--bg);border:1px solid var(--b);border-radius:12px;padding:11px 16px;position:sticky;top:0;z-index:25;margin-bottom:22px;transition:transform .3s ease,opacity .3s ease;transform-origin:top">
         <i class="ti ti-search" style="color:var(--t3)"></i>
         <input type="text" placeholder="Search name, phone, city..." id="csearch" oninput="filterC(this.value);toggleClearBtn()" style="background:none;border:none;outline:none;flex:1;font-size:13px;color:var(--t1);font-family:inherit;min-width:140px"/><span id="csearchclear" onclick="clearSearch()" style="display:none;cursor:pointer;color:var(--t3);font-size:14px;width:22px;height:22px;border-radius:50%;background:var(--card2);align-items:center;justify-content:center;flex-shrink:0" title="Clear search">✕</span>
         <span class="tag" style="cursor:pointer" onclick="renderCGrid(DB)">All</span>
@@ -2969,7 +2969,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 14-Jun-I';
+const APP_VERSION = 'v1.0 · build 14-Jun-J';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
@@ -3194,7 +3194,10 @@ async function boot() {
   if (!prof.full_name) { go('settings'); showT('\ud83d\udc4b Welcome! Set up your advisor profile first \u2014 it personalises everything.'); }
 }
 function initSearchAutoHide() {
-  const scroller = document.querySelector('.con');
+  // The real scrolling container is .mn (it has overflow-y:auto + a fixed
+  // viewport height set in the refinement layer). .con sits inside it and
+  // never actually scrolls, so the listener must bind to .mn.
+  const scroller = document.querySelector('.mn') || document.querySelector('.con');
   const bar = document.getElementById('csearchwrap');
   if (!scroller || !bar) return;
   if (scroller._ahBound) return; scroller._ahBound = true;
