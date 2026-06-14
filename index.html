@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Telugu:wght@400;600&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -422,6 +423,35 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;bac
       <button class="btn bp" onclick="location.reload()" style="padding:10px 18px">Check Status</button>
       <button class="btn bg" onclick="doLogout()" style="padding:10px 18px">Sign Out</button>
     </div>
+  </div>
+</div>
+<div class="lgw" id="PAYWALL" style="display:none">
+  <div class="lgc" style="max-width:440px">
+    <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--gold),#9C7A35);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px">💛</div>
+    <div style="font-family:'Sora',sans-serif;font-size:21px;font-weight:800;letter-spacing:-0.02em">Activate your Rishta AI</div>
+    <div style="font-size:12.5px;color:var(--t2);margin:8px 0 20px;line-height:1.6">Your account is approved. Choose a plan to unlock your relationship universe — every customer, reminder, and insight.</div>
+    <div id="planopts" style="display:flex;flex-direction:column;gap:12px">
+      <div class="planc" data-plan="monthly" onclick="pickPlan(this)" style="cursor:pointer;border:2px solid var(--b);border-radius:14px;padding:16px;transition:border-color .2s">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-size:14px;font-weight:700">Monthly</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Billed every month, cancel anytime</div></div>
+          <div style="text-align:right"><span style="font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:var(--gold)" id="priceMonthly">₹—</span><span style="font-size:11px;color:var(--t3)">/mo</span></div>
+        </div>
+      </div>
+      <div class="planc" data-plan="yearly" onclick="pickPlan(this)" style="cursor:pointer;border:2px solid var(--b);border-radius:14px;padding:16px;transition:border-color .2s;position:relative">
+        <div style="position:absolute;top:-9px;right:14px;background:var(--teal);color:#06140f;font-size:9px;font-weight:800;padding:2px 9px;border-radius:10px;letter-spacing:0.5px">BEST VALUE</div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-size:14px;font-weight:700">Yearly</div><div style="font-size:11px;color:var(--t3);margin-top:2px" id="yearlyNote">Billed once a year</div></div>
+          <div style="text-align:right"><span style="font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:var(--gold)" id="priceYearly">₹—</span><span style="font-size:11px;color:var(--t3)">/yr</span></div>
+        </div>
+      </div>
+    </div>
+    <div id="payerr" style="font-size:11.5px;color:var(--coral);min-height:16px;margin:12px 0 6px"></div>
+    <button class="btn bp" id="paybtn" onclick="startSubscription()" style="width:100%;justify-content:center;padding:13px;margin-top:6px">Subscribe &amp; Continue</button>
+    <div style="font-size:11px;color:var(--t3);margin-top:14px;display:flex;justify-content:space-between">
+      <span onclick="location.reload()" style="cursor:pointer;color:var(--gold)">I've already paid — refresh</span>
+      <span onclick="doLogout()" style="cursor:pointer;text-decoration:underline">Sign Out</span>
+    </div>
+    <div style="font-size:9px;color:var(--t3);margin-top:16px;text-align:center;line-height:1.7">Secure payments via Razorpay · UPI, cards, netbanking<br/>Auto-renews · cancel anytime</div>
   </div>
 </div>
 <div class="lo" id="LO"><div class="ls"></div><div class="lt" id="LT">Initializing Rishta AI...</div></div>
@@ -2996,7 +3026,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 14-Jun-Z1';
+const APP_VERSION = 'v1.0 · build 14-Jun-Z3';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
@@ -3110,11 +3140,14 @@ async function saveProfile() {
   if (!name) { showT('\u26a0\ufe0f Enter your full name'); return; }
   const { data: { user } } = await sb.auth.getUser();
   if (!user) return;
-  const payload = { id: user.id, email: user.email, full_name: name, designation: el_('srole').value.trim() || 'LIC Advisor',
+  const fields = { full_name: name, designation: el_('srole').value.trim() || 'LIC Advisor',
     location: el_('sloc').value.trim(), phone: el_('sphone').value.trim(),
     whatsapp: el_('swhats').value.trim() || el_('sphone').value.trim(), agency: el_('sagency').value.trim() };
-  const { error } = await sb.from('profiles').upsert(payload);
+  // The profile row already exists (created at signup), so a plain UPDATE of
+  // your own row is all that's needed — and it satisfies RLS cleanly.
+  const { error } = await sb.from('profiles').update(fields).eq('id', user.id);
   if (error) { showT('\u274c ' + error.message); return; }
+  const payload = { id: user.id, email: user.email, ...fields };
   Object.assign(payload, { role: PROF.urole, status: PROF.status });
   deriveProf(payload); applyProfile();
   renderMission(); renderTeam(); renderChat();
@@ -3142,11 +3175,16 @@ async function renderAdmin() {
     `<button class="btn bt" style="padding:6px 12px;font-size:11px" onclick="setUserStatus('${u.id}','approved','${esc(u.full_name||'')}')">\u2705 Approve</button>
      <button class="btn bd" style="padding:6px 12px;font-size:11px" onclick="setUserStatus('${u.id}','rejected','${esc(u.full_name||'')}')">\u274c Reject</button>`)).join('')
     : '<div style="font-size:12px;color:var(--t3)">No pending registrations. \ud83c\udf89</div>';
-  ul.innerHTML = (users||[]).map(u => ucard(u,
-    `<span class="tchip" style="color:${u.role==='super_admin'?'var(--gold)':u.status==='approved'?'var(--teal)':u.status==='rejected'?'var(--coral)':'var(--t2)'}">${u.role==='super_admin'?'\ud83d\udc51 Super Admin':esc(u.status||'pending')}</span>
+  ul.innerHTML = (users||[]).map(u => {
+    const sub = u.subscription_status || 'inactive';
+    const subCol = sub==='active'?'var(--teal)':sub==='past_due'?'var(--gold)':sub==='cancelled'?'var(--coral)':'var(--t3)';
+    const subBadge = u.role!=='super_admin' ? `<span class="tchip" style="color:${subCol}">${sub==='active'?'💳 Paid · '+(u.plan||''):sub==='past_due'?'⚠ Renewal due':sub==='cancelled'?'Cancelled':'Not subscribed'}</span>` : '';
+    return ucard(u,
+    `${subBadge}<span class="tchip" style="color:${u.role==='super_admin'?'var(--gold)':u.status==='approved'?'var(--teal)':u.status==='rejected'?'var(--coral)':'var(--t2)'}">${u.role==='super_admin'?'\ud83d\udc51 Super Admin':esc(u.status||'pending')}</span>
      ${u.role!=='super_admin' ? (u.status==='approved'
        ? `<button class="btn bd" style="padding:5px 11px;font-size:10.5px" onclick="setUserStatus('${u.id}','rejected','${esc(u.full_name||'')}')">Suspend</button>`
-       : `<button class="btn bt" style="padding:5px 11px;font-size:10.5px" onclick="setUserStatus('${u.id}','approved','${esc(u.full_name||'')}')">Approve</button>`) : ''}`)).join('');
+       : `<button class="btn bt" style="padding:5px 11px;font-size:10.5px" onclick="setUserStatus('${u.id}','approved','${esc(u.full_name||'')}')">Approve</button>`) : ''}`);
+  }).join('');
   const ag = el_('adgoals');
   if (ag) {
     const { data: allGoals } = await sb.from('goals').select('*').order('created_at', { ascending: false });
@@ -3191,6 +3229,77 @@ function enableDemoProtection() {
 }
 
 // ---- boot ----
+// ============================================================
+// BILLING / SUBSCRIPTIONS
+// ============================================================
+// ▼▼▼ EDIT YOUR PRICES HERE (display only — real charge is set by the
+//     Razorpay Plan you create in the dashboard; keep them matching). ▼▼▼
+const PRICING = {
+  monthly: 499,   // ₹ per month  — change to your price
+  yearly: 4999    // ₹ per year   — change to your price
+};
+// Your Supabase Edge Function URL (after you deploy it):
+//   https://YOUR-PROJECT-REF.supabase.co/functions/v1/billing
+const BILLING_FN = SUPABASE_URL.replace(/\/$/, '') + '/functions/v1/billing';
+let CHOSEN_PLAN = 'yearly';
+
+function showPaywall() {
+  hideLogin();
+  el_('GATE').style.display = 'none';
+  el_('PAYWALL').style.display = 'flex';
+  // fill prices
+  const pm = el_('priceMonthly'), py = el_('priceYearly');
+  if (pm) pm.textContent = '₹' + PRICING.monthly.toLocaleString('en-IN');
+  if (py) py.textContent = '₹' + PRICING.yearly.toLocaleString('en-IN');
+  // show yearly savings vs 12 months
+  const saving = (PRICING.monthly * 12) - PRICING.yearly;
+  const yn = el_('yearlyNote');
+  if (yn && saving > 0) yn.textContent = 'Billed once a year · save ₹' + saving.toLocaleString('en-IN');
+  // default-select yearly
+  document.querySelectorAll('.planc').forEach(p => {
+    const sel = p.dataset.plan === CHOSEN_PLAN;
+    p.style.borderColor = sel ? 'var(--gold)' : 'var(--b)';
+  });
+}
+function pickPlan(elm) {
+  CHOSEN_PLAN = elm.dataset.plan;
+  document.querySelectorAll('.planc').forEach(p => p.style.borderColor = (p === elm) ? 'var(--gold)' : 'var(--b)');
+}
+async function startSubscription() {
+  const btn = el_('paybtn'), err = el_('payerr');
+  err.textContent = ''; btn.disabled = true; btn.textContent = 'Starting...';
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { err.textContent = 'Please sign in again.'; btn.disabled = false; btn.textContent = 'Subscribe & Continue'; return; }
+    const resp = await fetch(BILLING_FN + '?action=create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
+      body: JSON.stringify({ plan: CHOSEN_PLAN })
+    });
+    const data = await resp.json();
+    if (!resp.ok || data.error) { err.textContent = data.error || 'Could not start subscription.'; btn.disabled = false; btn.textContent = 'Subscribe & Continue'; return; }
+    // Open Razorpay checkout for the subscription
+    const rzp = new Razorpay({
+      key: data.key_id,
+      subscription_id: data.subscription_id,
+      name: 'Rishta AI',
+      description: (CHOSEN_PLAN === 'yearly' ? 'Yearly' : 'Monthly') + ' subscription',
+      theme: { color: '#B7A06A' },
+      handler: function () {
+        // payment authorized; webhook will flip status to active shortly
+        showT('✅ Payment received! Activating your account...');
+        setTimeout(() => location.reload(), 3500);
+      },
+      modal: { ondismiss: function () { btn.disabled = false; btn.textContent = 'Subscribe & Continue'; } }
+    });
+    rzp.open();
+    btn.textContent = 'Subscribe & Continue';
+  } catch (e) {
+    err.textContent = 'Network error. Please try again.';
+    btn.disabled = false; btn.textContent = 'Subscribe & Continue';
+  }
+}
+
 let BOOTED = false;
 async function boot() {
   if (BOOTED) return; BOOTED = true;
@@ -3205,6 +3314,12 @@ async function boot() {
     return showGate('pending');
   }
   if (prof.role !== 'super_admin' && prof.status !== 'approved') { BOOTED = false; return showGate(prof.status); }
+  // Billing gate: approved advisors must have an active subscription.
+  // Super-admin is always exempt. 'active' and 'past_due' (grace) can use the app.
+  if (prof.role !== 'super_admin') {
+    const ss = prof.subscription_status || 'inactive';
+    if (ss !== 'active' && ss !== 'past_due') { BOOTED = false; UID = user.id; deriveProf(prof); return showPaywall(); }
+  }
   UID = user.id;
   deriveProf(prof); applyProfile();
   if (prof.role === 'super_admin') {
