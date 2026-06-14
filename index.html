@@ -498,9 +498,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;bac
     </div>
 
     <!-- CUSTOMERS -->
-    <div class="sc" id="sc-customers" style="padding-top:2px">
-      <div style="position:sticky;top:0;z-index:25;background:var(--bg);padding:10px 0 12px;margin:-4px 0 12px;box-shadow:0 14px 22px -8px var(--bg)">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#0F1A2E;border:1px solid var(--b);border-radius:12px;padding:11px 16px">
+    <div class="sc" id="sc-customers">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#0C1422;border:1px solid var(--b);border-radius:12px;padding:11px 16px;position:sticky;top:0;z-index:25;box-shadow:0 12px 20px rgba(8,12,22,0.9)">
         <i class="ti ti-search" style="color:var(--t3)"></i>
         <input type="text" placeholder="Search name, phone, city..." id="csearch" oninput="filterC(this.value)" style="background:none;border:none;outline:none;flex:1;font-size:13px;color:var(--t1);font-family:inherit;min-width:140px"/>
         <span class="tag" style="cursor:pointer" onclick="renderCGrid(DB)">All</span>
@@ -508,7 +507,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;bac
         <span class="tag" style="cursor:pointer;color:var(--teal)" onclick="filterSeg('bonds')">⭐ Champions</span>
         <span class="tag" style="cursor:pointer;color:var(--gold)" onclick="el_('csvfile').click()">📥 Import CSV</span>
         <input type="file" id="csvfile" accept=".csv" style="display:none" onchange="importCSV(this.files[0])"/>
-      </div></div>
+      </div>
       <div id="segbar"></div>
       <div id="cgrid" class="cgrid"></div>
     </div>
@@ -2960,7 +2959,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 13-Jun-X';
+const APP_VERSION = 'v1.0 · build 13-Jun-Y';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
