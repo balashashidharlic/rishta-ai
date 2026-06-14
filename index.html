@@ -1446,6 +1446,7 @@ async function saveC() {
     ({ error } = await sb.from('customers').update(payload).eq('id', c.id));
   } else {
     payload.active = 'active';
+    payload.advisor_id = UID;
     ({ error } = await sb.from('customers').insert(payload));
   }
   btn.innerHTML = 'Save to Universe'; btn.disabled = false;
@@ -2351,7 +2352,7 @@ async function addMem() {
   if (!name) { showT('⚠️ Enter member name'); return; }
   const m = { id:'m'+Date.now(), name, phone:el_('tp').value.trim(), role:el_('tr').value,
     parent:el_('tpar').value||'root', pol:parseInt(el_('tpol').value)||0,
-    prem:parseFloat(el_('tprem').value)||0, dob:el_('tdob').value||null, joined:new Date().toISOString().slice(0,10) };
+    prem:parseFloat(el_('tprem').value)||0, dob:el_('tdob').value||null, joined:new Date().toISOString().slice(0,10), advisor_id:UID };
   // show immediately, then save to the TeamMembers sheet
   TEAM.push(m); tcache(); renderTeam();
   el_('tn').value=''; el_('tp').value=''; el_('tpol').value=0; el_('tprem').value=0; el_('tdob').value='';
@@ -2537,7 +2538,8 @@ async function importCSV(file) {
     policy_no: g(r,'policy_no'), plan_name: g(r,'plan_name'),
     sum_assured: parseFloat(g(r,'sum_assured')) || 0, premium_amount: parseFloat(g(r,'premium_amount')) || 0,
     premium_mode: g(r,'premium_mode') || 'Yearly', commission: parseFloat(g(r,'commission')) || 0,
-    doc_date: g(r,'doc_date') || null, premium_due: g(r,'premium_due') || null, maturity_date: g(r,'maturity_date') || null
+    doc_date: g(r,'doc_date') || null, premium_due: g(r,'premium_due') || null, maturity_date: g(r,'maturity_date') || null,
+    advisor_id: UID
   })).filter(x => x.name);
   if (!recs.length) { hideL(); showT('⚠️ No valid rows found (need a name column)'); return; }
   const { error } = await sb.from('customers').insert(recs);
@@ -2567,7 +2569,8 @@ async function addLead() {
     name, phone: el_('lphone').value.trim(), age: parseInt(el_('lage').value)||0,
     occupation: el_('locc').value.trim(), city: el_('lcity').value.trim(),
     income: el_('linc').value, source: el_('lsrc').value, interest: el_('lint').value,
-    next_follow: el_('lfol').value || null, notes: el_('lnotes').value.trim(), status: (el_('lstg')?el_('lstg').value:'New Lead')
+    next_follow: el_('lfol').value || null, notes: el_('lnotes').value.trim(), status: (el_('lstg')?el_('lstg').value:'New Lead'),
+    advisor_id: UID
   });
   if (error) { showT('❌ ' + error.message); return; }
   ['lname','lphone','lage','locc','lcity','lnotes','lfol'].forEach(id => { const e = el_(id); if (e) e.value=''; });
@@ -2593,7 +2596,7 @@ async function convertLead(id) {
   const { error } = await sb.from('customers').insert({
     name: l.name, phone: l.phone||'', occupation: l.occupation||'', income: l.income||'',
     language: 'Telugu', goals: l.interest||'', referred_by: l.source==='Referral' ? 'Lead referral' : '',
-    notes: stamp + 'Converted from lead pipeline. ' + (l.notes||''), trust_score: 55, active: 'active'
+    notes: stamp + 'Converted from lead pipeline. ' + (l.notes||''), trust_score: 55, active: 'active', advisor_id: UID
   });
   if (error) { showT('❌ ' + error.message); return; }
   await sb.from('leads').update({ status: 'Converted' }).eq('id', id);
@@ -2948,7 +2951,8 @@ async function addGoal() {
     title, emoji: el_('ve').value.trim() || '\ud83c\udfaf',
     target_amount: parseFloat(el_('vtar').value)||0, current_amount: parseFloat(el_('vcur').value)||0,
     deadline: el_('vdl').value || null, motivation: el_('vmo').value.trim(),
-    image_url: el_('vimg').value.trim()
+    image_url: el_('vimg').value.trim(),
+    advisor_id: UID
   });
   if (error) { showT('\u274c ' + error.message); return; }
   ['vt','ve','vtar','vdl','vmo','vimg'].forEach(id => { const e = el_(id); if (e) e.value = ''; });
@@ -2992,7 +2996,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 14-Jun-Y';
+const APP_VERSION = 'v1.0 · build 14-Jun-Z1';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
