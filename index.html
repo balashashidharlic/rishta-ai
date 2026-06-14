@@ -500,9 +500,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;bac
     <!-- CUSTOMERS -->
     <div class="sc" id="sc-customers">
       <div class="csearchbar" style="position:sticky;top:-30px;z-index:25;background:var(--bg);margin:-30px -34px 14px;padding:30px 34px 12px">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#0C1422;border:1px solid var(--b);border-radius:12px;padding:11px 16px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--b);border-radius:12px;padding:11px 16px">
         <i class="ti ti-search" style="color:var(--t3)"></i>
-        <input type="text" placeholder="Search name, phone, city..." id="csearch" oninput="filterC(this.value)" style="background:none;border:none;outline:none;flex:1;font-size:13px;color:var(--t1);font-family:inherit;min-width:140px"/>
+        <input type="text" placeholder="Search name, phone, city..." id="csearch" oninput="filterC(this.value);toggleClearBtn()" style="background:none;border:none;outline:none;flex:1;font-size:13px;color:var(--t1);font-family:inherit;min-width:140px"/><span id="csearchclear" onclick="clearSearch()" style="display:none;cursor:pointer;color:var(--t3);font-size:14px;width:22px;height:22px;border-radius:50%;background:var(--card2);align-items:center;justify-content:center;flex-shrink:0" title="Clear search">✕</span>
         <span class="tag" style="cursor:pointer" onclick="renderCGrid(DB)">All</span>
         <span class="tag" style="cursor:pointer;color:var(--coral)" onclick="filterSeg('waiting')">⚠ At Risk</span>
         <span class="tag" style="cursor:pointer;color:var(--teal)" onclick="filterSeg('bonds')">⭐ Champions</span>
@@ -1063,6 +1063,15 @@ function applySeg() {
   const list = DB.filter(d.test);
   bar.innerHTML = `<div style="display:inline-flex;align-items:center;gap:10px;padding:8px 14px;border-radius:20px;background:var(--card);border:1px solid rgba(183,160,106,0.35);font-size:11.5px;margin-bottom:14px"><span style="color:var(--gold);font-weight:800">${list.length}</span> ${d.label} <span onclick="clearSeg()" style="cursor:pointer;color:var(--t3);font-weight:800;padding:0 2px">\u2715 show all</span></div>`;
   renderCGrid(list);
+}
+function toggleClearBtn() {
+  const inp = el_('csearch'), btn = el_('csearchclear');
+  if (btn) btn.style.display = (inp && inp.value.trim()) ? 'inline-flex' : 'none';
+}
+function clearSearch() {
+  const inp = el_('csearch'); if (inp) inp.value = '';
+  toggleClearBtn();
+  renderCGrid(DB);
 }
 function filterC(q) { renderCGrid(DB.filter(c=>(c.name||'').toLowerCase().includes(q.toLowerCase())||(c.phone||'').includes(q)||(c.occupation||'').toLowerCase().includes(q.toLowerCase()))); }
 function filterTrust(l) { renderCGrid(l==='high'?DB.filter(c=>parseInt(c.trust_score||50)>=75):DB.filter(c=>parseInt(c.trust_score||50)<45)); }
@@ -2960,7 +2969,7 @@ async function delGoal() {
 }
 
 // =============== AUTH + PROFILE + ADMIN + INIT ===============
-const APP_VERSION = 'v1.0 · build 13-Jun-Z';
+const APP_VERSION = 'v1.0 · build 14-Jun-A';
 const DEMO_MODE = true; // set to false to disable demo protections (watermark, right-click block, idle logout)
 const IDLE_MINUTES = 30;
 
